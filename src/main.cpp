@@ -1,4 +1,4 @@
-#include "..\include\GeradorNumerosAleatorios.h"
+#include "include\GeradorNumerosAleatorios.h"
 #include <iostream>
 #include <math.h>
 
