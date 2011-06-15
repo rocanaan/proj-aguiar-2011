@@ -11,9 +11,9 @@ class Evento{
               double tempo_chegada;
       
       public:
-             Evento(EnumTipo ptipo, double ptempo_chegada);
+             Evento(EnumTipo ptipo, double ptempo_acontecimento);
              EnumTipo getTipo();
-             double getTempoChegada();
+             double getTempoAcontecimento();
              ostream& imprime( ostream& o );
 };
       
