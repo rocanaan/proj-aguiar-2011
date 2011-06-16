@@ -5,20 +5,24 @@
 
 using namespace std;
 
-    Evento::Evento(int t, double h){
-                             this->tipo = t;
-                             this->tempo_acontecimento = h;
-                             }
-                             
-          int Evento::getTipo(){
-              return tipo;
-              }
-          double Evento::getTempoAcontecimento(){
-                 return tempo_acontecimento;
-                 }
-          ostream& Evento::imprime(ostream& o){
-               o << "Evento do tipo " << tipo << " marcado para " << tempo_acontecimento << endl;
-               }
-                             
-             
-             
+    Evento::Evento(EnumTipo ptipo, double ptempo_acontecimento)
+	{
+        this->tipo = ptipo;
+        this->tempo_acontecimento = ptempo_acontecimento;
+    }
+
+    EnumTipo Evento::getTipo()
+	{
+        return tipo;
+    }
+	
+    double Evento::getTempoAcontecimento()
+	{
+        return tempo_acontecimento;
+    }
+	
+    ostream& Evento::imprime(ostream& o)
+	{
+        o << "Evento do tipo " << tipo << " marcado para " << tempo_acontecimento << endl;
+    }
+
