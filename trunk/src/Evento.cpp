@@ -7,17 +7,17 @@ using namespace std;
 
     Evento::Evento(int t, double h){
                              this->tipo = t;
-                             this->ptempo_acontecimento = h;
+                             this->tempo_acontecimento = h;
                              }
                              
           int Evento::getTipo(){
               return tipo;
               }
           double Evento::getTempoAcontecimento(){
-                 return ptempo_acontecimento;
+                 return tempo_acontecimento;
                  }
           ostream& Evento::imprime(ostream& o){
-               o << "Evento do tipo " << tipo << " marcado para " << ptempo_acontecimento << endl;
+               o << "Evento do tipo " << tipo << " marcado para " << tempo_acontecimento << endl;
                }
                              
              
