@@ -8,7 +8,7 @@ enum EnumTipo{nova_chegada,termino_de_servico};
 class Evento{
       private:
               EnumTipo tipo;
-              double tempo_chegada;
+              double tempo_acontecimento;
       
       public:
              Evento(EnumTipo ptipo, double ptempo_acontecimento);
