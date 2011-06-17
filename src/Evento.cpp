@@ -1,4 +1,4 @@
-#include "include\Simulador.h"
+#include "include\Evento.h"
 #include <iostream>
 #include <cstdlib>
 #include <string>
