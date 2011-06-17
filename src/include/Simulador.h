@@ -17,6 +17,7 @@ bool operator > (const Evento& e1, const Evento& e2)
     return (e1.getTempoAcontecimento() > e2.getTempoAcontecimento());                                                                 
 }
 
+
 class Simulador{
       private:
         // tenho que ter a fila de heap de eventos 
