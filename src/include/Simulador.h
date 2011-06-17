@@ -12,32 +12,32 @@
 
 using namespace std;
 
-bool operator > (const Evento& e1, const Evento& e2)
+
+//Redefinição do operador > para podermos usar a priority_queue corretamente, ou seja, ordenando pelo tempo de acontecimento
+bool operator > (const Evento& evento1, const Evento& evento2)
 {
-    return (e1.getTempoAcontecimento() > e2.getTempoAcontecimento());                                                                 
+    return (evento1.getTempoAcontecimento() > evento2.getTempoAcontecimento());                                                                 
 }
 
 
 class Simulador{
-      private:
-        // tenho que ter a fila de heap de eventos 
-        priority_queue<Evento, vector<Evento>, greater<Evento> > filaEventos;
-         
+    private:
+		priority_queue<Evento, vector<Evento>, greater<Evento> > filaEventos;//Fila de prioridade para podermos ordenar os eventos a partir de seu tempo de acontecimento
 		queue<Cliente> fila1;
-		// Foi utillizado deque para podermos mover um cliente de volta para a frente da fila 2 sem dificuldades
-		deque<Cliente> fila2;
-		
-		
-		
+		deque<Cliente> fila2;//Foi utillizado deque para podermos mover um cliente de volta para a frente da fila 2 sem dificuldades
+	
+	
+	
 		double tempo_atual;
 		Cliente cliente_em_servico;
 		bool servidor_vazio;
 		int id_proximo_cliente;
 		double taxa_chegada;
 		double taxa_servico;
-
-      public:
-        Simulador(double ptaxa_chegada, double ptaxa_servico);		   
+    
+    public:
+		Simulador(double ptaxa_chegada, double ptaxa_servico);
+		~Simulador();	
 		void Roda(int num_total_clientes);
 };
       
