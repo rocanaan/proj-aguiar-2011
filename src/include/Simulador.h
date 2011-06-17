@@ -29,6 +29,8 @@ class Simulador{
 		Cliente cliente_em_servico;
 		bool servidor_vazio;
 		int id_proximo_cliente;
+		double taxa_chegada;
+		double taxa_servico;
 
       public:
         Simulador(double ptaxa_chegada, double ptaxa_servico);		   
