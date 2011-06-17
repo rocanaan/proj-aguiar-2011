@@ -1,8 +1,18 @@
 #include "include\Simulador.h"
+#include "include\GeradorNumerosAleatorios.h"
+#include <math.h>
 #define FILA_1 1
 #define FILA_2 2
 
 using namespace std;
+
+// defini aqui de novo com outro nome so pra nao reclamar de definicao, n queria me preocupar com fazer a main e o simulador verem a inversa
+double inversa2(double taxa)
+{
+	return (-1) * (log(1 - GeradorNumerosAleatorios::GetInstance()->Random()) / taxa);
+}
+
+
 
 Simulador::Simulador(double ptaxa_chegada, double ptaxa_servico)
 {
@@ -12,8 +22,10 @@ Simulador::Simulador(double ptaxa_chegada, double ptaxa_servico)
 	// que tivesse como parametro a taxa requisitada.
 	
    //Coloca o primeiro evendo na heap de eventos
+   filaEventos.push(Evento(nova_chegada,inversa2(1)));
    servidor_vazio = true;
    id_proximo_cliente = 0;
+   tempo_atual=0;
 }      
 
 void Simulador::Roda(int num_total_clientes)   
@@ -24,6 +36,10 @@ void Simulador::Roda(int num_total_clientes)
 	{
 		//Pegar o primeiro evento da heap
 		// tirar ele da heap e dar a ele o tempo como o tempo atual
+		Evento e = filaEventos.top();
+		filaEventos.pop();
+		tempo_atual=e.getTempoAcontecimento();
+		cout << e.imprime(cout) << endl;
 		
 		if(1/*tipo do evento == nova_chegada, por enquanto botei 1*/)
 		{
@@ -41,6 +57,8 @@ void Simulador::Roda(int num_total_clientes)
 			fila1.push(clienteAtual); // Coloca o novo cliente na fila 1
 			
 			//agendar evento de proxima nova_chegada
+			filaEventos.push(Evento(nova_chegada,tempo_atual+inversa2(0.5)));
+			
 		}
 		else if (1/*tipo de evento == termino_de_servico, por enquanto botei 1*/)
 		{

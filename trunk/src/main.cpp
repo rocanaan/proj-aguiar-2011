@@ -1,4 +1,5 @@
 #include "include\GeradorNumerosAleatorios.h"
+#include "include\Simulador.h"
 #include <iostream>
 #include <math.h>
 
@@ -12,10 +13,20 @@ double inversa(double taxa)
 int main(void)
 {
 	//GeradorNumerosAleatorios *gna = GeradorNumerosAleatorios::GetInstance();
+	string repeat = "";
+	while (repeat != "N" and repeat !="n")
+    {
+	      /*for (int i=0; i<60; i++)
+		      cout << inversa(0.5) << endl;
+		      //cout << gna->Random() << endl;*/
+		      
+	      Simulador s = Simulador(1,1);
+	      s.Roda(60);
+    
+          cout << "Deseja fazer uma nova simulacao? (S/N)" << endl;
+          getline(cin,repeat);
+    }
 	
-	for (int i=0; i<60; i++)
-		cout << inversa(0.5) << endl;
-		//cout << gna->Random() << endl;
 	
 	return 0;
 }
