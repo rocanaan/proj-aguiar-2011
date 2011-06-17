@@ -41,7 +41,22 @@ using namespace std;
 		this->fila = pfila;
 	}
 	
-	bool Cliente::FoiInterrompido()
+	double Cliente::GetTempoRestante()
+	{
+		return tempo_restante;
+	}
+	
+	double Cliente::SetTempoRestante(double ptempo_restante)
+	{
+		this->tempo_restante = ptempo_restante;
+	}
+	
+	bool Cliente::VerificaInterrompido()
 	{
 		return interrompido;
+	}
+	
+	bool Cliente::FoiInterrompido()
+	{
+		this->interrompido = true;
 	}
