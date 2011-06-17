@@ -13,7 +13,8 @@ class Evento{
       public:
              Evento(EnumTipo ptipo, double ptempo_acontecimento);
              EnumTipo getTipo();
-             double getTempoAcontecimento();
+             double getTempoAcontecimento() const;
              ostream& imprime( ostream& o );
 };
+
       

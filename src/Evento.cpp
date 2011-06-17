@@ -1,9 +1,8 @@
-#include "include\Evento.h"
+#include "include\Simulador.h"
 #include <iostream>
 #include <cstdlib>
 #include <string>
 
-using namespace std;
 
     Evento::Evento(EnumTipo ptipo, double ptempo_acontecimento)
 	{
@@ -16,7 +15,7 @@ using namespace std;
         return tipo;
     }
 	
-    double Evento::getTempoAcontecimento()
+    double Evento::getTempoAcontecimento() const
 	{
         return tempo_acontecimento;
     }
