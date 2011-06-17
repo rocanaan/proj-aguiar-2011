@@ -61,37 +61,41 @@ void Simulador::Roda(int num_total_clientes)
 	while(num_total_clientes > num_clientes_servidos)
 	{
 	
-		Evento eventoAtual = filaEventos.top();//O primeiro evento é selecionado 
+		Evento evento_atual = filaEventos.top();//O primeiro evento é selecionado 
 		filaEventos.pop();//Ele é retirado da Fila
-		tempo_atual=eventoAtual.getTempoAcontecimento();
-		cout << "Evento sendo tratado: Evento do tipo " << eventoAtual.getTipo() << " no tempo " << tempo_atual << endl;
+		tempo_atual=evento_atual.getTempoAcontecimento();
+		cout << "Evento sendo tratado: Evento do tipo " << evento_atual.getTipo() << " no tempo " << tempo_atual << endl;
 		
 		//Se o Evento, que está sendo tratado no momento, for do tipo nova_chegada
-		if(eventoAtual.getTipo() == nova_chegada)
+		if(evento_atual.getTipo() == nova_chegada)
 		{
 			//Condição para tratar a interrupção presente no sistema.
 			//Se o servidor estiver ocupado e este cliente for da fila 2 então o cliente que acabou de chegar irá interromper este serviço
 			if(!servidor_vazio && cliente_em_servico.GetFila() == FILA_2)
 			{
-				Evento eventoDestruido = filaEventos.top(); //Guardamos o Evento a ser destruido
+				Evento evento_destruido = filaEventos.top(); //Guardamos o Evento a ser destruido
 				filaEventos.pop();//Remove o Evento de Término de serviço gerado por este cliente da fila 2 ( ele vai sempre ser o top)
-				cout << "        Evento sendo destruido: : Evento do tipo " << eventoDestruido.getTipo() << " marcado para " <<  eventoDestruido.getTempoAcontecimento()<< endl;
+				cout << "        Evento sendo destruido: : Evento do tipo " << evento_destruido.getTipo() << " marcado para " <<  evento_destruido.getTempoAcontecimento()<< endl;
+				
+				cliente_em_servico.FoiInterrompido();//Marca o cliente como sendo um cliente Interrompido
+				cliente_em_servico.SetTempoRestante(evento_destruido.getTempoAcontecimento() - tempo_atual);//O tempo restante para finalizar seu servico é guardado
+				
 				fila2.push_front(cliente_em_servico); //Cliente que foi interrompido volta a ser o primeiro da fila 2.
 				servidor_vazio = true; //Deixa o servidor vazio
 				cout << "Boom! Headshot!" << endl;
 			}
 			
-			Cliente clienteAtual = Cliente(id_proximo_cliente,FILA_1,N_INTERROMPIDO); //O novo cliente começa na fila 1
+			Cliente cliente_atual = Cliente(id_proximo_cliente,FILA_1,N_INTERROMPIDO); //O novo cliente começa na fila 1
 			id_proximo_cliente++; 
 			
-			fila1.push(clienteAtual); //Coloca o novo cliente na fila 1
+			fila1.push(cliente_atual); //Coloca o novo cliente na fila 1
 			
 			Evento proxChegada = Evento(nova_chegada,tempo_atual+inversa2(taxa_chegada));//Agenda o Evento para a próxima chegada
 			filaEventos.push(proxChegada);
 			cout << "       Agendando nova chegada para " << proxChegada.getTempoAcontecimento() << endl;
 			
 		}//Se o Evento, que está sendo tratado no momento, for do termino_de_servico
-		else if (eventoAtual.getTipo() == termino_de_servico)
+		else if (evento_atual.getTipo() == termino_de_servico)
 		{
 			if(cliente_em_servico.GetFila() == FILA_1)
 			{
@@ -132,10 +136,22 @@ void Simulador::Roda(int num_total_clientes)
 				fila2.pop_front();
 			
 				servidor_vazio = false;
+				//Se o cliente, que veio da fila 2, não foi interrompido, gere para ele o seu tempo de serviço
+				if(cliente_em_servico.VerificaInterrompido() == N_INTERROMPIDO) 
+				{
+					Evento proxTerminoServico = Evento(termino_de_servico,tempo_atual+inversa2(taxa_servico));//Agenda evento de termino de servico
+					filaEventos.push(proxTerminoServico);
+					cout << "       Agendando proximo termino de servico da fila 2 para " << proxTerminoServico.getTempoAcontecimento() << endl;
+				}
+
+				else 
+				{
+					Evento proxTerminoServico = Evento(termino_de_servico,tempo_atual+cliente_em_servico.GetTempoRestante());//Agenda evento de termino de servico, com o tempo restante de servico do cliente que foi interrompido
+					filaEventos.push(proxTerminoServico);
+					cout << "(Evento já foi interrompido alguma vez)Agendando proximo termino de servico da fila 2 para " << proxTerminoServico.getTempoAcontecimento() << endl;
+				}
 				
-				Evento proxTerminoServico = Evento(termino_de_servico,tempo_atual+inversa2(taxa_servico));//Agenda evento de termino de servico
-				filaEventos.push(proxTerminoServico);
-				cout << "       Agendando proximo termino de servico da fila 2 para " << proxTerminoServico.getTempoAcontecimento() << endl;
+
 			}
 			cout << "            Fila do cliente em servico:" << cliente_em_servico.GetFila() << endl;
 		}
