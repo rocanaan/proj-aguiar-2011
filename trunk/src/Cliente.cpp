@@ -19,7 +19,7 @@ using namespace std;
 	
 	int Cliente::GetFila()
 	{
-		return id;
+		return fila;
 	}
 	
 	int Cliente::SetFila(int pfila)
