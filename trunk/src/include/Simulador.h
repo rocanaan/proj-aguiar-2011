@@ -1,4 +1,7 @@
-#include<vector>
+#ifndef SIMULADOR_H_
+#define SIMULADOR_H_
+
+#include <vector>
 #include <queue>
 #include <deque>
 #include <stdio.h>
@@ -9,10 +12,10 @@
 
 using namespace std;
 
-bool operator > (Evento const e1, Evento const e2)
-    {
-        return (e1.getTempoAcontecimento() > e2.getTempoAcontecimento());
-    }
+bool operator > (const Evento& e1, const Evento& e2)
+{
+    return (e1.getTempoAcontecimento() > e2.getTempoAcontecimento());                                                                 
+}
 
 class Simulador{
       private:
@@ -37,3 +40,4 @@ class Simulador{
 		void Roda(int num_total_clientes);
 };
       
+#endif /*SIMULADOR_H_*/

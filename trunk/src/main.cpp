@@ -21,7 +21,7 @@ int main(void)
 		      //cout << gna->Random() << endl;*/
 		      
 	      Simulador s = Simulador(1,1);
-	      s.Roda(60);
+	      s.Roda(10);
     
           cout << "Deseja fazer uma nova simulacao? (S/N)" << endl;
           getline(cin,repeat);

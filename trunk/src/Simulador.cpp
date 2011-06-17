@@ -43,7 +43,7 @@ void Simulador::Roda(int num_total_clientes)
 		Evento eventoAtual = filaEventos.top();
 		filaEventos.pop();
 		tempo_atual=eventoAtual.getTempoAcontecimento();
-		cout << eventoAtual.imprime(cout) << endl;
+		cout << "Evento sendo tratado: Evento do tipo " << eventoAtual.getTipo() << " no tempo " << tempo_atual << endl;
 		
 		if(eventoAtual.getTipo() == nova_chegada)
 		{
@@ -52,7 +52,11 @@ void Simulador::Roda(int num_total_clientes)
 				// Remove o evento Termino de Servico do cliente atualmente em servico
 				// Altere o tempo de servico do cliente_em_servico
 				// Mova ele para a frente da fila 2
+				Evento eventoDestruido = filaEventos.top();
+				filaEventos.pop();
+				cout << "        Evento sendo destruido: : Evento do tipo " << eventoDestruido.getTipo() << " marcado para " <<  eventoDestruido.getTempoAcontecimento()<< endl;
 				fila2.push_front(cliente_em_servico);
+				cout << "Boom! Headshot!" << endl;
 			}
 			
 			Cliente clienteAtual = Cliente(id_proximo_cliente,FILA_1); // O novo cliente começa na fila 1
@@ -61,19 +65,23 @@ void Simulador::Roda(int num_total_clientes)
 			fila1.push(clienteAtual); // Coloca o novo cliente na fila 1
 			
 			//agendar evento de proxima nova_chegada
-			filaEventos.push(Evento(nova_chegada,tempo_atual+inversa2(taxa_chegada)));
+			Evento proxChegada = Evento(nova_chegada,tempo_atual+inversa2(taxa_chegada));
+			filaEventos.push(proxChegada);
+			cout << "       Agendando nova chegada para " << proxChegada.getTempoAcontecimento() << endl;
 			
 		}
-		else if (eventoAtual.getTipo() == nova_chegada)
+		else if (eventoAtual.getTipo() == termino_de_servico)
 		{
 			if(cliente_em_servico.GetFila() == FILA_1)
 			{
 				fila2.push_front(cliente_em_servico);
 				cliente_em_servico.SetFila(FILA_2);
+				cout << "       Fim de servico na fila 1. Inserindo cliente na fila 2" << endl;
 			}
 			else
 			{
 				//acabou seus servicos, logo + um cliente servido totalmente
+				cout  <<"       Fim de servico na fila 2. Removendo cliente do sistema" << endl;
 				num_clientes_servidos++;
 			}
 			
@@ -93,7 +101,10 @@ void Simulador::Roda(int num_total_clientes)
 				servidor_vazio = false;
 				
 				//agendar evento de termino de servico
-				filaEventos.push(Evento(termino_de_servico,tempo_atual+inversa2(taxa_servico)));
+				Evento proxTerminoServico = Evento(termino_de_servico,tempo_atual+inversa2(taxa_servico));
+				filaEventos.push(proxTerminoServico);
+				cout << "       Agendando proximo termino de servico da fila 1 para " << proxTerminoServico.getTempoAcontecimento() << endl;;
+				
 			}
 			else if(!fila2.empty())
 			{
@@ -103,7 +114,9 @@ void Simulador::Roda(int num_total_clientes)
 				servidor_vazio = false;
 				
 				//agendar evento de termino de servico
-				filaEventos.push(Evento(termino_de_servico,tempo_atual+inversa2(taxa_servico)));
+				Evento proxTerminoServico = Evento(termino_de_servico,tempo_atual+inversa2(taxa_servico));
+				filaEventos.push(proxTerminoServico);
+				cout << "       Agendando proximo termino de servico da fila 2 para " << proxTerminoServico.getTempoAcontecimento() << endl;
 			}
 		}
 	}

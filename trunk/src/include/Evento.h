@@ -1,3 +1,6 @@
+#ifndef EVENTO_H_
+#define EVENTO_H_
+
 #include <stdio.h>
 #include <cstdlib>
 #include <iostream>
@@ -17,4 +20,5 @@ class Evento{
              ostream& imprime( ostream& o );
 };
 
+#endif /*EVENTO_H_*/
       
