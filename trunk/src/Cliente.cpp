@@ -5,6 +5,8 @@
 
 using namespace std;
 
+      
+
 	Cliente::Cliente()
 	{
 		this->id = 0;

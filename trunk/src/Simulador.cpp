@@ -75,8 +75,8 @@ void Simulador::Roda(int num_total_clientes)
 		{
 			if(cliente_em_servico.GetFila() == FILA_1)
 			{
-				fila2.push_front(cliente_em_servico);
 				cliente_em_servico.SetFila(FILA_2);
+				fila2.push_front(cliente_em_servico);
 				cout << "       Fim de servico na fila 1. Inserindo cliente na fila 2" << endl;
 			}
 			else
@@ -119,6 +119,7 @@ void Simulador::Roda(int num_total_clientes)
 				filaEventos.push(proxTerminoServico);
 				cout << "       Agendando proximo termino de servico da fila 2 para " << proxTerminoServico.getTempoAcontecimento() << endl;
 			}
+			cout << "            Fila do cliente em servico:" << cliente_em_servico.GetFila() << endl;
 		}
 	}
 

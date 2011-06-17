@@ -20,7 +20,7 @@ int main(void)
 		      cout << inversa(0.5) << endl;
 		      //cout << gna->Random() << endl;*/
 		      
-	      Simulador s = Simulador(1,1);
+	      Simulador s = Simulador(0.3,1);
 	      s.Roda(10);
     
           cout << "Deseja fazer uma nova simulacao? (S/N)" << endl;
