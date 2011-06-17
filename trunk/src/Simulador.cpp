@@ -56,6 +56,7 @@ void Simulador::Roda(int num_total_clientes)
 				filaEventos.pop();
 				cout << "        Evento sendo destruido: : Evento do tipo " << eventoDestruido.getTipo() << " marcado para " <<  eventoDestruido.getTempoAcontecimento()<< endl;
 				fila2.push_front(cliente_em_servico);
+				servidor_vazio = true; // deixa o servidor vazio
 				cout << "Boom! Headshot!" << endl;
 			}
 			
