@@ -21,11 +21,15 @@ Simulador::Simulador(double ptaxa_chegada, double ptaxa_servico)
 	// e cada uma delas ter uma das taxas. Logo, seria bom o metodo inversa estar dentro da classe geradora e que a classe tivesse um construtor
 	// que tivesse como parametro a taxa requisitada.
 	
-   //Coloca o primeiro evendo na heap de eventos
-   filaEventos.push(Evento(nova_chegada,inversa2(1)));
-   servidor_vazio = true;
-   id_proximo_cliente = 0;
-   tempo_atual=0;
+	//Se não usarmos 2 instâncias do Gerador vamos então ter as 2 taxas aqui que usamos em lugares diferentes do método Roda do Simulador
+	taxa_chegada = ptaxa_chegada;
+	taxa_servico = ptaxa_servico;
+	
+	//Coloca o primeiro evendo na heap de eventos
+	filaEventos.push(Evento(nova_chegada,inversa2(taxa_chegada)));
+	servidor_vazio = true;
+	id_proximo_cliente = 0;
+	tempo_atual=0;
 }      
 
 void Simulador::Roda(int num_total_clientes)   
@@ -36,12 +40,12 @@ void Simulador::Roda(int num_total_clientes)
 	{
 		//Pegar o primeiro evento da heap
 		// tirar ele da heap e dar a ele o tempo como o tempo atual
-		Evento e = filaEventos.top();
+		Evento eventoAtual = filaEventos.top();
 		filaEventos.pop();
-		tempo_atual=e.getTempoAcontecimento();
-		cout << e.imprime(cout) << endl;
+		tempo_atual=eventoAtual.getTempoAcontecimento();
+		cout << eventoAtual.imprime(cout) << endl;
 		
-		if(1/*tipo do evento == nova_chegada, por enquanto botei 1*/)
+		if(eventoAtual.getTipo() == nova_chegada)
 		{
 			if(!servidor_vazio && cliente_em_servico.GetFila() == FILA_2)
 			{
@@ -57,10 +61,10 @@ void Simulador::Roda(int num_total_clientes)
 			fila1.push(clienteAtual); // Coloca o novo cliente na fila 1
 			
 			//agendar evento de proxima nova_chegada
-			filaEventos.push(Evento(nova_chegada,tempo_atual+inversa2(0.5)));
+			filaEventos.push(Evento(nova_chegada,tempo_atual+inversa2(taxa_chegada)));
 			
 		}
-		else if (1/*tipo de evento == termino_de_servico, por enquanto botei 1*/)
+		else if (eventoAtual.getTipo() == nova_chegada)
 		{
 			if(cliente_em_servico.GetFila() == FILA_1)
 			{
@@ -89,6 +93,7 @@ void Simulador::Roda(int num_total_clientes)
 				servidor_vazio = false;
 				
 				//agendar evento de termino de servico
+				filaEventos.push(Evento(termino_de_servico,tempo_atual+inversa2(taxa_servico)));
 			}
 			else if(!fila2.empty())
 			{
@@ -98,6 +103,7 @@ void Simulador::Roda(int num_total_clientes)
 				servidor_vazio = false;
 				
 				//agendar evento de termino de servico
+				filaEventos.push(Evento(termino_de_servico,tempo_atual+inversa2(taxa_servico)));
 			}
 		}
 	}
