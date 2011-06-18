@@ -36,3 +36,8 @@
         o << "Evento do tipo " << tipo << " marcado para " << tempo_acontecimento << endl;
     }
 
+	//Redefinição do operador > para podermos usar a priority_queue corretamente, ou seja, ordenando pelo tempo de acontecimento
+	/*bool Evento::operator > (const Evento evento2) const
+	{
+		return (this->getTempoAcontecimento() > evento2.getTempoAcontecimento());                                                                 
+	}*/
