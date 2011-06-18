@@ -251,14 +251,25 @@ namespace interface_ad {
 					 Cliente *cliente_em_servico;
 					 for (int i = 0;i < clientes_fila1->size();++i)
 					 {
-						 if (clientes_fila1->at(i).id() == System::Double::Parse(label2->Text))
+						 if (clientes_fila1->at(i).id() == System::Int32::Parse(label2->Text))
 							 cliente_em_servico = &clientes_fila1->at(i);
 					 }
 					 cliente_em_servico->tempo_servico(cliente_em_servico->tempo_servico() - intervalo);
 					 label6->Text = cliente_em_servico->tempo_servico().ToString();
+				
 					 if (cliente_em_servico->tempo_servico() <= 0)
 					 {
+						 clientes_fila2->push_back(*cliente_em_servico);
+						 for (int i = 0;i < clientes_fila1->size();++i)
+						 {
+							 if (clientes_fila1->at(i).id() == System::Int32::Parse(label2->Text))
+							 {
+								 clientes_fila1->erase(clientes_fila1->begin()+i);
+							 }
+						 }
+						 label6->Text = "0";
 						 label2->Text = "0";
+
 					 }
 				 }
 
