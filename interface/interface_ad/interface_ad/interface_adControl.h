@@ -57,7 +57,8 @@ namespace interface_ad {
 	private: System::Windows::Forms::Label^  label4;
 
 	private:
-		vector<Cliente> *lista_clientes;
+		vector<Cliente> *clientes_fila1;
+		vector<Cliente> *clientes_fila2;
 	private: System::Windows::Forms::Label^  label5;
 	private: System::Windows::Forms::Label^  label6;
 			 /// <summary>
@@ -235,7 +236,7 @@ namespace interface_ad {
 #pragma endregion
 	private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
 
-				 int intervalo = 0.1;
+				 double intervalo = 0.1;
 				 srand(time(NULL));
 				 double tempo = System::Double::Parse(this->label1->Text);
 				 double tempo_serviço;
@@ -243,28 +244,32 @@ namespace interface_ad {
 				 double chegada_atual = System::Double::Parse(this->label4->Text);
 				 tempo += intervalo;
 				 double taxa_chegada = 1;
-				 double taxa_servico = 1/2;
+				 double taxa_servico = 2;
 
 				 if (System::Int32::Parse(label2->Text) != 0)	//Se tiver alguem sendo servido
 				 {
 					 Cliente *cliente_em_servico;
-					 for (int i = 0;i < lista_clientes->size();++i)
+					 for (int i = 0;i < clientes_fila1->size();++i)
 					 {
-						 if ((lista_clientes[i]->id() == System::Double::Parse(label2->Text))
-							 cliente_em_servico = lista_clientes[i];
+						 if (clientes_fila1->at(i).id() == System::Double::Parse(label2->Text))
+							 cliente_em_servico = &clientes_fila1->at(i);
 					 }
-					 cliente_em_servico.tempo_servico(cliente_em_servico.tempo_servico-intervalo);
-					 label2->Text = cliente_em_servico.tempo_servico();
+					 cliente_em_servico->tempo_servico(cliente_em_servico->tempo_servico() - intervalo);
+					 label6->Text = cliente_em_servico->tempo_servico().ToString();
+					 if (cliente_em_servico->tempo_servico() <= 0)
+					 {
+						 label2->Text = "0";
+					 }
 				 }
 
 				 if (tempo >= chegada_atual)
 				 {
 					 n_clientes++;
 					 Cliente novocliente(n_clientes,taxa_servico);
-					 lista_clientes->push_back(novocliente);
+					 clientes_fila1->push_back(novocliente);
 					 proxima_chegada = tempo + inversa2(taxa_chegada);
 					 label4->Text = proxima_chegada.ToString();
-		//			 lista_clientes->Add(novocliente.id());
+		//			 clientes_fila1->Add(novocliente.id());
 					 
 					
 		
@@ -290,8 +295,8 @@ namespace interface_ad {
 				 n_clientes = 0;
 				 double proxima_chegada = inversa2(taxa);
 				 this->label2->Text = "0";
-				 lista_clientes = new vector<Cliente>;
-				
+				 clientes_fila1 = new vector<Cliente>;
+				 clientes_fila2 = new vector<Cliente>;
 				 
 				 this->label4->Text = proxima_chegada.ToString();
 			 }
