@@ -12,14 +12,6 @@
 
 using namespace std;
 
-
-//Redefinição do operador > para podermos usar a priority_queue corretamente, ou seja, ordenando pelo tempo de acontecimento
-bool operator > (const Evento& evento1, const Evento& evento2)
-{
-    return (evento1.getTempoAcontecimento() > evento2.getTempoAcontecimento());                                                                 
-}
-
-
 class Simulador{
     private:
 		priority_queue<Evento, vector<Evento>, greater<Evento> > filaEventos;//Fila de prioridade para podermos ordenar os eventos a partir de seu tempo de acontecimento
