@@ -59,8 +59,11 @@ namespace interface_ad {
 	private:
 		vector<Cliente> *clientes_fila1;
 		vector<Cliente> *clientes_fila2;
+		Cliente *cliente_em_servico;
 	private: System::Windows::Forms::Label^  label5;
 	private: System::Windows::Forms::Label^  label6;
+	private: System::Windows::Forms::TextBox^  textBox1;
+
 			 /// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -86,6 +89,7 @@ namespace interface_ad {
 			this->label4 = (gcnew System::Windows::Forms::Label());
 			this->label5 = (gcnew System::Windows::Forms::Label());
 			this->label6 = (gcnew System::Windows::Forms::Label());
+			this->textBox1 = (gcnew System::Windows::Forms::TextBox());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pictureBox1))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pictureBox2))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pictureBox3))->BeginInit();
@@ -174,7 +178,6 @@ namespace interface_ad {
 			this->label3->Size = System::Drawing::Size(112, 13);
 			this->label3->TabIndex = 8;
 			this->label3->Text = L"Próxima chegada em: ";
-		
 			// 
 			// label4
 			// 
@@ -193,16 +196,24 @@ namespace interface_ad {
 			this->label5->Size = System::Drawing::Size(97, 13);
 			this->label5->TabIndex = 10;
 			this->label5->Text = L"Tempo de Serviço:";
-	
 			// 
 			// label6
 			// 
 			this->label6->AutoSize = true;
 			this->label6->Location = System::Drawing::Point(353, 176);
 			this->label6->Name = L"label6";
-			this->label6->Size = System::Drawing::Size(35, 13);
+			this->label6->Size = System::Drawing::Size(13, 13);
 			this->label6->TabIndex = 11;
-			this->label6->Text = L"label6";
+			this->label6->Text = L"0";
+			// 
+			// textBox1
+			// 
+			this->textBox1->Location = System::Drawing::Point(3, 299);
+			this->textBox1->Multiline = true;
+			this->textBox1->Name = L"textBox1";
+			this->textBox1->ScrollBars = System::Windows::Forms::ScrollBars::Vertical;
+			this->textBox1->Size = System::Drawing::Size(433, 150);
+			this->textBox1->TabIndex = 12;
 			// 
 			// interface_adControl
 			// 
@@ -210,6 +221,7 @@ namespace interface_ad {
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->BackColor = System::Drawing::SystemColors::Window;
 			this->BorderStyle = System::Windows::Forms::BorderStyle::Fixed3D;
+			this->Controls->Add(this->textBox1);
 			this->Controls->Add(this->label6);
 			this->Controls->Add(this->label5);
 			this->Controls->Add(this->label4);
@@ -223,7 +235,7 @@ namespace interface_ad {
 			this->Controls->Add(this->button1);
 			this->Controls->Add(this->label1);
 			this->Name = L"interface_adControl";
-			this->Size = System::Drawing::Size(434, 283);
+			this->Size = System::Drawing::Size(434, 452);
 			this->Load += gcnew System::EventHandler(this, &interface_adControl::interface_adControl_Load);
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pictureBox1))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pictureBox2))->EndInit();
@@ -239,64 +251,63 @@ namespace interface_ad {
 				 double intervalo = 0.1;
 				 srand(time(NULL));
 				 double tempo = System::Double::Parse(this->label1->Text);
-				 double tempo_serviço;
 				 double proxima_chegada;
 				 double chegada_atual = System::Double::Parse(this->label4->Text);
 				 tempo += intervalo;
 				 double taxa_chegada = 1;
 				 double taxa_servico = 2;
 
-				 if (System::Int32::Parse(label2->Text) != 0)	//Se tiver alguem sendo servido
+				 if (cliente_em_servico != NULL)	//Se tiver alguem sendo servido
 				 {
-					 Cliente *cliente_em_servico;
-					 for (int i = 0;i < clientes_fila1->size();++i)
-					 {
-						 if (clientes_fila1->at(i).id() == System::Int32::Parse(label2->Text))
-							 cliente_em_servico = &clientes_fila1->at(i);
-					 }
+				
 					 cliente_em_servico->tempo_servico(cliente_em_servico->tempo_servico() - intervalo);
 					 label6->Text = cliente_em_servico->tempo_servico().ToString();
-				
-					 if (cliente_em_servico->tempo_servico() <= 0)
+					
+					 if (cliente_em_servico->tempo_servico() < 0)	//Se o servico acabou
 					 {
 						 clientes_fila2->push_back(*cliente_em_servico);
-						 for (int i = 0;i < clientes_fila1->size();++i)
-						 {
-							 if (clientes_fila1->at(i).id() == System::Int32::Parse(label2->Text))
-							 {
-								 clientes_fila1->erase(clientes_fila1->begin()+i);
-							 }
-						 }
+						 cliente_em_servico = NULL;
 						 label6->Text = "0";
 						 label2->Text = "0";
 
 					 }
 				 }
-
+				 Cliente *novocliente;
 				 if (tempo >= chegada_atual)
 				 {
+						
 					 n_clientes++;
-					 Cliente novocliente(n_clientes,taxa_servico);
-					 clientes_fila1->push_back(novocliente);
+					 novocliente = new Cliente(n_clientes,taxa_servico);
+					
+					 clientes_fila1->push_back(*novocliente);
+					
 					 proxima_chegada = tempo + inversa2(taxa_chegada);
 					 label4->Text = proxima_chegada.ToString();
-		//			 clientes_fila1->Add(novocliente.id());
 					 
-					
-		
-					 listBox1->Items->Add(novocliente.id());
+					 listBox1->Items->Add(novocliente->id());
+					  
 					 listBox1->SetSelected(0,true);
-					 if (System::Int32::Parse(listBox1->Text)-1 == novocliente.id() - 1) //Se nao tiver ninguem na fila
-					 {
-						 if (System::Int32::Parse(label2->Text) == 0)	//Se nao tiver ninguem sendo servido
-						 {
-							 label2->Text = novocliente.id().ToString();
-							 listBox1->Items->RemoveAt(0);
-							 label6->Text = novocliente.tempo_servico().ToString();
-						 }
-					 }
-				//	 if ()
+					
 				 }
+				
+
+				 if (clientes_fila1->empty() == false)	//Se a fila nao estiver vazia
+				 {
+					
+					if (cliente_em_servico == NULL)	//Se nao tiver ninguem sendo servido
+					{
+						cliente_em_servico = new Cliente(clientes_fila1->at(0).id(),taxa_servico);
+						cliente_em_servico->tempo_servico(clientes_fila1->at(0).tempo_servico());
+						label2->Text = cliente_em_servico->id().ToString();
+						listBox1->Items->RemoveAt(0);
+						label6->Text = cliente_em_servico->tempo_servico().ToString();
+						clientes_fila1->erase(clientes_fila1->begin());
+					}
+					
+				 }
+
+				
+				
 				 this->label1->Text = tempo.ToString();
 			 }
 	private: System::Void interface_adControl_Load(System::Object^  sender, System::EventArgs^  e) {
@@ -308,7 +319,7 @@ namespace interface_ad {
 				 this->label2->Text = "0";
 				 clientes_fila1 = new vector<Cliente>;
 				 clientes_fila2 = new vector<Cliente>;
-				 
+				 textBox1->Text = "Console\r\n";
 				 this->label4->Text = proxima_chegada.ToString();
 			 }
 
