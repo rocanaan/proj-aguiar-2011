@@ -57,4 +57,5 @@ Cliente::Cliente(int novo_id,int taxa)
 {
 	_id = novo_id;
 	_tempo_servico = (-1) * (log(1 - GeradorNumerosAleatorios::GetInstance()->Random()) / taxa);
+	_tipo_servico = 1;
 }

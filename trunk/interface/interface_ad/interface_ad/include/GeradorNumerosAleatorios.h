@@ -29,10 +29,13 @@ class GeradorNumerosAleatorios
 	private:
 		int _id;
 		double _tempo_servico;
+		int _tipo_servico;
 	public:
 		Cliente(int novo_id, int taxa);
 		inline int id(){return _id;}; 
 		inline void tempo_servico(double tempo){_tempo_servico = tempo;};
 		inline double tempo_servico(){return _tempo_servico;};
+		inline int tipo_servico(){return _tipo_servico;};
+		inline void tipo_servico(int servico){_tipo_servico = servico;};
 	};
 	
