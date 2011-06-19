@@ -59,7 +59,7 @@ namespace interface_form {
 			this->interface_adControl1->BorderStyle = System::Windows::Forms::BorderStyle::Fixed3D;
 			this->interface_adControl1->Location = System::Drawing::Point(12, 12);
 			this->interface_adControl1->Name = L"interface_adControl1";
-			this->interface_adControl1->Size = System::Drawing::Size(434, 283);
+			this->interface_adControl1->Size = System::Drawing::Size(442, 455);
 			this->interface_adControl1->TabIndex = 0;
 			this->interface_adControl1->Load += gcnew System::EventHandler(this, &Form1::interface_adControl1_Load);
 			// 
@@ -67,7 +67,7 @@ namespace interface_form {
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(466, 323);
+			this->ClientSize = System::Drawing::Size(466, 479);
 			this->Controls->Add(this->interface_adControl1);
 			this->Name = L"Form1";
 			this->Text = L"Form1";

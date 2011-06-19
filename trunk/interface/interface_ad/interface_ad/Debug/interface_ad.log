@@ -1,4 +1,4 @@
-﻿Build started 18/06/2011 18:35:55.
+﻿Build started 19/06/2011 04:51:05.
      1>Project "C:\AD\Trabalho\svn\interface\interface_ad\interface_ad\interface_ad.vcxproj" on node 2 (build target(s)).
      1>InitializeBuildStatus:
          Creating "Debug\interface_ad.unsuccessfulbuild" because "AlwaysCreate" was specified.
@@ -8,12 +8,10 @@
          All outputs are up-to-date.
          C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /AI"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0" /Zi /clr:pure /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDLL /D _UNICODE /D UNICODE /EHa /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"StdAfx.h" /Fp"Debug\interface_ad.pch" /Fo"Debug\\" /Fd"Debug\vc100.pdb" /TP /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Core.dll" /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Data.dll" /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.dll" /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Drawing.dll" /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Windows.Forms.dll" /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Xml.dll" /analyze- /errorReport:prompt interface_adControl.cpp /clr:nostdlib 
          interface_adControl.cpp
-     1>c:\ad\trabalho\svn\interface\interface_ad\interface_ad\interface_adControl.h(240): warning C4244: 'argument' : conversion from 'time_t' to 'unsigned int', possible loss of data
-     1>c:\ad\trabalho\svn\interface\interface_ad\interface_ad\interface_adControl.h(252): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\ad\trabalho\svn\interface\interface_ad\interface_ad\interface_adControl.h(263): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\ad\trabalho\svn\interface\interface_ad\interface_ad\interface_adControl.h(279): warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
-     1>c:\ad\trabalho\svn\interface\interface_ad\interface_ad\interface_adControl.h(242): warning C4101: 'tempo_serviço' : unreferenced local variable
-     1>c:\ad\trabalho\svn\interface\interface_ad\interface_ad\interface_adControl.h(304): warning C4244: 'argument' : conversion from 'time_t' to 'unsigned int', possible loss of data
+     1>c:\ad\trabalho\svn\interface\interface_ad\interface_ad\interface_adControl.h(252): warning C4244: 'argument' : conversion from 'time_t' to 'unsigned int', possible loss of data
+     1>c:\ad\trabalho\svn\interface\interface_ad\interface_ad\interface_adControl.h(280): warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
+     1>c:\ad\trabalho\svn\interface\interface_ad\interface_ad\interface_adControl.h(299): warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
+     1>c:\ad\trabalho\svn\interface\interface_ad\interface_ad\interface_adControl.h(315): warning C4244: 'argument' : conversion from 'time_t' to 'unsigned int', possible loss of data
          All outputs are up-to-date.
        CoreResGen:
          All outputs are up-to-date.
@@ -36,4 +34,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:02.25
+Time Elapsed 00:00:02.45
