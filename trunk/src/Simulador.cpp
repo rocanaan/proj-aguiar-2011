@@ -95,7 +95,7 @@ void Simulador::Roda(int num_total_clientes)
 			if(cliente_em_servico.GetFila() == FILA_1)
 			{
 				cliente_em_servico.SetFila(FILA_2);//O cliente que irá terminar o serviço agora é definido como da fila 2
-				fila2.push_front(cliente_em_servico);// Coloca o cliente na fila 2
+				fila2.push(cliente_em_servico);// Coloca o cliente na fila 2
 				cout << "       Fim de servico na fila 1. Inserindo cliente na fila 2" << endl;
 			}
 			else
