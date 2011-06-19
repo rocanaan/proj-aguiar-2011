@@ -1,5 +1,4 @@
 #include "include\Simulador.h"
-#include "include\GeradorNumerosAleatorios.h"
 #include <math.h>
 #define FILA_1 1
 #define FILA_2 2
@@ -7,13 +6,6 @@
 #define N_INTERROMPIDO 0
 
 using namespace std;
-
-//Defini aqui de novo com outro nome so pra nao reclamar de definicao, n queria me preocupar com fazer a main e o simulador verem a inversa
-double inversa2(double taxa)
-{
-	return (-1) * (log(1 - GeradorNumerosAleatorios::GetInstance()->Random()) / taxa);
-}
-
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -32,8 +24,10 @@ Simulador::Simulador(double ptaxa_chegada, double ptaxa_servico)
 	taxa_chegada = ptaxa_chegada;
 	taxa_servico = ptaxa_servico;
 	
+	gerador = new GeradorTaxaExponencial();
+	
 	//Coloca o primeiro evendo na heap de eventos
-	filaEventos.push(Evento(nova_chegada,inversa2(taxa_chegada)));
+	filaEventos.push(Evento(nova_chegada,gerador->ExponencialInversa(taxa_chegada)));
 	servidor_vazio = true;
 	id_proximo_cliente = 0;
 	tempo_atual=0;
@@ -56,6 +50,7 @@ Simulador::~Simulador()
 void Simulador::Roda(int num_total_clientes)   
 {
 	int num_clientes_servidos = 0;
+	
 	
 	//Enquanto o número total de clientes que queremos servir for maior que o número de clientes já servidos por completo, rodamos a simulação
 	while(num_total_clientes > num_clientes_servidos)
@@ -90,7 +85,7 @@ void Simulador::Roda(int num_total_clientes)
 			
 			fila1.push(cliente_atual); //Coloca o novo cliente na fila 1
 			
-			Evento proxChegada = Evento(nova_chegada,tempo_atual+inversa2(taxa_chegada));//Agenda o Evento para a próxima chegada
+			Evento proxChegada = Evento(nova_chegada,tempo_atual+gerador->ExponencialInversa(taxa_chegada));//Agenda o Evento para a próxima chegada
 			filaEventos.push(proxChegada);
 			cout << "       Agendando nova chegada para " << proxChegada.getTempoAcontecimento() << endl;
 			
@@ -125,7 +120,7 @@ void Simulador::Roda(int num_total_clientes)
 				
 				servidor_vazio = false;//O servidor agora está ocupado
 				
-				Evento proxTerminoServico = Evento(termino_de_servico,tempo_atual+inversa2(taxa_servico));//Agendar evento de termino de servico
+				Evento proxTerminoServico = Evento(termino_de_servico,tempo_atual+gerador->ExponencialInversa(taxa_servico));//Agendar evento de termino de servico
 				filaEventos.push(proxTerminoServico);
 				cout << "       Agendando proximo termino de servico da fila 1 para " << proxTerminoServico.getTempoAcontecimento() << endl;;
 				
@@ -139,7 +134,7 @@ void Simulador::Roda(int num_total_clientes)
 				//Se o cliente, que veio da fila 2, não foi interrompido, gere para ele o seu tempo de serviço
 				if(cliente_em_servico.VerificaInterrompido() == N_INTERROMPIDO) 
 				{
-					Evento proxTerminoServico = Evento(termino_de_servico,tempo_atual+inversa2(taxa_servico));//Agenda evento de termino de servico
+					Evento proxTerminoServico = Evento(termino_de_servico,tempo_atual+gerador->ExponencialInversa(taxa_servico));//Agenda evento de termino de servico
 					filaEventos.push(proxTerminoServico);
 					cout << "       Agendando proximo termino de servico da fila 2 para " << proxTerminoServico.getTempoAcontecimento() << endl;
 				}

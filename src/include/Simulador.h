@@ -9,6 +9,7 @@
 #include <iostream>
 #include "Cliente.h"
 #include "Evento.h"
+#include "GeradorTaxaExponencial.h"
 
 using namespace std;
 
@@ -18,7 +19,7 @@ class Simulador{
 		queue<Cliente> fila1;
 		deque<Cliente> fila2;//Foi utillizado deque para podermos mover um cliente de volta para a frente da fila 2 sem dificuldades
 	
-	
+		GeradorTaxaExponencial* gerador;
 	
 		double tempo_atual;
 		Cliente cliente_em_servico;
