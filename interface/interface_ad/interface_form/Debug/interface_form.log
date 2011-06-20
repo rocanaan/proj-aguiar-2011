@@ -1,4 +1,4 @@
-﻿Build started 19/06/2011 16:32:33.
+﻿Build started 19/06/2011 20:15:18.
      1>Project "C:\AD\Trabalho\svn\interface\interface_ad\interface_form\interface_form.vcxproj" on node 3 (build target(s)).
      1>InitializeBuildStatus:
          Creating "Debug\interface_form.unsuccessfulbuild" because "AlwaysCreate" was specified.
@@ -32,4 +32,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:02.13
+Time Elapsed 00:00:02.29

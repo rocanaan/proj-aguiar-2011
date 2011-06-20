@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <deque>
+#include <fstream>
 using namespace System;
 using namespace System::ComponentModel;
 using namespace System::Collections;
@@ -19,7 +20,16 @@ int n_clientes;
 namespace interface_ad {
 
 	
-	
+	void add_up(String ^texto, System::Windows::Forms::TextBox ^textbox)
+	{
+		String ^temp;
+		temp = temp->Copy(textbox->Text);
+		
+		textbox->Text = texto;
+		textbox->Text += "\r\n";
+		textbox->Text = textbox->Text->Insert(textbox->Text->Length,temp);
+
+	}
 	/// <summary>
 	/// Summary for interface_adControl
 	/// </summary>
@@ -258,32 +268,40 @@ namespace interface_ad {
 				 tempo += intervalo;
 				 double taxa_chegada = 1;
 				 double taxa_servico = 2;
-
-
+				 String ^texto;
+				 texto += tempo.ToString();
+				 texto += " - ";/*
 				 textBox1->Text += tempo.ToString();
-				 textBox1->Text += " - ";
+				 textBox1->Text += " - ";*/
 				 if (cliente_em_servico != NULL)	//Se tiver alguem sendo servido
 				 {
-					 textBox1->Text += "Tem alguem sendo servido,  ";	
+					 texto += "Tem alguem sendo servido,  ";
+					 //textBox1->Text += "Tem alguem sendo servido,  ";	
 					 cliente_em_servico->tempo_servico(cliente_em_servico->tempo_servico() - intervalo);
 					 label6->Text = cliente_em_servico->tempo_servico().ToString();
 					
 					 if (cliente_em_servico->tempo_servico() < 0)	//Se o servico acabou
 					 {
-						 textBox1->Text += "Serviço acabou,  ";	
+						 texto += "Serviço acabou,  ";
+					//	 add_up("Serviço acabou,  ",textBox1);
+					//	 textBox1->Text += "Serviço acabou,  ";	
 						 if (cliente_em_servico->tipo_servico() == 2)	//Se o cliente tiver vindo da fila 2
 						 {
-							 textBox1->Text += "O cara veio da fila 2 e vai pro limbo,  ";	
+							 texto += "O cara veio da fila 2 e vai pro limbo,  ";
+					//		 add_up("O cara veio da fila 2 e vai pro limbo,  ",textBox1);
+					//		 textBox1->Text += "O cara veio da fila 2 e vai pro limbo,  ";	
 							 delete(cliente_em_servico);
 							
 						 }
 						 else
 						 {
-							 textBox1->Text += "O cara veio da fila 1 e vai pra fila 2,  ";	
+							 texto += "O cara veio da fila 1 e vai pra fila 2,  ";
+						//	 add_up("O cara veio da fila 1 e vai pra fila 2,  ",textBox1);
+						//	 textBox1->Text += "O cara veio da fila 1 e vai pra fila 2,  ";	
 							 listBox2->Items->Add(cliente_em_servico->id().ToString());
 							 listBox2->SetSelected(0,true);
 							 clientes_fila2->push_back(new Cliente(cliente_em_servico->id(),taxa_servico));
-							 clientes_fila2->at(0)->tipo_servico(2);
+							 clientes_fila2->at(clientes_fila2->size()-1)->tipo_servico(2);
 							 textBox1->Text += clientes_fila2->at(0)->id().ToString();
 						 }
 						 cliente_em_servico = NULL;
@@ -296,7 +314,9 @@ namespace interface_ad {
 				 Cliente *novocliente;
 				 if (tempo >= chegada_atual)
 				 {
-					 textBox1->Text += "Chegou gente,  ";	
+					 texto += "Chegou gente,  ";
+			//		 add_up("Chegou gente,  ",textBox1);
+			//		 textBox1->Text += "Chegou gente,  ";	
 					 n_clientes++;
 					 novocliente = new Cliente(n_clientes,taxa_servico);
 					
@@ -313,10 +333,14 @@ namespace interface_ad {
 				
 				 if (clientes_fila2->empty() == false)	//Se a fila 2 nao estiver vazia
 				 {
-					textBox1->Text += "Fila 2 não está vazia,  ";	
+					texto += "Fila 2 não está vazia,  ";
+			//		add_up("Fila 2 não está vazia,  ",textBox1);
+			//		textBox1->Text += "Fila 2 não está vazia,  ";	
 					if (cliente_em_servico == NULL)	//Se nao tiver ninguem sendo servido 								
 					{
-						textBox1->Text += "Não tem ninguem sendo servido,  ";	
+						texto += "Não tem ninguem sendo servido,  ";
+				//		add_up("Não tem ninguem sendo servido,  ",textBox1);
+		//				textBox1->Text += "Não tem ninguem sendo servido,  ";	
 						cliente_em_servico = new Cliente(clientes_fila2->at(0)->id(),taxa_servico);
 						cliente_em_servico->tempo_servico(clientes_fila2->at(0)->tempo_servico());
 						cliente_em_servico->tipo_servico(clientes_fila2->at(0)->tipo_servico());
@@ -329,10 +353,14 @@ namespace interface_ad {
 
 				 if (clientes_fila1->empty() == false)	//Se a fila 1 nao estiver vazia
 				 {
-					textBox1->Text += "Tem gente na fila 1,  ";	
+					texto += "Tem gente na fila 1,  ";
+		//			add_up("Tem gente na fila 1,  ",textBox1);
+		//			textBox1->Text += "Tem gente na fila 1,  ";	
 					if (cliente_em_servico == NULL)	//Se nao tiver ninguem sendo servido 								
 					{
-						textBox1->Text += "Tem ninguem sendo servido,  ";	
+						texto += "Tem ninguem sendo servido,  ";
+		//				add_up("Tem ninguem sendo servido,  ",textBox1);
+		//				textBox1->Text += "Tem ninguem sendo servido,  ";	
 						cliente_em_servico = new Cliente(clientes_fila1->at(0).id(),taxa_servico);
 						cliente_em_servico->tempo_servico(clientes_fila1->at(0).tempo_servico());
 						label2->Text = cliente_em_servico->id().ToString();
@@ -342,7 +370,9 @@ namespace interface_ad {
 					}
 					else if (cliente_em_servico->tipo_servico() == 2)	// Se tiver alguem da fila 2 sendo servido
 					{
-						textBox1->Text += "Tem um cara da fila 2 sendo servido,  ";	
+						texto += "Tem um cara da fila 2 sendo servido,  ";
+			//			add_up("Tem um cara da fila 2 sendo servido,  ",textBox1);
+			//			textBox1->Text += "Tem um cara da fila 2 sendo servido,  ";	
 						clientes_fila2->push_front(cliente_em_servico);
 						listBox2->Items->Insert(0,cliente_em_servico->id().ToString()); //vai adicionar ao final.tenho q adicionar ao inicio
 						listBox2->SetSelected(0,true);
@@ -356,9 +386,9 @@ namespace interface_ad {
 					
 				 }
 
-				
-				 textBox1->Text += "\r\n";
-				 textBox1->Select(0,20);
+				 add_up(texto,textBox1);
+			//	 textBox1->Text += "\r\n";
+		//		 textBox1->Select(0,20);
 				 this->label1->Text = tempo.ToString();
 			 }
 	private: System::Void interface_adControl_Load(System::Object^  sender, System::EventArgs^  e) {
