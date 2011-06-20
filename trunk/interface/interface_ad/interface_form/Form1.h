@@ -67,10 +67,12 @@ namespace interface_form {
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(466, 479);
+			this->BackColor = System::Drawing::SystemColors::Window;
+			this->ClientSize = System::Drawing::Size(466, 478);
 			this->Controls->Add(this->interface_adControl1);
+			this->MaximizeBox = false;
 			this->Name = L"Form1";
-			this->Text = L"Form1";
+			this->Text = L"Simulador";
 			this->ResumeLayout(false);
 
 		}
