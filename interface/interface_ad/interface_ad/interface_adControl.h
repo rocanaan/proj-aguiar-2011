@@ -74,6 +74,8 @@ namespace interface_ad {
 	private: System::Windows::Forms::Label^  label5;
 	private: System::Windows::Forms::Label^  label6;
 	private: System::Windows::Forms::TextBox^  textBox1;
+	private: System::Windows::Forms::Label^  label7;
+	private: System::Windows::Forms::Label^  label8;
 
 			 /// <summary>
 		/// Required designer variable.
@@ -101,6 +103,8 @@ namespace interface_ad {
 			this->label5 = (gcnew System::Windows::Forms::Label());
 			this->label6 = (gcnew System::Windows::Forms::Label());
 			this->textBox1 = (gcnew System::Windows::Forms::TextBox());
+			this->label7 = (gcnew System::Windows::Forms::Label());
+			this->label8 = (gcnew System::Windows::Forms::Label());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pictureBox1))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pictureBox2))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pictureBox3))->BeginInit();
@@ -219,13 +223,33 @@ namespace interface_ad {
 			// 
 			// textBox1
 			// 
+			this->textBox1->BackColor = System::Drawing::SystemColors::Window;
 			this->textBox1->Location = System::Drawing::Point(3, 299);
 			this->textBox1->Multiline = true;
 			this->textBox1->Name = L"textBox1";
+			this->textBox1->ReadOnly = true;
 			this->textBox1->ScrollBars = System::Windows::Forms::ScrollBars::Vertical;
 			this->textBox1->Size = System::Drawing::Size(433, 150);
 			this->textBox1->TabIndex = 12;
 			this->textBox1->TextChanged += gcnew System::EventHandler(this, &interface_adControl::textBox1_TextChanged);
+			// 
+			// label7
+			// 
+			this->label7->AutoSize = true;
+			this->label7->Location = System::Drawing::Point(4, 280);
+			this->label7->Name = L"label7";
+			this->label7->Size = System::Drawing::Size(45, 13);
+			this->label7->TabIndex = 13;
+			this->label7->Text = L"Console";
+			// 
+			// label8
+			// 
+			this->label8->AutoSize = true;
+			this->label8->Location = System::Drawing::Point(360, 3);
+			this->label8->Name = L"label8";
+			this->label8->Size = System::Drawing::Size(40, 13);
+			this->label8->TabIndex = 14;
+			this->label8->Text = L"Tempo";
 			// 
 			// interface_adControl
 			// 
@@ -233,6 +257,8 @@ namespace interface_ad {
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->BackColor = System::Drawing::SystemColors::Window;
 			this->BorderStyle = System::Windows::Forms::BorderStyle::Fixed3D;
+			this->Controls->Add(this->label8);
+			this->Controls->Add(this->label7);
 			this->Controls->Add(this->textBox1);
 			this->Controls->Add(this->label6);
 			this->Controls->Add(this->label5);
@@ -275,19 +301,19 @@ namespace interface_ad {
 				 textBox1->Text += " - ";*/
 				 if (cliente_em_servico != NULL)	//Se tiver alguem sendo servido
 				 {
-					 texto += "Tem alguem sendo servido,  ";
+					 texto += "Há cliente no servidor - ";
 					 //textBox1->Text += "Tem alguem sendo servido,  ";	
 					 cliente_em_servico->tempo_servico(cliente_em_servico->tempo_servico() - intervalo);
 					 label6->Text = cliente_em_servico->tempo_servico().ToString();
 					
 					 if (cliente_em_servico->tempo_servico() < 0)	//Se o servico acabou
 					 {
-						 texto += "Serviço acabou,  ";
+						 texto += "Serviço acabou -  ";
 					//	 add_up("Serviço acabou,  ",textBox1);
 					//	 textBox1->Text += "Serviço acabou,  ";	
 						 if (cliente_em_servico->tipo_servico() == 2)	//Se o cliente tiver vindo da fila 2
 						 {
-							 texto += "O cara veio da fila 2 e vai pro limbo,  ";
+							 texto += "Cliente veio da fila 2 e está saindo do sistema - ";
 					//		 add_up("O cara veio da fila 2 e vai pro limbo,  ",textBox1);
 					//		 textBox1->Text += "O cara veio da fila 2 e vai pro limbo,  ";	
 							 delete(cliente_em_servico);
@@ -295,7 +321,7 @@ namespace interface_ad {
 						 }
 						 else
 						 {
-							 texto += "O cara veio da fila 1 e vai pra fila 2,  ";
+							 texto += "Cliente vindo da fila 1 e indo para fila 2 - ";
 						//	 add_up("O cara veio da fila 1 e vai pra fila 2,  ",textBox1);
 						//	 textBox1->Text += "O cara veio da fila 1 e vai pra fila 2,  ";	
 							 listBox2->Items->Add(cliente_em_servico->id().ToString());
@@ -314,7 +340,7 @@ namespace interface_ad {
 				 Cliente *novocliente;
 				 if (tempo >= chegada_atual)
 				 {
-					 texto += "Chegou gente,  ";
+					 texto += "Aconteceu uma chegada de cliente para fila 1 - ";
 			//		 add_up("Chegou gente,  ",textBox1);
 			//		 textBox1->Text += "Chegou gente,  ";	
 					 n_clientes++;
@@ -333,12 +359,12 @@ namespace interface_ad {
 				
 				 if (clientes_fila2->empty() == false)	//Se a fila 2 nao estiver vazia
 				 {
-					texto += "Fila 2 não está vazia,  ";
+					texto += "Há clientes na fila 2 - ";
 			//		add_up("Fila 2 não está vazia,  ",textBox1);
 			//		textBox1->Text += "Fila 2 não está vazia,  ";	
 					if (cliente_em_servico == NULL)	//Se nao tiver ninguem sendo servido 								
 					{
-						texto += "Não tem ninguem sendo servido,  ";
+						texto += "Não há ninguem no servidor - ";
 				//		add_up("Não tem ninguem sendo servido,  ",textBox1);
 		//				textBox1->Text += "Não tem ninguem sendo servido,  ";	
 						cliente_em_servico = new Cliente(clientes_fila2->at(0)->id(),taxa_servico);
@@ -353,12 +379,12 @@ namespace interface_ad {
 
 				 if (clientes_fila1->empty() == false)	//Se a fila 1 nao estiver vazia
 				 {
-					texto += "Tem gente na fila 1,  ";
+					texto += "Há clientes na fila 1 - ";
 		//			add_up("Tem gente na fila 1,  ",textBox1);
 		//			textBox1->Text += "Tem gente na fila 1,  ";	
 					if (cliente_em_servico == NULL)	//Se nao tiver ninguem sendo servido 								
 					{
-						texto += "Tem ninguem sendo servido,  ";
+						texto += "Não há ninguem no servidor - ";
 		//				add_up("Tem ninguem sendo servido,  ",textBox1);
 		//				textBox1->Text += "Tem ninguem sendo servido,  ";	
 						cliente_em_servico = new Cliente(clientes_fila1->at(0).id(),taxa_servico);
@@ -370,7 +396,7 @@ namespace interface_ad {
 					}
 					else if (cliente_em_servico->tipo_servico() == 2)	// Se tiver alguem da fila 2 sendo servido
 					{
-						texto += "Tem um cara da fila 2 sendo servido,  ";
+						texto += "Há um cliente que veio da fila 2 no servidor - ";
 			//			add_up("Tem um cara da fila 2 sendo servido,  ",textBox1);
 			//			textBox1->Text += "Tem um cara da fila 2 sendo servido,  ";	
 						clientes_fila2->push_front(cliente_em_servico);
@@ -400,7 +426,6 @@ namespace interface_ad {
 				 this->label2->Text = "0";
 				 clientes_fila1 = new vector<Cliente>;
 				 clientes_fila2 = new deque<Cliente*>;
-				 textBox1->Text = "Console\r\n";
 				 this->label4->Text = proxima_chegada.ToString();
 				
 			 }
