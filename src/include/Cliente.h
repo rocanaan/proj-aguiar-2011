@@ -11,6 +11,7 @@ class Cliente{
 			int fila;
 			bool interrompido;
 			double tempo_restante;
+			bool direto_ao_servidor;
 			
 			// instante de chegada do cliente no sistema, na fila 1
 			double instante_chegada1;
@@ -25,7 +26,7 @@ class Cliente{
 
       public:
 			Cliente();
-			Cliente(int pid,double instante_chegada,int pfila,bool pinterrompido);
+			Cliente(int pid,double instante_chegada,int pfila);
 			int getID();
 			int GetFila();
 			int SetFila(int pfila);	
@@ -33,7 +34,10 @@ class Cliente{
 			double SetTempoRestante(double ptempo_restante);
 			bool VerificaInterrompido();
 			bool FoiInterrompido();
-			
+			void SetDiretoAoServidor(bool pbool);
+			bool GetDiretoAoServidor();
+
+	
 			void setInstanteChegada2(double t);
 			void setInstanteSaida(double t);
 			void setDuracaoPrimeiroServico(double duracao);
