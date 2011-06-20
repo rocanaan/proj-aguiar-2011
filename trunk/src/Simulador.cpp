@@ -31,6 +31,11 @@ Simulador::Simulador(double ptaxa_chegada, double ptaxa_servico)
 	servidor_vazio = true;
 	id_proximo_cliente = 0;
 	tempo_atual=0;
+	
+	Nq1_parcial = 0;
+	Nq2_parcial = 0;
+	N1_parcial = 0;
+	N2_parcial = 0;
 }      
 
 Simulador::~Simulador()
