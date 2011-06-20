@@ -23,6 +23,5 @@ int main(void)
           getline(cin,repeat);
     }
 	
-	
 	return 0;
 }
