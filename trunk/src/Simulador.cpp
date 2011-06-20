@@ -131,7 +131,15 @@ void Simulador::Roda(int num_total_clientes)
 				servidor_vazio = true; //Deixa o servidor vazio
 			}
 			
-			Cliente cliente_atual = Cliente(id_proximo_cliente,tempo_atual,FILA_1,N_INTERROMPIDO); //O novo cliente começa na fila 1
+			Cliente cliente_atual = Cliente(id_proximo_cliente,tempo_atual,FILA_1); //O novo cliente começa na fila 1
+			
+			//Como o servidor já vai estar marcado como vazio se ele estivesse ocupado com algum cliente da fila 2 então só é necessário verificar se ele está vazio
+			if(servidor_vazio)
+			{
+				cliente_atual.SetDiretoAoServidor(true);
+				cout << "Cliente foi direto ao servidor"<<endl;
+			}
+			
 			id_proximo_cliente++; 
 			
 			fila1.push(cliente_atual); //Coloca o novo cliente na fila 1
@@ -148,16 +156,29 @@ void Simulador::Roda(int num_total_clientes)
 			{
 				cliente_em_servico.SetFila(FILA_2);//O cliente que irá terminar o serviço agora é definido como da fila 2
 				cliente_em_servico.setInstanteChegada2(tempo_atual);
+				
 				fila2.push_back(cliente_em_servico);// Coloca o cliente na fila 2
+				
+				//Se a fila 2 só tem o próprio cliente e não tem ninguem em serviço, quer dizer que o cliente da fila 2 será atendido direto
+				if(fila2.size() == 1 && servidor_vazio)
+					fila2.front().SetDiretoAoServidor(true);
+
 				cout << "          Fim de servico na fila 1. Inserindo cliente " << cliente_em_servico.getID() << " na fila 2" << endl;
 				/*
                 coleto as estatisticas do cliente aqui ou quando ele sai do servidor?
                 depende, tenho que ver com o Aguiar
                 vou fazer como se fosse aqui
                 */
-                acumulaW1 += cliente_em_servico.W1();
+				if(!cliente_em_servico.GetDiretoAoServidor())
+					cliente_W1 = cliente_em_servico.W1();
+				else
+					cliente_W1 = 0;
+					
+				cliente_em_servico.SetDiretoAoServidor(false);
+				
+				acumulaW1 += cliente_W1;
                 acumulaT1 += cliente_em_servico.T1();
-                cout << "          Dados do cliente " << cliente_em_servico.getID() << ": W1 =  " << cliente_em_servico.W1() << ", T1 = " << cliente_em_servico.T1() << endl;
+                cout << "          Dados do cliente " << cliente_em_servico.getID() << ": W1 =  " << cliente_W1 << ", T1 = " << cliente_em_servico.T1() << endl;
                 // OBS: Problema quando o cliente nao passou pela fila. W1 nao sai = 0 por erro de precisão.
                 num_clientes_servidos_uma_vez ++;
 			}
@@ -167,9 +188,15 @@ void Simulador::Roda(int num_total_clientes)
 				cout  <<"          Fim de servico na fila 2. Removendo cliente " << cliente_em_servico.getID() << " do sistema" << endl;
 				num_clientes_servidos++;
 				cliente_em_servico.setInstanteSaida(tempo_atual);
-				acumulaW2 += cliente_em_servico.W2();
+				
+				if(cliente_em_servico.VerificaInterrompido() == N_INTERROMPIDO && cliente_em_servico.GetDiretoAoServidor())
+					cliente_W2 = 0;
+				else
+					cliente_W2 = cliente_em_servico.W2();
+				
+				acumulaW2 += cliente_W2;
 				acumulaT2 += cliente_em_servico.T2();
-				cout << "          Dados do cliente " << cliente_em_servico.getID() << ": W2 =  " << cliente_em_servico.W2() << ", T2 = " << cliente_em_servico.T2() << endl;
+				cout << "          Dados do cliente " << cliente_em_servico.getID() << ": W2 =  " << cliente_W2 << ", T2 = " << cliente_em_servico.T2() << endl;
 			}
 			
 			//
@@ -198,7 +225,6 @@ void Simulador::Roda(int num_total_clientes)
 			{
 				cliente_em_servico = fila2.front();
 				fila2.pop_front();
-			
 				servidor_vazio = false;
 				//Se o cliente, que veio da fila 2, não foi interrompido, gere para ele o seu tempo de serviço
 				if(cliente_em_servico.VerificaInterrompido() == N_INTERROMPIDO) 

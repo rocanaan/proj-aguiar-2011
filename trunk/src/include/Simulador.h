@@ -27,6 +27,8 @@ class Simulador{
 		int id_proximo_cliente;
 		double taxa_chegada;
 		double taxa_servico;
+		double cliente_W1;
+		double cliente_W2;
 		
 		/*
         Variaveis que auxiliarão no cálculo do numero medio de clientes em cada regiao do sistema,

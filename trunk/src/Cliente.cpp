@@ -18,12 +18,13 @@ using namespace std;
 		this->interrompido = 0;
 	}
 	
-    Cliente::Cliente(int pid,double instante_chegada, int pfila, bool pinterrompido)
+    Cliente::Cliente(int pid,double instante_chegada, int pfila)
 	{
         this->id = pid;
         this->fila = pfila;
-		this->interrompido = pinterrompido;
+		this->interrompido = false;
 		this->instante_chegada1 = instante_chegada;
+		this->direto_ao_servidor = false;
     }
 	
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -86,19 +87,33 @@ using namespace std;
     {
         return id;
     }
+	
+	void Cliente::SetDiretoAoServidor(bool pbool)
+	{
+		this->direto_ao_servidor = pbool;
+	}
+	
+	bool Cliente::GetDiretoAoServidor()
+	{
+		return direto_ao_servidor;
+	}
     
-    double Cliente::W1(){
+    double Cliente::W1()
+	{
            return instante_chegada2 - instante_chegada1 - duracao_primeiro_servico;
     }
     
-    double Cliente::T1(){
+    double Cliente::T1()
+	{
            return instante_chegada2 - instante_chegada1;
     }
     
-    double Cliente::W2(){
+    double Cliente::W2()
+	{
            return instante_saida - instante_chegada2 - duracao_segundo_servico;
     }
     
-    double Cliente::T2(){
+    double Cliente::T2()
+	{
            return instante_saida - instante_chegada2;
     }
