@@ -18,11 +18,12 @@ using namespace std;
 		this->interrompido = 0;
 	}
 	
-    Cliente::Cliente(int pid, int pfila, bool pinterrompido)
+    Cliente::Cliente(int pid,double instante_chegada, int pfila, bool pinterrompido)
 	{
         this->id = pid;
         this->fila = pfila;
 		this->interrompido = pinterrompido;
+		this->instante_chegada1 = instante_chegada;
     }
 	
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -60,3 +61,44 @@ using namespace std;
 	{
 		this->interrompido = true;
 	}
+	
+	void Cliente::setInstanteChegada2(double t)
+	{
+         this->instante_chegada2=t;
+    }
+    
+    void Cliente::setDuracaoPrimeiroServico(double duracao)
+    {
+         this->duracao_primeiro_servico=duracao;
+    }
+    
+    void Cliente::setDuracaoSegundoServico(double duracao)
+    {
+         this->duracao_segundo_servico=duracao;
+    }
+    
+    void Cliente::setInstanteSaida(double t)
+    {
+         this->instante_saida=t;
+    }
+    
+    int Cliente::getID()
+    {
+        return id;
+    }
+    
+    double Cliente::W1(){
+           return instante_chegada2 - instante_chegada1 - duracao_primeiro_servico;
+    }
+    
+    double Cliente::T1(){
+           return instante_chegada2 - instante_chegada1;
+    }
+    
+    double Cliente::W2(){
+           return instante_saida - instante_chegada2 - duracao_segundo_servico;
+    }
+    
+    double Cliente::T2(){
+           return instante_saida - instante_chegada2;
+    }

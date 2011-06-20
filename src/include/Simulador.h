@@ -42,12 +42,20 @@ class Simulador{
 		double Nq2_parcial;
 		double N1_parcial;
 		double N2_parcial;
+		
+		/*
+		Acumuladores das informacoes dos clientes
+		*/
+		double acumulaW1;
+	    double acumulaT1;
+        double acumulaW2;
+        double acumulaT2;
     
     public:
 		Simulador(double ptaxa_chegada, double ptaxa_servico);
 		~Simulador();	
 		void Roda(int num_total_clientes);
-		void ImprimeResultados(int n, double t);
+		void ImprimeResultados(int n, int servidos1, double t);
 };
       
 #endif /*SIMULADOR_H_*/
