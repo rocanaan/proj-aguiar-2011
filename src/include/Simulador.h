@@ -27,6 +27,12 @@ class Simulador{
 		int id_proximo_cliente;
 		double taxa_chegada;
 		double taxa_servico;
+		
+		//Variaveis que auxiliarao no calculo do numero medio de clientes em cada regiao do sistema
+        double Nq1_parcial;
+		double Nq2_parcial;
+		double N1_parcial;
+		double N2_parcial;
     
     public:
 		Simulador(double ptaxa_chegada, double ptaxa_servico);
