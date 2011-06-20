@@ -32,6 +32,9 @@ Simulador::Simulador(double ptaxa_chegada, double ptaxa_servico)
 	id_proximo_cliente = 0;
 	tempo_atual=0;
 	
+	/*
+    inicia as variaveis que acumulam o (numero de pessoas * tempo) de cada região do sistema
+    */
 	Nq1_parcial = 0;
 	Nq2_parcial = 0;
 	N1_parcial = 0;
@@ -56,13 +59,13 @@ void Simulador::Roda(int num_total_clientes)
 {
 	int num_clientes_servidos = 0;
 	
-	
 	//Enquanto o número total de clientes que queremos servir for maior que o número de clientes já servidos por completo, rodamos a simulação
 	while(num_total_clientes > num_clientes_servidos)
 	{
 	
 		Evento evento_atual = filaEventos.top();//O primeiro evento é selecionado 
 		filaEventos.pop();//Ele é retirado da Fila
+		double tempo_desde_evento_anterior = evento_atual.getTempoAcontecimento()-tempo_atual;
 		tempo_atual=evento_atual.getTempoAcontecimento();
 		cout << "Evento sendo tratado: Evento do tipo " << evento_atual.getTipo() << " no tempo " << tempo_atual << endl;
 		cout << "Status do sistema (antes de resolver o evento):" << endl;
@@ -72,6 +75,37 @@ void Simulador::Roda(int num_total_clientes)
 		                  cout << "     Há 1 cliente em servico, vindo da fila " << cliente_em_servico.GetFila() <<endl;
 		cout << "     Numero de pessoas na fila 1: " << fila1.size()  << endl;
         cout << "     Numero de pessoas na fila 2: " << fila2.size() << endl;
+        
+        
+        /* Para cada uma das variaveis Nq1, Nq2, N1 e N2,
+           calcula a "area sob a curva" desde o ultimo evento, multiplicando 
+           o valor da variavel pelo tamanho do intervalo entre o evento anterior
+           e o evento atual.
+           Como entre eventos nada muda no servidor, cada uma dessas variaveis
+           permaneceu constante
+                      Nq1 e Nq2 sao o numero de pessoas nas filas de espera 1 e 2, respectivamente
+                      N1 e N2 sao o numero de pessoas esperando cada tipo de servico na fila
+                      Ni = Nqi + 1 se houver um cliente vindo da fila i no servidor
+                      Ni = Nqi caso contrario
+           No final da simulacao, teremos a area sob a curva de cada uma dessas variaveis.
+           Faltara dividir pelo tempo total decorrido para calcular a media.
+        */
+        Nq1_parcial += fila1.size()*tempo_desde_evento_anterior;
+        Nq2_parcial += fila2.size()*tempo_desde_evento_anterior;
+        if (!servidor_vazio){
+           if (cliente_em_servico.GetFila() == 1){
+              N1_parcial += (1+fila1.size())*tempo_desde_evento_anterior;
+              N2_parcial += fila2.size()*tempo_desde_evento_anterior;
+           }
+           else{
+                N1_parcial += fila1.size()*tempo_desde_evento_anterior;
+                N2_parcial += (1+fila2.size())*tempo_desde_evento_anterior;
+           }
+        }
+        else{
+             N1_parcial += fila1.size()*tempo_desde_evento_anterior;
+             N2_parcial += fila2.size()*tempo_desde_evento_anterior;
+        }                             
  
 		//Se o Evento, que está sendo tratado no momento, for do tipo nova_chegada
 		if(evento_atual.getTipo() == nova_chegada)
@@ -164,7 +198,24 @@ void Simulador::Roda(int num_total_clientes)
 			}
 		}
 	}
+	ImprimeResultados(num_total_clientes, tempo_atual);
+} 
 
-
-}    
+void Simulador::ImprimeResultados(int n, double t){
+     /*
+     Divide cada uma das variaveis de fila Nq1, Nq2, N1 e N2 pelo tempo total
+     de simulacao para obter a media de cada uma delas, e imprime na tela
+     */
+         double Nq1 = Nq1_parcial/t;
+         double Nq2 = Nq2_parcial/t;
+         double N1 = N1_parcial/t;
+         double N2 = N2_parcial/t;
+         
+         cout << endl <<endl << endl << "Imprimindo resultados: "<< endl;
+         cout << "     E[Nq1] = " << Nq1 << endl;
+         cout << "     E[Nq2] = " << Nq2 << endl;
+         cout << "     E[N1] = " << N1 << endl;
+         cout << "     E[N2] = " << N2 << endl;
+}
+            
 
