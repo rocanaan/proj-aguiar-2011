@@ -6,12 +6,12 @@ using namespace std;
 
 int main(void)
 {
-	/*GeradorTaxaExponencial gna;
+	/*GeradorTaxaExponencial *gna = GeradorTaxaExponencial::GetInstancia();
 	
-	gna.DefinirSementeAleatoria();
+	gna->DefinirSemente(100);
 	
 	for (int i=0; i<60; i++)
-		cout << gna.ExponencialInversa(1) << endl;*/
+		cout << gna->Random() << endl;*/
 		
 	string repeat = "";
 	while (repeat != "N" and repeat !="n")
