@@ -36,6 +36,10 @@ namespace interface_ad {
 	public ref class interface_adControl : public System::Windows::Forms::UserControl
 	{
 	public:
+		inline void taxa_chegada(double taxa){_taxa_chegada = taxa;};
+		inline void taxa_servico(double taxa){_taxa_servico = taxa;};
+		inline double taxa_chegada(){return _taxa_chegada;};
+		inline double taxa_servico(){return _taxa_servico;};
 		interface_adControl(void)
 		{
 			InitializeComponent();
@@ -71,6 +75,8 @@ namespace interface_ad {
 		vector<Cliente> *clientes_fila1;
 		deque<Cliente*> *clientes_fila2;
 		Cliente *cliente_em_servico;
+		int _taxa_chegada;
+		int _taxa_servico;
 	private: System::Windows::Forms::Label^  label5;
 	private: System::Windows::Forms::Label^  label6;
 	private: System::Windows::Forms::TextBox^  textBox1;
@@ -184,6 +190,7 @@ namespace interface_ad {
 			this->label2->Size = System::Drawing::Size(35, 13);
 			this->label2->TabIndex = 7;
 			this->label2->Text = L"label2";
+			this->label2->TextAlign = System::Drawing::ContentAlignment::MiddleCenter;
 			// 
 			// label3
 			// 
@@ -292,8 +299,8 @@ namespace interface_ad {
 				 double proxima_chegada;
 				 double chegada_atual = System::Double::Parse(this->label4->Text);
 				 tempo += intervalo;
-				 double taxa_chegada = 1;
-				 double taxa_servico = 2;
+				 double taxa_chegada = _taxa_chegada;
+				 double taxa_servico = _taxa_servico;
 				 String ^texto;
 				 texto += tempo.ToString();
 				 texto += " - ";/*
@@ -420,7 +427,7 @@ namespace interface_ad {
 	private: System::Void interface_adControl_Load(System::Object^  sender, System::EventArgs^  e) {
 				
 				 srand(time(NULL));
-				 double taxa = 1;
+				 double taxa = taxa_chegada();
 				 n_clientes = 0;
 				 double proxima_chegada = inversa2(taxa);
 				 this->label2->Text = "0";
