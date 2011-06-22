@@ -22,7 +22,7 @@ namespace interface_form {
 			//TODO: Add the constructor code here
 			//
 		}
-
+		interface_ad::interface_adControl^  interface_adControl1;
 	protected:
 		/// <summary>
 		/// Clean up any resources being used.
@@ -34,7 +34,6 @@ namespace interface_form {
 				delete components;
 			}
 		}
-	private: interface_ad::interface_adControl^  interface_adControl1;
 	protected: 
 
 	private:
