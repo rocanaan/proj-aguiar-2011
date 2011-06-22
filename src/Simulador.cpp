@@ -24,7 +24,7 @@ Simulador::Simulador(double ptaxa_chegada, double ptaxa_servico)
 	taxa_chegada = ptaxa_chegada;
 	taxa_servico = ptaxa_servico;
 	
-	gerador = new GeradorTaxaExponencial();
+	gerador = GeradorTaxaExponencial::GetInstancia();
 	
 	//Coloca o primeiro evendo na heap de eventos
 	filaEventos.push(Evento(nova_chegada,gerador->ExponencialInversa(taxa_chegada)));
@@ -71,9 +71,9 @@ void Simulador::Roda(int num_total_clientes)
 	
 		Evento evento_atual = filaEventos.top();//O primeiro evento é selecionado 
 		filaEventos.pop();//Ele é retirado da Fila
-		double tempo_desde_evento_anterior = evento_atual.getTempoAcontecimento()-tempo_atual;
-		tempo_atual=evento_atual.getTempoAcontecimento();
-		cout << "Evento sendo tratado: Evento do tipo " << evento_atual.getTipo() << " no tempo " << tempo_atual << endl;
+		double tempo_desde_evento_anterior = evento_atual.GetTempoAcontecimento()-tempo_atual;
+		tempo_atual=evento_atual.GetTempoAcontecimento();
+		cout << "Evento sendo tratado: Evento do tipo " << evento_atual.GetTipo() << " no tempo " << tempo_atual << endl;
 		cout << "Status do sistema (antes de resolver o evento):" << endl;
 		if(servidor_vazio)
 		                  cout << "     O servidor esta vazio" << endl;
@@ -114,7 +114,7 @@ void Simulador::Roda(int num_total_clientes)
         }                             
  
 		//Se o Evento, que está sendo tratado no momento, for do tipo nova_chegada
-		if(evento_atual.getTipo() == nova_chegada)
+		if(evento_atual.GetTipo() == nova_chegada)
 		{
 			//Condição para tratar a interrupção presente no sistema.
 			//Se o servidor estiver ocupado e este cliente for da fila 2 então o cliente que acabou de chegar irá interromper este serviço
@@ -122,10 +122,10 @@ void Simulador::Roda(int num_total_clientes)
 			{
 				Evento evento_destruido = filaEventos.top(); //Guardamos o Evento a ser destruido
 				filaEventos.pop();//Remove o Evento de Término de serviço gerado por este cliente da fila 2 ( ele vai sempre ser o top)
-				cout << "          Evento sendo destruido: : Evento do tipo " << evento_destruido.getTipo() << " marcado para " <<  evento_destruido.getTempoAcontecimento()<< endl;
+				cout << "          Evento sendo destruido: : Evento do tipo " << evento_destruido.GetTipo() << " marcado para " <<  evento_destruido.GetTempoAcontecimento()<< endl;
 				
-				cliente_em_servico.FoiInterrompido();//Marca o cliente como sendo um cliente Interrompido
-				cliente_em_servico.SetTempoRestante(evento_destruido.getTempoAcontecimento() - tempo_atual);//O tempo restante para finalizar seu servico é guardado
+				cliente_em_servico.Interromper();//Marca o cliente como sendo um cliente Interrompido
+				cliente_em_servico.SetTempoRestante(evento_destruido.GetTempoAcontecimento() - tempo_atual);//O tempo restante para finalizar seu servico é guardado
 				
 				fila2.push_front(cliente_em_servico); //Cliente que foi interrompido volta a ser o primeiro da fila 2.
 				servidor_vazio = true; //Deixa o servidor vazio
@@ -146,16 +146,16 @@ void Simulador::Roda(int num_total_clientes)
 			
 			Evento proxChegada = Evento(nova_chegada,tempo_atual+gerador->ExponencialInversa(taxa_chegada));//Agenda o Evento para a próxima chegada
 			filaEventos.push(proxChegada);
-			cout << "          Inserindo o cliente " << cliente_atual.getID() << " na fila 1" << endl;
-			cout << "          Agendando nova chegada para " << proxChegada.getTempoAcontecimento() << endl;
+			cout << "          Inserindo o cliente " << cliente_atual.GetID() << " na fila 1" << endl;
+			cout << "          Agendando nova chegada para " << proxChegada.GetTempoAcontecimento() << endl;
 			
 		}//Se o Evento, que está sendo tratado no momento, for do termino_de_servico
-		else if (evento_atual.getTipo() == termino_de_servico)
+		else if (evento_atual.GetTipo() == termino_de_servico)
 		{
 			if(cliente_em_servico.GetFila() == FILA_1)
 			{
 				cliente_em_servico.SetFila(FILA_2);//O cliente que irá terminar o serviço agora é definido como da fila 2
-				cliente_em_servico.setInstanteChegada2(tempo_atual);
+				cliente_em_servico.SetInstanteChegada2(tempo_atual);
 				
 				fila2.push_back(cliente_em_servico);// Coloca o cliente na fila 2
 				
@@ -163,7 +163,7 @@ void Simulador::Roda(int num_total_clientes)
 				if(fila2.size() == 1 && servidor_vazio)
 					fila2.front().SetDiretoAoServidor(true);
 
-				cout << "          Fim de servico na fila 1. Inserindo cliente " << cliente_em_servico.getID() << " na fila 2" << endl;
+				cout << "          Fim de servico na fila 1. Inserindo cliente " << cliente_em_servico.GetID() << " na fila 2" << endl;
 				/*
                 coleto as estatisticas do cliente aqui ou quando ele sai do servidor?
                 depende, tenho que ver com o Aguiar
@@ -178,16 +178,16 @@ void Simulador::Roda(int num_total_clientes)
 				
 				acumulaW1 += cliente_W1;
                 acumulaT1 += cliente_em_servico.T1();
-                cout << "          Dados do cliente " << cliente_em_servico.getID() << ": W1 =  " << cliente_W1 << ", T1 = " << cliente_em_servico.T1() << endl;
+                cout << "          Dados do cliente " << cliente_em_servico.GetID() << ": W1 =  " << cliente_W1 << ", T1 = " << cliente_em_servico.T1() << endl;
                 // OBS: Problema quando o cliente nao passou pela fila. W1 nao sai = 0 por erro de precisão.
                 num_clientes_servidos_uma_vez ++;
 			}
 			else
 			{
 				//Acabou os 2 serviços do cliente, logo marcamos mais um cliente servido totalmente
-				cout  <<"          Fim de servico na fila 2. Removendo cliente " << cliente_em_servico.getID() << " do sistema" << endl;
+				cout  <<"          Fim de servico na fila 2. Removendo cliente " << cliente_em_servico.GetID() << " do sistema" << endl;
 				num_clientes_servidos++;
-				cliente_em_servico.setInstanteSaida(tempo_atual);
+				cliente_em_servico.SetInstanteSaida(tempo_atual);
 				
 				if(cliente_em_servico.VerificaInterrompido() == N_INTERROMPIDO && cliente_em_servico.GetDiretoAoServidor())
 					cliente_W2 = 0;
@@ -196,7 +196,7 @@ void Simulador::Roda(int num_total_clientes)
 				
 				acumulaW2 += cliente_W2;
 				acumulaT2 += cliente_em_servico.T2();
-				cout << "          Dados do cliente " << cliente_em_servico.getID() << ": W2 =  " << cliente_W2 << ", T2 = " << cliente_em_servico.T2() << endl;
+				cout << "          Dados do cliente " << cliente_em_servico.GetID() << ": W2 =  " << cliente_W2 << ", T2 = " << cliente_em_servico.T2() << endl;
 			}
 			
 			//
@@ -216,9 +216,9 @@ void Simulador::Roda(int num_total_clientes)
 				double duracao = gerador->ExponencialInversa(taxa_servico);
 				Evento proxTerminoServico = Evento(termino_de_servico,tempo_atual+duracao);//Agendar evento de termino de servico
 				filaEventos.push(proxTerminoServico);
-				cliente_em_servico.setDuracaoPrimeiroServico(duracao);
-				cout << "          Transferindo cliente " << cliente_em_servico.getID() << " da fila 1 para o servidor." << endl;
-				cout << "          Agendando termino do primeiro servico do cliente " << cliente_em_servico.getID() <<" para " << proxTerminoServico.getTempoAcontecimento() << endl;;
+				cliente_em_servico.SetDuracaoPrimeiroServico(duracao);
+				cout << "          Transferindo cliente " << cliente_em_servico.GetID() << " da fila 1 para o servidor." << endl;
+				cout << "          Agendando termino do primeiro servico do cliente " << cliente_em_servico.GetID() <<" para " << proxTerminoServico.GetTempoAcontecimento() << endl;;
 				
 			}
 			else if(!fila2.empty())
@@ -232,17 +232,17 @@ void Simulador::Roda(int num_total_clientes)
 					double duracao = gerador->ExponencialInversa(taxa_servico);
                     Evento proxTerminoServico = Evento(termino_de_servico,tempo_atual+duracao);//Agenda evento de termino de servico
 					filaEventos.push(proxTerminoServico);
-					cliente_em_servico.setDuracaoSegundoServico(duracao);
-					cout << "          Transferindo cliente " << cliente_em_servico.getID() << " da fila 2 para o servidor." << endl;
-					cout << "          Agendando termino do segundo servico do cliente " << cliente_em_servico.getID() << " para " << proxTerminoServico.getTempoAcontecimento() << endl;
+					cliente_em_servico.SetDuracaoSegundoServico(duracao);
+					cout << "          Transferindo cliente " << cliente_em_servico.GetID() << " da fila 2 para o servidor." << endl;
+					cout << "          Agendando termino do segundo servico do cliente " << cliente_em_servico.GetID() << " para " << proxTerminoServico.GetTempoAcontecimento() << endl;
 				}
 
 				else 
 				{
 					Evento proxTerminoServico = Evento(termino_de_servico,tempo_atual+cliente_em_servico.GetTempoRestante());//Agenda evento de termino de servico, com o tempo restante de servico do cliente que foi interrompido
 					filaEventos.push(proxTerminoServico);
-					cout << "          Inserindo cliente " << cliente_em_servico.getID() << " da fila 2 no servidor. Este cliente ja foi interrompido alguma vez." << endl;
-					cout << "          Agendando termino do segundo servico do cliente " << cliente_em_servico.getID() << " para " << proxTerminoServico.getTempoAcontecimento() << endl;
+					cout << "          Inserindo cliente " << cliente_em_servico.GetID() << " da fila 2 no servidor. Este cliente ja foi interrompido alguma vez." << endl;
+					cout << "          Agendando termino do segundo servico do cliente " << cliente_em_servico.GetID() << " para " << proxTerminoServico.GetTempoAcontecimento() << endl;
 				}
 				
 

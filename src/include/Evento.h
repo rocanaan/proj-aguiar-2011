@@ -9,16 +9,16 @@ using namespace std;
 enum EnumTipo{nova_chegada,termino_de_servico};
 
 class Evento{
-      private:
-              EnumTipo tipo;
-              double tempo_acontecimento;
-      
-      public:
-             Evento(EnumTipo ptipo, double ptempo_acontecimento);
-             EnumTipo getTipo();
-             double getTempoAcontecimento() const;
-             ostream& imprime( ostream& o );
-    		 inline bool operator > (const Evento evento2) const { return (this->getTempoAcontecimento() > evento2.getTempoAcontecimento()); }
+	private:
+		EnumTipo tipo;
+		double tempo_acontecimento;
+  
+	public:
+		Evento(EnumTipo ptipo, double ptempo_acontecimento);
+		EnumTipo GetTipo();
+		double GetTempoAcontecimento() const;
+		ostream& Imprime( ostream& o );
+		inline bool operator > (const Evento evento2) const { return (this->GetTempoAcontecimento() > evento2.GetTempoAcontecimento()); }
 };
 
 #endif /*EVENTO_H_*/

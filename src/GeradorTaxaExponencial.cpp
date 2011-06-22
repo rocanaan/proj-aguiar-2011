@@ -1,8 +1,14 @@
+//ATENÇÃO:
+//Por estar usando a função srand/rand o valor máximo que pode ser sorteado é RAND_MAX = (2^16) - 1
+
 #include "include\GeradorTaxaExponencial.h"
 #include <iostream>
 #include <math.h>
 #include <stdlib.h>
 #include <time.h>
+
+//Inicialização da instancia
+GeradorTaxaExponencial* GeradorTaxaExponencial::instancia = NULL;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -12,27 +18,13 @@
 
 GeradorTaxaExponencial::GeradorTaxaExponencial()
 {
-	time_t tempo;
-
-	tempo = time(NULL); //Usado para gerar uma semente inicial a partir do tempo
-
-	this->b = 13;
-	this->z0 = (int) tempo;
-	this->c = 0;
-	this->m = 0xFFFFFFFF;
-
-	this->zn = z0;
+	srand(time(NULL));
 }
 
-GeradorTaxaExponencial::GeradorTaxaExponencial(unsigned int b, unsigned int z0, unsigned int c, unsigned int m)
+/*GeradorTaxaExponencial::GeradorTaxaExponencial(unsigned int semente_inicial)
 {
-	this->b = b;
-	this->z0 = z0;
-	this->c = c;
-	this->m = m;
-	
-	this->zn = z0;
-}
+	srand(semente_inicial);
+}*/
 
 GeradorTaxaExponencial::~GeradorTaxaExponencial()
 {
@@ -45,25 +37,32 @@ GeradorTaxaExponencial::~GeradorTaxaExponencial()
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//Faz com que a semente inicial seja dada por um número aleatório dado pela função srand do C
-bool GeradorTaxaExponencial::DefinirSementeAleatoria()
+//Retorna a instancia única do gerador de números aleatórios
+GeradorTaxaExponencial* GeradorTaxaExponencial::GetInstancia()
 {
-	if (z0 != zn)
-		return false; //Para não permitir que se mude a semente após já ter gerado algum número
+	if (instancia == NULL)
+		instancia = new GeradorTaxaExponencial();
+		
+	return instancia;
+}
 
-	srand(time(NULL));
-	z0 = rand() % m;
-	zn = z0;
-	
-	return true;
+//Reseta o gerador de números aleatórios para poder ser usado com outra semente
+void GeradorTaxaExponencial::ResetarGerador()
+{
+	srand(1); //Passando 1 como argumento, a função srand reinicia, como se nunca tivesse havido uma chamada a srand ou a rand.
+}
+
+//Define uma nova semente para o gerador de números aleatórios(resetando ele antes)
+void GeradorTaxaExponencial::DefinirSemente(unsigned int semente)
+{
+	ResetarGerador();
+	srand(semente);
 }
 
 //Função do Gerador de Números Aleatórios
 double GeradorTaxaExponencial::Random()
 {
-	zn = (b * zn + c) % m;
-	
-	return zn / (double) m; //divido por m para ficar no intervalo [0, 1)
+	return (rand() % RAND_MAX) / (double) RAND_MAX;
 }
 
 //Faz a inversa do log para encontrar uma exponencial

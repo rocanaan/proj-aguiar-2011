@@ -9,11 +9,11 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    Evento::Evento(EnumTipo ptipo, double ptempo_acontecimento)
-	{
-        this->tipo = ptipo;
-        this->tempo_acontecimento = ptempo_acontecimento;
-    }
+Evento::Evento(EnumTipo ptipo, double ptempo_acontecimento)
+{
+	this->tipo = ptipo;
+	this->tempo_acontecimento = ptempo_acontecimento;
+}
 	
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -21,23 +21,17 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    EnumTipo Evento::getTipo()
-	{
-        return tipo;
-    }
-	
-    double Evento::getTempoAcontecimento() const
-	{
-        return tempo_acontecimento;
-    }
-	
-    ostream& Evento::imprime(ostream& o)
-	{
-        o << "Evento do tipo " << tipo << " marcado para " << tempo_acontecimento << endl;
-    }
+EnumTipo Evento::GetTipo()
+{
+	return tipo;
+}
 
-	//Redefinição do operador > para podermos usar a priority_queue corretamente, ou seja, ordenando pelo tempo de acontecimento
-	/*bool Evento::operator > (const Evento evento2) const
-	{
-		return (this->getTempoAcontecimento() > evento2.getTempoAcontecimento());                                                                 
-	}*/
+double Evento::GetTempoAcontecimento() const
+{
+	return tempo_acontecimento;
+}
+
+ostream& Evento::Imprime(ostream& o)
+{
+	o << "Evento do tipo " << tipo << " marcado para " << tempo_acontecimento << endl;
+}
