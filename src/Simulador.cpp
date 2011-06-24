@@ -60,7 +60,7 @@ Simulador::~Simulador()
 
 
 //Função principal do simulador, executa a simulação
-void Simulador::Roda(int num_total_clientes)   
+void Simulador::Roda(int num_total_clientes, int rodada_atual)   
 {
 	int num_clientes_servidos = 0;
 	int num_clientes_servidos_uma_vez =0;
@@ -73,7 +73,7 @@ void Simulador::Roda(int num_total_clientes)
 		filaEventos.pop();//Ele é retirado da Fila
 		double tempo_desde_evento_anterior = evento_atual.GetTempoAcontecimento()-tempo_atual;
 		tempo_atual=evento_atual.GetTempoAcontecimento();
-		cout << "Evento sendo tratado: Evento do tipo " << evento_atual.GetTipo() << " no tempo " << tempo_atual << endl;
+		cout << endl << "Evento sendo tratado: Evento do tipo " << evento_atual.GetTipo() << " no tempo " << tempo_atual << endl;
 		cout << "Status do sistema (antes de resolver o evento):" << endl;
 		if(servidor_vazio)
 		                  cout << "     O servidor esta vazio" << endl;
@@ -82,7 +82,13 @@ void Simulador::Roda(int num_total_clientes)
 		cout << "     Numero de pessoas na fila 1: " << fila1.size()  << endl;
         cout << "     Numero de pessoas na fila 2: " << fila2.size() << endl;
         
-        
+		
+		
+		
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+		/////////////////////////////////////////COLETA DE DADOS/////////////////////////////////////////////
+		/////////////////////////////////////////////////////////////////////////////////////////////////////
+		
         /* Para cada uma das variaveis Nq1, Nq2, N1 e N2,
            calcula a "area sob a curva" desde o ultimo evento, multiplicando 
            o valor da variavel pelo tamanho do intervalo entre o evento anterior
@@ -111,7 +117,14 @@ void Simulador::Roda(int num_total_clientes)
         else{
              N1_parcial += fila1.size()*tempo_desde_evento_anterior;
              N2_parcial += fila2.size()*tempo_desde_evento_anterior;
-        }                             
+        }    
+		
+		/////////////////////////////////////////////////////////////////////////////////////////////////////
+		/////////////////////////////////////////FIM DA COLETA DE DADOS//////////////////////////////////////	
+		/////////////////////////////////////////////////////////////////////////////////////////////////////
+ 
+ 
+ 
  
 		//Se o Evento, que está sendo tratado no momento, for do tipo nova_chegada
 		if(evento_atual.GetTipo() == nova_chegada)
@@ -131,7 +144,7 @@ void Simulador::Roda(int num_total_clientes)
 				servidor_vazio = true; //Deixa o servidor vazio
 			}
 			
-			Cliente cliente_atual = Cliente(id_proximo_cliente,tempo_atual,FILA_1); //O novo cliente começa na fila 1
+			Cliente cliente_atual = Cliente(id_proximo_cliente,tempo_atual,FILA_1, rodada_atual); //O novo cliente começa na fila 1
 			
 			//Como o servidor já vai estar marcado como vazio se ele estivesse ocupado com algum cliente da fila 2 então só é necessário verificar se ele está vazio
 			if(servidor_vazio)
@@ -164,11 +177,16 @@ void Simulador::Roda(int num_total_clientes)
 					fila2.front().SetDiretoAoServidor(true);
 
 				cout << "          Fim de servico na fila 1. Inserindo cliente " << cliente_em_servico.GetID() << " na fila 2" << endl;
-				/*
-                coleto as estatisticas do cliente aqui ou quando ele sai do servidor?
-                depende, tenho que ver com o Aguiar
-                vou fazer como se fosse aqui
-                */
+				
+
+
+				
+				
+				/////////////////////////////////////////////////////////////////////////////////////////////////////
+				/////////////////////////////////////////COLETA DE DADOS/////////////////////////////////////////////
+				/////////////////////////////////////////////////////////////////////////////////////////////////////
+				
+				
 				if(!cliente_em_servico.GetDiretoAoServidor())
 					cliente_W1 = cliente_em_servico.W1();
 				else
@@ -179,8 +197,16 @@ void Simulador::Roda(int num_total_clientes)
 				acumulaW1 += cliente_W1;
                 acumulaT1 += cliente_em_servico.T1();
                 cout << "          Dados do cliente " << cliente_em_servico.GetID() << ": W1 =  " << cliente_W1 << ", T1 = " << cliente_em_servico.T1() << endl;
-                // OBS: Problema quando o cliente nao passou pela fila. W1 nao sai = 0 por erro de precisão.
-                num_clientes_servidos_uma_vez ++;
+               	
+				
+				/////////////////////////////////////////////////////////////////////////////////////////////////////
+				/////////////////////////////////////////FIM DA COLETA DE DADOS//////////////////////////////////////	
+				/////////////////////////////////////////////////////////////////////////////////////////////////////
+				
+
+				
+				
+			    num_clientes_servidos_uma_vez ++;
 			}
 			else
 			{
@@ -188,6 +214,13 @@ void Simulador::Roda(int num_total_clientes)
 				cout  <<"          Fim de servico na fila 2. Removendo cliente " << cliente_em_servico.GetID() << " do sistema" << endl;
 				num_clientes_servidos++;
 				cliente_em_servico.SetInstanteSaida(tempo_atual);
+				
+				
+				
+				/////////////////////////////////////////////////////////////////////////////////////////////////////
+				/////////////////////////////////////////COLETA DE DADOS/////////////////////////////////////////////
+				/////////////////////////////////////////////////////////////////////////////////////////////////////
+				
 				
 				if(cliente_em_servico.VerificaInterrompido() == N_INTERROMPIDO && cliente_em_servico.GetDiretoAoServidor())
 					cliente_W2 = 0;
@@ -197,6 +230,11 @@ void Simulador::Roda(int num_total_clientes)
 				acumulaW2 += cliente_W2;
 				acumulaT2 += cliente_em_servico.T2();
 				cout << "          Dados do cliente " << cliente_em_servico.GetID() << ": W2 =  " << cliente_W2 << ", T2 = " << cliente_em_servico.T2() << endl;
+				
+				
+				/////////////////////////////////////////////////////////////////////////////////////////////////////
+				/////////////////////////////////////////FIM DA COLETA DE DADOS//////////////////////////////////////	
+				/////////////////////////////////////////////////////////////////////////////////////////////////////
 			}
 			
 			//
@@ -249,10 +287,10 @@ void Simulador::Roda(int num_total_clientes)
 			}
 		}
 	}
-	ImprimeResultados(num_total_clientes, num_clientes_servidos_uma_vez, tempo_atual);
+	ImprimeResultados(num_total_clientes, num_clientes_servidos_uma_vez, tempo_atual, rodada_atual);
 } 
 
-void Simulador::ImprimeResultados(int n, int servidos1, double t){
+void Simulador::ImprimeResultados(int n, int servidos1, double t, int rodada){
      /*
      Divide cada uma das variaveis de fila Nq1, Nq2, N1 e N2 pelo tempo total
      de simulacao para obter a media de cada uma delas, e imprime na tela
@@ -262,7 +300,7 @@ void Simulador::ImprimeResultados(int n, int servidos1, double t){
          double N1 = N1_parcial/t;
          double N2 = N2_parcial/t;
          
-         cout << endl <<endl << endl << "Imprimindo resultados: "<< endl;
+         cout << endl <<endl << endl << "Imprimindo resultados da rodada "<< rodada <<" :"<< endl;
          cout << "     E[Nq1] = " << Nq1 << endl;
          cout << "     E[Nq2] = " << Nq2 << endl;
          cout << "     E[N1] = " << N1 << endl;

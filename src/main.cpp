@@ -17,7 +17,7 @@ int main(void)
 	while (repeat != "N" and repeat !="n")
     {     
 	      Simulador s = Simulador(0.3,1);
-	      s.Roda(10);
+	      s.Roda(10,1);
     
           cout << "Deseja fazer uma nova simulacao? (S/N)" << endl;
           getline(cin,repeat);

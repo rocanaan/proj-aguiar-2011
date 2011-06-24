@@ -56,8 +56,8 @@ class Simulador{
     public:
 		Simulador(double ptaxa_chegada, double ptaxa_servico);
 		~Simulador();	
-		void Roda(int num_total_clientes);
-		void ImprimeResultados(int n, int servidos1, double t);
+		void Roda(int num_total_clientes, int rodada_atual);
+		void ImprimeResultados(int n, int servidos1, double t, int rodada);
 };
       
 #endif /*SIMULADOR_H_*/
