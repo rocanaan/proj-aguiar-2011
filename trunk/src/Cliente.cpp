@@ -18,13 +18,14 @@ Cliente::Cliente()
 	this->interrompido = 0;
 }
 
-Cliente::Cliente(int pid,double instante_chegada, int pfila)
+Cliente::Cliente(int pid,double instante_chegada, int pfila, int rodada_atual)
 {
 	this->id = pid;
 	this->fila = pfila;
 	this->interrompido = false;
 	this->instante_chegada1 = instante_chegada;
 	this->direto_ao_servidor = false;
+	this->rodada_pertencente = rodada_atual;
 }
 	
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -96,6 +97,11 @@ void Cliente::SetDiretoAoServidor(bool pbool)
 bool Cliente::GetDiretoAoServidor()
 {
 	return direto_ao_servidor;
+}
+
+int Cliente::GetRodadaPertencente()
+{
+	return rodada_pertencente;
 }
 
 double Cliente::W1()

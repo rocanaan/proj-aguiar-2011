@@ -12,21 +12,23 @@ class Cliente{
 		bool interrompido;
 		double tempo_restante;
 		bool direto_ao_servidor;
+		//Informa a rodada que o cliente pertence, utilizado como modo de "coloração"
+		int rodada_pertencente;
 		
-		// instante de chegada do cliente no sistema, na fila 1
+		//Instante de chegada do cliente no sistema, na fila 1
 		double instante_chegada1;
-		// instante em que o cliente chega na fila 2. É o mesmo instante em que acaba seu primeiro serviço
+		//Instante em que o cliente chega na fila 2. É o mesmo instante em que acaba seu primeiro serviço
 		double instante_chegada2;
-		// instante em que acaba o segundo serviço do cliente. É o instante em que ele é removido do sistema
+		//Instante em que acaba o segundo serviço do cliente. É o instante em que ele é removido do sistema
 		double instante_saida;
-		// duração do primeiro serviço
+		//Duração do primeiro serviço
 		double duracao_primeiro_servico;
-		// duração do segundo serviço
+		//Duração do segundo serviço
 		double duracao_segundo_servico;
 
 	public:
 		Cliente();
-		Cliente(int pid,double instante_chegada,int pfila);
+		Cliente(int pid,double instante_chegada,int pfila, int rodada_atual);
 		int GetID();
 		int GetFila();
 		int SetFila(int pfila);	
@@ -36,6 +38,7 @@ class Cliente{
 		void Interromper();
 		void SetDiretoAoServidor(bool pbool);
 		bool GetDiretoAoServidor();
+		int GetRodadaPertencente();
 
 		void SetInstanteChegada2(double t);
 		void SetInstanteSaida(double t);
