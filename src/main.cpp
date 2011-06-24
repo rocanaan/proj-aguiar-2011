@@ -14,13 +14,31 @@ int main(void)
 		cout << gna->Random() << endl;*/
 		
 	string repeat = "";
+	int num_rodada ;
+	double taxa_chegada ;
+	int num_clientes ;
+	
 	while (repeat != "N" and repeat !="n")
-    {     
-	      Simulador s = Simulador(0.3,1);
-	      s.Roda(10,1);
+    {
+	
+		printf("Qual a taxa de chegada desejada ?\n");
+		scanf("%lf",&taxa_chegada);
+		printf("Quantos clientes serao servidos ?\n");
+		scanf("%d",&num_clientes);
+		printf("Quantas rodadas ?\n");
+		scanf("%d",&num_rodada);
+
+		Simulador simula = Simulador(taxa_chegada,1);
+
+		for( int i = 0 ; i < num_rodada ; i++)
+		{
+			simula.Roda(num_clientes,i, 0);
+			simula.LimpaResultadosParciais();
+		}
     
-          cout << "Deseja fazer uma nova simulacao? (S/N)" << endl;
-          getline(cin,repeat);
+		printf("Deseja fazer uma nova simulacao? (S/N)");
+		scanf("%s",&repeat);
+		printf("\n");
     }
 	
 	return 0;

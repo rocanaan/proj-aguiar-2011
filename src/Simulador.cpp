@@ -60,7 +60,7 @@ Simulador::~Simulador()
 
 
 //Função principal do simulador, executa a simulação
-void Simulador::Roda(int num_total_clientes, int rodada_atual)   
+void Simulador::Roda(int num_total_clientes, int rodada_atual, bool debug_eventos)   
 {
 	int num_clientes_servidos = 0;
 	int num_clientes_servidos_uma_vez =0;
@@ -73,15 +73,18 @@ void Simulador::Roda(int num_total_clientes, int rodada_atual)
 		filaEventos.pop();//Ele é retirado da Fila
 		double tempo_desde_evento_anterior = evento_atual.GetTempoAcontecimento()-tempo_atual;
 		tempo_atual=evento_atual.GetTempoAcontecimento();
-		cout << endl << "Evento sendo tratado: Evento do tipo " << evento_atual.GetTipo() << " no tempo " << tempo_atual << endl;
-		cout << "Status do sistema (antes de resolver o evento):" << endl;
-		if(servidor_vazio)
-		                  cout << "     O servidor esta vazio" << endl;
-		else
-		                  cout << "     Existe 1 cliente em servico, vindo da fila " << cliente_em_servico.GetFila() <<endl;
-		cout << "     Numero de pessoas na fila 1: " << fila1.size()  << endl;
-        cout << "     Numero de pessoas na fila 2: " << fila2.size() << endl;
-        
+		
+		if(debug_eventos)
+		{
+			cout << endl << "Evento sendo tratado: Evento do tipo " << evento_atual.GetTipo() << " no tempo " << tempo_atual << endl;
+			cout << "Status do sistema (antes de resolver o evento):" << endl;
+			if(servidor_vazio)
+							  cout << "     O servidor esta vazio" << endl;
+			else
+							  cout << "     Existe 1 cliente em servico, vindo da fila " << cliente_em_servico.GetFila() <<endl;
+			cout << "     Numero de pessoas na fila 1: " << fila1.size()  << endl;
+			cout << "     Numero de pessoas na fila 2: " << fila2.size() << endl;
+        }
 		
 		
 		
@@ -135,7 +138,9 @@ void Simulador::Roda(int num_total_clientes, int rodada_atual)
 			{
 				Evento evento_destruido = filaEventos.top(); //Guardamos o Evento a ser destruido
 				filaEventos.pop();//Remove o Evento de Término de serviço gerado por este cliente da fila 2 ( ele vai sempre ser o top)
-				cout << "          Evento sendo destruido: : Evento do tipo " << evento_destruido.GetTipo() << " marcado para " <<  evento_destruido.GetTempoAcontecimento()<< endl;
+				
+				if(debug_eventos)
+					cout << "          Evento sendo destruido: : Evento do tipo " << evento_destruido.GetTipo() << " marcado para " <<  evento_destruido.GetTempoAcontecimento()<< endl;
 				
 				cliente_em_servico.Interromper();//Marca o cliente como sendo um cliente Interrompido
 				cliente_em_servico.SetTempoRestante(evento_destruido.GetTempoAcontecimento() - tempo_atual);//O tempo restante para finalizar seu servico é guardado
@@ -150,7 +155,8 @@ void Simulador::Roda(int num_total_clientes, int rodada_atual)
 			if(servidor_vazio)
 			{
 				cliente_atual.SetDiretoAoServidor(true);
-				cout << "Cliente foi direto ao servidor"<<endl;
+				if(debug_eventos)
+					cout << "Cliente foi direto ao servidor"<<endl;
 			}
 			
 			id_proximo_cliente++; 
@@ -159,8 +165,12 @@ void Simulador::Roda(int num_total_clientes, int rodada_atual)
 			
 			Evento proxChegada = Evento(nova_chegada,tempo_atual+gerador->ExponencialInversa(taxa_chegada));//Agenda o Evento para a próxima chegada
 			filaEventos.push(proxChegada);
-			cout << "          Inserindo o cliente " << cliente_atual.GetID() << " na fila 1" << endl;
-			cout << "          Agendando nova chegada para " << proxChegada.GetTempoAcontecimento() << endl;
+			
+			if(debug_eventos)
+			{
+				cout << "          Inserindo o cliente " << cliente_atual.GetID() << " na fila 1" << endl;
+				cout << "          Agendando nova chegada para " << proxChegada.GetTempoAcontecimento() << endl;
+			}
 			
 		}//Se o Evento, que está sendo tratado no momento, for do termino_de_servico
 		else if (evento_atual.GetTipo() == termino_de_servico)
@@ -175,8 +185,9 @@ void Simulador::Roda(int num_total_clientes, int rodada_atual)
 				//Se a fila 2 só tem o próprio cliente e não tem ninguem em serviço, quer dizer que o cliente da fila 2 será atendido direto
 				if(fila2.size() == 1 && servidor_vazio)
 					fila2.front().SetDiretoAoServidor(true);
-
-				cout << "          Fim de servico na fila 1. Inserindo cliente " << cliente_em_servico.GetID() << " na fila 2" << endl;
+					
+				if(debug_eventos)
+					cout << "          Fim de servico na fila 1. Inserindo cliente " << cliente_em_servico.GetID() << " na fila 2" << endl;
 				
 
 
@@ -186,18 +197,22 @@ void Simulador::Roda(int num_total_clientes, int rodada_atual)
 				/////////////////////////////////////////COLETA DE DADOS/////////////////////////////////////////////
 				/////////////////////////////////////////////////////////////////////////////////////////////////////
 				
-				
-				if(!cliente_em_servico.GetDiretoAoServidor())
-					cliente_W1 = cliente_em_servico.W1();
-				else
-					cliente_W1 = 0;
+				//Verifica se o cliente em serviço é da rodada(coloração usada) em que estamos, pois só esse cliente entra nos dados desta rodada
+				if(cliente_em_servico.GetRodadaPertencente() == rodada_atual)
+				{
+					if(!cliente_em_servico.GetDiretoAoServidor())
+						cliente_W1 = cliente_em_servico.W1();
+					else
+						cliente_W1 = 0;
+						
+					cliente_em_servico.SetDiretoAoServidor(false);
 					
-				cliente_em_servico.SetDiretoAoServidor(false);
-				
-				acumulaW1 += cliente_W1;
-                acumulaT1 += cliente_em_servico.T1();
-                cout << "          Dados do cliente " << cliente_em_servico.GetID() << ": W1 =  " << cliente_W1 << ", T1 = " << cliente_em_servico.T1() << endl;
-               	
+					acumulaW1 += cliente_W1;
+					acumulaT1 += cliente_em_servico.T1();
+					
+					if(debug_eventos)
+						cout << "          Dados do cliente " << cliente_em_servico.GetID() << ": W1 =  " << cliente_W1 << ", T1 = " << cliente_em_servico.T1() << endl;
+				}	
 				
 				/////////////////////////////////////////////////////////////////////////////////////////////////////
 				/////////////////////////////////////////FIM DA COLETA DE DADOS//////////////////////////////////////	
@@ -211,7 +226,9 @@ void Simulador::Roda(int num_total_clientes, int rodada_atual)
 			else
 			{
 				//Acabou os 2 serviços do cliente, logo marcamos mais um cliente servido totalmente
-				cout  <<"          Fim de servico na fila 2. Removendo cliente " << cliente_em_servico.GetID() << " do sistema" << endl;
+				if(debug_eventos)
+					cout  <<"          Fim de servico na fila 2. Removendo cliente " << cliente_em_servico.GetID() << " do sistema" << endl;
+				
 				num_clientes_servidos++;
 				cliente_em_servico.SetInstanteSaida(tempo_atual);
 				
@@ -221,16 +238,20 @@ void Simulador::Roda(int num_total_clientes, int rodada_atual)
 				/////////////////////////////////////////COLETA DE DADOS/////////////////////////////////////////////
 				/////////////////////////////////////////////////////////////////////////////////////////////////////
 				
-				
-				if(cliente_em_servico.VerificaInterrompido() == N_INTERROMPIDO && cliente_em_servico.GetDiretoAoServidor())
-					cliente_W2 = 0;
-				else
-					cliente_W2 = cliente_em_servico.W2();
-				
-				acumulaW2 += cliente_W2;
-				acumulaT2 += cliente_em_servico.T2();
-				cout << "          Dados do cliente " << cliente_em_servico.GetID() << ": W2 =  " << cliente_W2 << ", T2 = " << cliente_em_servico.T2() << endl;
-				
+				//Verifica se o cliente em serviço é da rodada(coloração usada) em que estamos, pois só esse cliente entra nos dados desta rodada
+				if(cliente_em_servico.GetRodadaPertencente() == rodada_atual)
+				{
+					if(cliente_em_servico.VerificaInterrompido() == N_INTERROMPIDO && cliente_em_servico.GetDiretoAoServidor())
+						cliente_W2 = 0;
+					else
+						cliente_W2 = cliente_em_servico.W2();
+					
+					acumulaW2 += cliente_W2;
+					acumulaT2 += cliente_em_servico.T2();
+					
+					if(debug_eventos)
+						cout << "          Dados do cliente " << cliente_em_servico.GetID() << ": W2 =  " << cliente_W2 << ", T2 = " << cliente_em_servico.T2() << endl;
+				}
 				
 				/////////////////////////////////////////////////////////////////////////////////////////////////////
 				/////////////////////////////////////////FIM DA COLETA DE DADOS//////////////////////////////////////	
@@ -255,15 +276,19 @@ void Simulador::Roda(int num_total_clientes, int rodada_atual)
 				Evento proxTerminoServico = Evento(termino_de_servico,tempo_atual+duracao);//Agendar evento de termino de servico
 				filaEventos.push(proxTerminoServico);
 				cliente_em_servico.SetDuracaoPrimeiroServico(duracao);
-				cout << "          Transferindo cliente " << cliente_em_servico.GetID() << " da fila 1 para o servidor." << endl;
-				cout << "          Agendando termino do primeiro servico do cliente " << cliente_em_servico.GetID() <<" para " << proxTerminoServico.GetTempoAcontecimento() << endl;;
 				
+				if(debug_eventos)
+				{
+					cout << "          Transferindo cliente " << cliente_em_servico.GetID() << " da fila 1 para o servidor." << endl;
+					cout << "          Agendando termino do primeiro servico do cliente " << cliente_em_servico.GetID() <<" para " << proxTerminoServico.GetTempoAcontecimento() << endl;;
+				}
 			}
 			else if(!fila2.empty())
 			{
 				cliente_em_servico = fila2.front();
 				fila2.pop_front();
 				servidor_vazio = false;
+				
 				//Se o cliente, que veio da fila 2, não foi interrompido, gere para ele o seu tempo de serviço
 				if(cliente_em_servico.VerificaInterrompido() == N_INTERROMPIDO) 
 				{
@@ -271,16 +296,23 @@ void Simulador::Roda(int num_total_clientes, int rodada_atual)
                     Evento proxTerminoServico = Evento(termino_de_servico,tempo_atual+duracao);//Agenda evento de termino de servico
 					filaEventos.push(proxTerminoServico);
 					cliente_em_servico.SetDuracaoSegundoServico(duracao);
-					cout << "          Transferindo cliente " << cliente_em_servico.GetID() << " da fila 2 para o servidor." << endl;
-					cout << "          Agendando termino do segundo servico do cliente " << cliente_em_servico.GetID() << " para " << proxTerminoServico.GetTempoAcontecimento() << endl;
+					
+					if(debug_eventos)
+					{
+						cout << "          Transferindo cliente " << cliente_em_servico.GetID() << " da fila 2 para o servidor." << endl;
+						cout << "          Agendando termino do segundo servico do cliente " << cliente_em_servico.GetID() << " para " << proxTerminoServico.GetTempoAcontecimento() << endl;
+					}
 				}
 
 				else 
 				{
 					Evento proxTerminoServico = Evento(termino_de_servico,tempo_atual+cliente_em_servico.GetTempoRestante());//Agenda evento de termino de servico, com o tempo restante de servico do cliente que foi interrompido
 					filaEventos.push(proxTerminoServico);
-					cout << "          Inserindo cliente " << cliente_em_servico.GetID() << " da fila 2 no servidor. Este cliente ja foi interrompido alguma vez." << endl;
-					cout << "          Agendando termino do segundo servico do cliente " << cliente_em_servico.GetID() << " para " << proxTerminoServico.GetTempoAcontecimento() << endl;
+					if(debug_eventos)
+					{	
+						cout << "          Inserindo cliente " << cliente_em_servico.GetID() << " da fila 2 no servidor. Este cliente ja foi interrompido alguma vez." << endl;
+						cout << "          Agendando termino do segundo servico do cliente " << cliente_em_servico.GetID() << " para " << proxTerminoServico.GetTempoAcontecimento() << endl;
+				    }
 				}
 				
 
@@ -290,7 +322,8 @@ void Simulador::Roda(int num_total_clientes, int rodada_atual)
 	ImprimeResultados(num_total_clientes, num_clientes_servidos_uma_vez, tempo_atual, rodada_atual);
 } 
 
-void Simulador::ImprimeResultados(int n, int servidos1, double t, int rodada){
+void Simulador::ImprimeResultados(int n, int servidos1, double t, int rodada)
+{
      /*
      Divide cada uma das variaveis de fila Nq1, Nq2, N1 e N2 pelo tempo total
      de simulacao para obter a media de cada uma delas, e imprime na tela
@@ -300,7 +333,7 @@ void Simulador::ImprimeResultados(int n, int servidos1, double t, int rodada){
          double N1 = N1_parcial/t;
          double N2 = N2_parcial/t;
          
-         cout << endl <<endl << endl << "Imprimindo resultados da rodada "<< rodada <<" :"<< endl;
+         cout << endl <<endl << endl << "Imprimindo resultados da rodada "<< rodada+1 <<" :"<< endl;
          cout << "     E[Nq1] = " << Nq1 << endl;
          cout << "     E[Nq2] = " << Nq2 << endl;
          cout << "     E[N1] = " << N1 << endl;
@@ -322,6 +355,21 @@ void Simulador::ImprimeResultados(int n, int servidos1, double t, int rodada){
      cout << "     E[T2] = " << T2 << endl;
      
      
+}
+
+void Simulador::LimpaResultadosParciais()
+{
+
+	acumulaW1=0;
+	acumulaT1=0;
+	acumulaW2=0;
+	acumulaT2=0;
+
+	Nq1_parcial = 0;
+	Nq2_parcial = 0;
+	N1_parcial = 0;
+	N2_parcial = 0;
+
 }
             
 
