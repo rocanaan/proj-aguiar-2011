@@ -26,6 +26,11 @@ Simulador::Simulador(double ptaxa_chegada, double ptaxa_servico)
 	
 	gerador = GeradorTaxaExponencial::GetInstancia();
 	
+	//Limpa a heap de eventos e as filas
+	while(!filaEventos.empty()) filaEventos.pop();
+	while(!fila1.empty()) fila1.pop();
+    fila2.clear();
+	
 	//Coloca o primeiro evendo na heap de eventos
 	filaEventos.push(Evento(nova_chegada,gerador->ExponencialInversa(taxa_chegada)));
 	servidor_vazio = true;
@@ -44,6 +49,8 @@ Simulador::Simulador(double ptaxa_chegada, double ptaxa_servico)
 	Nq2_parcial = 0;
 	N1_parcial = 0;
 	N2_parcial = 0;
+	
+	
 }      
 
 Simulador::~Simulador()
