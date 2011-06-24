@@ -4,8 +4,6 @@
 #include "include\GeradorTaxaExponencial.h"
 #include <iostream>
 #include <math.h>
-#include <stdlib.h>
-#include <time.h>
 
 //Inicialização da instancia
 GeradorTaxaExponencial* GeradorTaxaExponencial::instancia = NULL;
@@ -16,15 +14,9 @@ GeradorTaxaExponencial* GeradorTaxaExponencial::instancia = NULL;
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-GeradorTaxaExponencial::GeradorTaxaExponencial()
+GeradorTaxaExponencial::GeradorTaxaExponencial() : CRandomMersenne(0)
 {
-	srand(time(NULL));
 }
-
-/*GeradorTaxaExponencial::GeradorTaxaExponencial(unsigned int semente_inicial)
-{
-	srand(semente_inicial);
-}*/
 
 GeradorTaxaExponencial::~GeradorTaxaExponencial()
 {
@@ -46,23 +38,16 @@ GeradorTaxaExponencial* GeradorTaxaExponencial::GetInstancia()
 	return instancia;
 }
 
-//Reseta o gerador de números aleatórios para poder ser usado com outra semente
-void GeradorTaxaExponencial::ResetarGerador()
-{
-	srand(1); //Passando 1 como argumento, a função srand reinicia, como se nunca tivesse havido uma chamada a srand ou a rand.
-}
-
 //Define uma nova semente para o gerador de números aleatórios(resetando ele antes)
-void GeradorTaxaExponencial::DefinirSemente(unsigned int semente)
+void GeradorTaxaExponencial::DefinirSemente(int semente)
 {
-	ResetarGerador();
-	srand(semente);
+	CRandomMersenne::RandomInit(semente);
 }
 
 //Função do Gerador de Números Aleatórios
 double GeradorTaxaExponencial::Random()
 {
-	return (rand() % RAND_MAX) / (double) RAND_MAX;
+	return CRandomMersenne::Random();
 }
 
 //Faz a inversa do log para encontrar uma exponencial
