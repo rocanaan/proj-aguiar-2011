@@ -71,6 +71,8 @@ void Simulador::Roda(int num_total_clientes, int rodada_atual, bool debug_evento
 {
 	int num_clientes_servidos = 0;
 	int num_clientes_servidos_uma_vez =0;
+	double tempo_inicio_rodada = tempo_atual;
+
 	
 	//Enquanto o número total de clientes que queremos servir for maior que o número de clientes já servidos por completo, rodamos a simulação
 	while(num_total_clientes > num_clientes_servidos)
@@ -326,7 +328,7 @@ void Simulador::Roda(int num_total_clientes, int rodada_atual, bool debug_evento
 			}
 		}
 	}
-	ImprimeResultados(num_total_clientes, num_clientes_servidos_uma_vez, tempo_atual, rodada_atual);
+	ImprimeResultados(num_total_clientes, num_clientes_servidos_uma_vez, tempo_atual - tempo_inicio_rodada, rodada_atual);
 } 
 
 void Simulador::ImprimeResultados(int n, int servidos1, double t, int rodada)
@@ -366,7 +368,7 @@ void Simulador::ImprimeResultados(int n, int servidos1, double t, int rodada)
 
 void Simulador::LimpaResultadosParciais()
 {
-
+	
 	acumulaW1=0;
 	acumulaT1=0;
 	acumulaW2=0;
