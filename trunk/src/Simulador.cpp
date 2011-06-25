@@ -483,3 +483,44 @@ void Simulador::GeraDadosGrafico(int rodada, double pN1, double pN2, double pNq1
 	outputFile << rodada <<"\t"<< pV_W2 << endl;
 	outputFile.close();
 }
+
+vector<double> Simulador::GetE_Nq1()
+{
+	return E_Nq1;
+}
+vector<double> Simulador::GetE_Nq2()
+{
+	return E_Nq2;
+}
+vector<double> Simulador::GetE_N1()
+{
+	return E_N1;
+}
+vector<double> Simulador::GetE_N2()
+{
+	return E_N2;
+}
+vector<double> Simulador::GetE_W1()
+{
+	return E_W1;
+}
+vector<double> Simulador::GetE_T1()
+{
+	return E_T1;
+}
+vector<double> Simulador::GetE_W2()
+{
+	return E_W2;
+}
+vector<double> Simulador::GetE_T2()
+{
+	return E_T2;
+}
+vector<double> Simulador::GetV_W1()
+{
+	return V_W1;
+}
+vector<double> Simulador::GetV_W2()
+{
+	return V_W2;
+}
