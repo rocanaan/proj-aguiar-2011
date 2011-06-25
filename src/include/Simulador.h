@@ -31,6 +31,9 @@ class Simulador{
 		double cliente_W1;
 		double cliente_W2;
 		
+		int total_clientes_servidos_uma_vez;
+        int total_clientes_servidos_duas_vezes;
+		
 		/*
         Variaveis que auxiliarão no cálculo do numero medio de clientes em cada regiao do sistema,
         acumulando o produto N * tempo, onde N é o número de pessoas em cada região do sistema.
@@ -70,7 +73,7 @@ class Simulador{
     public:
 		Simulador(double ptaxa_chegada, double ptaxa_servico, bool deterministico);
 		~Simulador();	
-		void Roda(int num_total_clientes, int rodada_atual, bool debug_eventos, bool deterministico);
+		void Roda(int num_total_clientes, int rodada_atual, bool debug_eventos, bool deterministico, bool determina_transiente);
 		void CalculaResultados(int n, int servidos1, double t, int rodada, bool debug_eventos);
 		void LimpaResultadosParciais();
 		void GeraDadosGrafico(int rodada, double pN1, double pN2, double pNq1, double pNq2, double pW1, double pW2, double pT1, double pT2, double pV_W1, double pV_W2);

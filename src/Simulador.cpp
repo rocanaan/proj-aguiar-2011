@@ -49,6 +49,8 @@ Simulador::Simulador(double ptaxa_chegada, double ptaxa_servico, bool determinis
 	id_proximo_cliente = 0;
 	tempo_atual = 0.0;
 	
+	total_clientes_servidos_uma_vez =0;
+    total_clientes_servidos_duas_vezes = 0;
 	acumulaW1 = 0.0;
 	acumulaT1 = 0.0;
 	acumulaW2 = 0.0;
@@ -81,15 +83,16 @@ Simulador::~Simulador()
 
 
 //Função principal do simulador, executa a simulação
-void Simulador::Roda(int num_total_clientes, int rodada_atual, bool debug_eventos, bool deterministico)   
+void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug_eventos, bool deterministico, bool determina_transiente)   
 {
-	int num_clientes_servidos = 0;
-	int num_clientes_servidos_uma_vez =0;
+    int num_servicos_tipo_1_rodada_atual = 0;
+	int num_servicos_tipo_2_rodada_atual = 0;
+	
 	double tempo_inicio_rodada = tempo_atual;
 
 	
 	//Enquanto o número total de clientes que queremos servir for maior que o número de clientes já servidos por completo, rodamos a simulação
-	while(num_total_clientes > num_clientes_servidos)
+	while(num_clientes_por_rodada > num_servicos_tipo_2_rodada_atual)
 	{
 	
 		Evento evento_atual = filaEventos.top();//O primeiro evento é selecionado 
@@ -225,7 +228,7 @@ void Simulador::Roda(int num_total_clientes, int rodada_atual, bool debug_evento
 				/////////////////////////////////////////////////////////////////////////////////////////////////////
 				
 				//Verifica se o cliente em serviço é da rodada(coloração usada) em que estamos, pois só esse cliente entra nos dados desta rodada
-				if(cliente_em_servico.GetRodadaPertencente() == rodada_atual)
+				if(cliente_em_servico.GetRodadaPertencente() == rodada_atual or determina_transiente)
 				{
 					if(!cliente_em_servico.GetDiretoAoServidor())
 						cliente_W1 = cliente_em_servico.W1();
@@ -242,7 +245,8 @@ void Simulador::Roda(int num_total_clientes, int rodada_atual, bool debug_evento
 					{
 						cout << "          Dados do cliente " << cliente_em_servico.GetID() << ": W1 =  " << cliente_W1 << ", T1 = " << cliente_em_servico.T1() << endl;
 					}
-					num_clientes_servidos_uma_vez ++;
+					num_servicos_tipo_1_rodada_atual ++;
+					total_clientes_servidos_uma_vez ++;
 				}	
 				
 				/////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -271,7 +275,8 @@ void Simulador::Roda(int num_total_clientes, int rodada_atual, bool debug_evento
 				//Verifica se o cliente em serviço é da rodada(coloração usada) em que estamos, pois só esse cliente entra nos dados desta rodada
 				if(cliente_em_servico.GetRodadaPertencente() == rodada_atual)
 				{
-					num_clientes_servidos++;
+					total_clientes_servidos_duas_vezes ++;
+					num_servicos_tipo_2_rodada_atual ++;
 					
 					if(cliente_em_servico.VerificaInterrompido() == N_INTERROMPIDO && cliente_em_servico.GetDiretoAoServidor())
 						cliente_W2 = 0;
@@ -354,7 +359,15 @@ void Simulador::Roda(int num_total_clientes, int rodada_atual, bool debug_evento
 			}
 		}
 	}
-	CalculaResultados(num_total_clientes, num_clientes_servidos_uma_vez, tempo_atual - tempo_inicio_rodada, rodada_atual, debug_eventos);
+	if(!determina_transiente)
+	{
+                             CalculaResultados(num_servicos_tipo_2_rodada_atual, num_servicos_tipo_1_rodada_atual, tempo_atual - tempo_inicio_rodada, rodada_atual, debug_eventos);
+     }
+     else
+     {
+         CalculaResultados(total_clientes_servidos_duas_vezes, total_clientes_servidos_uma_vez, tempo_atual, rodada_atual, debug_eventos);
+     }
+    
 } 
 
 void Simulador::CalculaResultados(int n, int servidos1, double t, int rodada, bool debug_eventos)
@@ -398,7 +411,7 @@ void Simulador::CalculaResultados(int n, int servidos1, double t, int rodada, bo
     V_W2.push_back((acumula_quadradoW2 - E_W2.back()*n)/(n-1));
 	
 
-    if(debug_eventos)
+    if(1)
 	{
 		cout << endl <<endl << endl << "Imprimindo resultados da rodada "<< rodada+1 <<" :"<< endl;
 		cout << "     E[Nq1] = " << E_Nq1.back() << endl;
