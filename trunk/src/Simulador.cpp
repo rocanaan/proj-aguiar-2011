@@ -26,23 +26,36 @@ Simulador::Simulador(double ptaxa_chegada, double ptaxa_servico, bool determinis
 	
 	gerador = GeradorTaxaExponencial::GetInstancia();
 	
-	//Limpa a heap de eventos e as filas
-	while(!filaEventos.empty()) filaEventos.pop();
+	//Limpa a heap de eventos, as filas e os dados
+ 	while(!filaEventos.empty()) filaEventos.pop();
 	while(!fila1.empty()) fila1.pop();
     fila2.clear();
+	while(!E_N1.empty()) E_N1.pop_back();
+	while(!E_N2.empty()) E_N2.pop_back();
+	while(!E_Nq1.empty()) E_Nq1.pop_back();
+	while(!E_Nq2.empty()) E_Nq2.pop_back();
+	while(!E_W1.empty()) E_W1.pop_back();
+	while(!E_W2.empty()) E_W2.pop_back();
+	while(!E_T1.empty()) E_T1.pop_back();
+	while(!E_T2.empty()) E_T2.pop_back();
+	while(!E_T1.empty()) E_T1.pop_back();
+	while(!E_T2.empty()) E_T2.pop_back();
+	while(!V_W1.empty()) V_W1.pop_back();
+	while(!V_W2.empty()) V_W2.pop_back();
 	
 	//Coloca o primeiro evendo na heap de eventos
 	filaEventos.push(Evento(nova_chegada,gerador->GeraTempoExponencial(taxa_chegada, deterministico)));
 	servidor_vazio = true;
 	id_proximo_cliente = 0;
-	tempo_atual=0.0;
+	tempo_atual = 0.0;
 	
-	acumulaW1=0.0;
-	acumulaT1=0.0;
-	acumulaW2=0.0;
-	acumulaT2=0.0;
+	acumulaW1 = 0.0;
+	acumulaT1 = 0.0;
+	acumulaW2 = 0.0;
+	acumulaT2 = 0.0;
 	acumula_quadradoW1 = 0.0;
 	acumula_quadradoW2 = 0.0;
+	
 	/*
     inicia as variaveis que acumulam o (numero de pessoas * tempo) de cada região do sistema
     */
@@ -285,7 +298,7 @@ void Simulador::Roda(int num_total_clientes, int rodada_atual, bool debug_evento
 		}
 		
 		//Se não tem ninguem no servidor
-		if(servidor_vazio == true && num_total_clientes > num_clientes_servidos)
+		if(servidor_vazio == true )
 		{
 			//Fila 1 tem prioridade
 			if(!fila1.empty())
@@ -341,37 +354,29 @@ void Simulador::Roda(int num_total_clientes, int rodada_atual, bool debug_evento
 			}
 		}
 	}
-	ImprimeResultados(num_total_clientes, num_clientes_servidos_uma_vez, tempo_atual - tempo_inicio_rodada, rodada_atual);
+	CalculaResultados(num_total_clientes, num_clientes_servidos_uma_vez, tempo_atual - tempo_inicio_rodada, rodada_atual, debug_eventos);
 } 
 
-void Simulador::ImprimeResultados(int n, int servidos1, double t, int rodada)
+void Simulador::CalculaResultados(int n, int servidos1, double t, int rodada, bool debug_eventos)
 {
-     /*
-     Divide cada uma das variaveis de fila Nq1, Nq2, N1 e N2 pelo tempo total
-     de simulacao para obter a media de cada uma delas, e imprime na tela
-     */
-         double E_Nq1 = Nq1_parcial/t;
-         double E_Nq2 = Nq2_parcial/t;
-         double E_N1 = N1_parcial/t;
-         double E_N2 = N2_parcial/t;
-		
-         
-         cout << endl <<endl << endl << "Imprimindo resultados da rodada "<< rodada+1 <<" :"<< endl;
-         cout << "     E[Nq1] = " << E_Nq1 << endl;
-         cout << "     E[Nq2] = " << E_Nq2 << endl;
-         cout << "     E[N1] = " << E_N1 << endl;
-         cout << "     E[N2] = " << E_N2 << endl;
-         
-     /*
-     Divide cada um dos acumuladores dos clientes pelo numero de clientes servidos
-     Falta variancia
-     Falta saber se os da fila um são tratados apenas quando saem do sistema ou quando são servidos pela primeira vez
-     */
-     double E_W1 = acumulaW1/servidos1;
-     double E_T1 = acumulaT1/servidos1;
-     double E_W2 = acumulaW2/n;
-     double E_T2 = acumulaT2/n;
-     
+    /*
+    Divide cada uma das variaveis de fila Nq1, Nq2, N1 e N2 pelo tempo da rodada
+     para obter a media de cada uma delas
+    */
+    E_Nq1.push_back(Nq1_parcial/t);
+    E_Nq2.push_back(Nq2_parcial/t);
+    E_N1.push_back(N1_parcial/t);
+    E_N2.push_back(N2_parcial/t);
+	
+    /*
+    Divide cada um dos acumuladores dos clientes pelo numero de clientes servidos
+    */
+    E_W1.push_back(acumulaW1/servidos1);
+    E_T1.push_back(acumulaT1/servidos1);
+    E_W2.push_back(acumulaW2/n);
+    E_T2.push_back(acumulaT2/n);
+	
+	     
      /* O estimador da variância é dado por (1/(n-1)) * somatório de ( ( Xi - Xmédio)^2) para cada amostra i, se forem feitas n amostras
      mas
      somatório de ( ( Xi - Xmédio)^2) para cada amostra i =
@@ -388,39 +393,48 @@ void Simulador::ImprimeResultados(int n, int servidos1, double t, int rodada)
      
      para X = W1 ou X = W2
      */
-     
-     double V_W1 = (acumula_quadradoW1 - E_W1*servidos1)/(servidos1-1);
-     double V_W2 = (acumula_quadradoW2 - E_W2*n)/(n-1);
-           
-     cout << endl << "     E[W1] = " << E_W1 << endl;
-     cout << "     E[T1] = " << E_T1 << endl;
-     cout << "     E[W2] = " << E_W2 << endl;
-     cout << "     E[T2] = " << E_T2 << endl;
-     cout << "     V[W1] = " << V_W1 << endl;
-     cout << "     V[W2] = " << V_W2 << endl;
-     
-     
-     GeraDadosGrafico(rodada, E_N1, E_N2, E_Nq1, E_Nq2, E_W1, E_W2, E_T1, E_T2);
+	 
+	V_W1.push_back((acumula_quadradoW1 - E_W1.back()*servidos1)/(servidos1-1));
+    V_W2.push_back((acumula_quadradoW2 - E_W2.back()*n)/(n-1));
+	
+
+    if(debug_eventos)
+	{
+		cout << endl <<endl << endl << "Imprimindo resultados da rodada "<< rodada+1 <<" :"<< endl;
+		cout << "     E[Nq1] = " << E_Nq1.back() << endl;
+		cout << "     E[Nq2] = " << E_Nq2.back() << endl;
+		cout << "     E[N1] = " << E_N1.back() << endl;
+		cout << "     E[N2] = " << E_N2.back() << endl;
+		cout << "     E[W1] = " << E_W1.back() << endl;
+		cout << "     E[T1] = " << E_T1.back() << endl;
+		cout << "     E[W2] = " << E_W2.back() << endl;
+		cout << "     E[T2] = " << E_T2.back() << endl;
+		cout << "     V[W1] = " << V_W1.back() << endl;
+		cout << "     V[W2] = " << V_W2.back() << endl;
+	}
+    
+    GeraDadosGrafico(rodada, E_N1.back(), E_N2.back(), E_Nq1.back(), E_Nq2.back(), E_W1.back(), E_W2.back(), E_T1.back(), E_T2.back(), V_W1.back(),V_W2.back());
 }
 
 void Simulador::LimpaResultadosParciais()
 {
 	
-	acumulaW1=0.0;
-	acumulaT1=0.0;
-	acumulaW2=0.0;
-	acumulaT2=0.0;
-	acumula_quadradoW1=0.0;
-	acumula_quadradoW2=0.0;
-
+	acumulaW1 = 0.0;
+	acumulaT1 = 0.0;
+	acumulaW2 = 0.0;
+	acumulaT2 = 0.0;
+	
 	Nq1_parcial = 0.0;
 	Nq2_parcial = 0.0;
 	N1_parcial = 0.0;
 	N2_parcial = 0.0;
+	
+	acumula_quadradoW1 = 0.0;
+	acumula_quadradoW2 = 0.0;
 
 }
             
-void Simulador::GeraDadosGrafico(int rodada, double pN1, double pN2, double pNq1, double pNq2, double pW1, double pW2, double pT1, double pT2)
+void Simulador::GeraDadosGrafico(int rodada, double pN1, double pN2, double pNq1, double pNq2, double pW1, double pW2, double pT1, double pT2, double pV_W1, double pV_W2)
 {
 	ofstream outputFile;
 	outputFile.open("N1.txt", ios::app);
@@ -432,7 +446,7 @@ void Simulador::GeraDadosGrafico(int rodada, double pN1, double pN2, double pNq1
 	outputFile << rodada <<"\t"<< pN2 << endl;
 	outputFile.close();
 
-	outputFile.open("pNq1.txt", ios::app);
+	outputFile.open("Nq1.txt", ios::app);
 	outputFile << rodada <<"\t"<< pNq1 << endl;
 	outputFile.close();
 	
@@ -459,5 +473,13 @@ void Simulador::GeraDadosGrafico(int rodada, double pN1, double pN2, double pNq1
 
 	outputFile.open("T2.txt", ios::app);
 	outputFile << rodada <<"\t"<< pT2 << endl;
+	outputFile.close();
+	
+	outputFile.open("V_W1.txt", ios::app);
+	outputFile << rodada <<"\t"<< pV_W1 << endl;
+	outputFile.close();
+	
+	outputFile.open("V_W2.txt", ios::app);
+	outputFile << rodada <<"\t"<< pV_W2 << endl;
 	outputFile.close();
 }
