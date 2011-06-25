@@ -53,16 +53,27 @@ class Simulador{
 	    double acumulaT1;
         double acumulaW2;
         double acumulaT2;
-        double acumula_quadradoW1;
+		double acumula_quadradoW1;
         double acumula_quadradoW2;
+		
+		vector<double> E_Nq1;
+		vector<double> E_Nq2;
+		vector<double> E_N1;
+		vector<double> E_N2;
+		vector<double> E_W1;
+		vector<double> E_T1;
+		vector<double> E_W2;
+		vector<double> E_T2;
+		vector<double> V_W1;
+		vector<double> V_W2;
     
     public:
 		Simulador(double ptaxa_chegada, double ptaxa_servico, bool deterministico);
 		~Simulador();	
 		void Roda(int num_total_clientes, int rodada_atual, bool debug_eventos, bool deterministico);
-		void ImprimeResultados(int n, int servidos1, double t, int rodada);
+		void CalculaResultados(int n, int servidos1, double t, int rodada, bool debug_eventos);
 		void LimpaResultadosParciais();
-		void GeraDadosGrafico(int rodada, double pN1, double pN2, double pNq1, double pNq2, double pW1, double pW2, double pT1, double pT2);
+		void GeraDadosGrafico(int rodada, double pN1, double pN2, double pNq1, double pNq2, double pW1, double pW2, double pT1, double pT2, double pV_W1, double pV_W2);
 };
       
 #endif /*SIMULADOR_H_*/
