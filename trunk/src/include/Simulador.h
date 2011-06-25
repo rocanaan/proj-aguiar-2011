@@ -53,6 +53,8 @@ class Simulador{
 	    double acumulaT1;
         double acumulaW2;
         double acumulaT2;
+        double acumula_quadradoW1;
+        double acumula_quadradoW2;
     
     public:
 		Simulador(double ptaxa_chegada, double ptaxa_servico, bool deterministico);
