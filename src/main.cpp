@@ -32,7 +32,7 @@ int main(void)
 
 		for( int i = 0 ; i < num_rodada ; i++)
 		{
-			simula.Roda(num_clientes,i, 0);
+			simula.Roda(num_clientes,i, false);
 			simula.LimpaResultadosParciais();
 		}
     
