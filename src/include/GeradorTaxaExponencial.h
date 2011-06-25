@@ -16,5 +16,11 @@ class GeradorTaxaExponencial : CRandomMersenne
 	
 		void DefinirSemente(int semente); //Muda a semente do gerador de números aleatórios(resetando ele anteriormente)
 		double Random(); //Função do Gerador de Números Aleatórios
-		double ExponencialInversa(double taxa); //Faz a inversa do log para encontrar uma exponencial
+		
+		/* 
+       Se o modo deterministico for selecionado, gera a média de uma variável exponencial com a taxa dada = 1/taxa
+       Caso contrário, gera uma amostra de uma distribuição homogênea no intervalo de 0 a 1
+       e aplica a função inversa da CDF da exponencial para gerar uma amostra de variável exponencial.
+       */
+		double GeraTempoExponencial(double taxa, bool deterministico); 
 };

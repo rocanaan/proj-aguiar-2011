@@ -17,6 +17,9 @@ int main(void)
 	int num_rodadas ;
 	double taxa_chegada ;
 	int num_clientes ;
+	bool deterministico ;
+	bool debug;
+	string temp;
 	
 	while (repeat != "N" and repeat !="n")
     {
@@ -32,14 +35,27 @@ int main(void)
 		cout << "Quantas rodadas ?" << endl;
 	    cin >> num_rodadas;
 	    cin.ignore();
+	    
+	    cout << "Deseja rodar em modo deterministico? (S/N)" << endl;
+	    getline(cin,temp);
+	    if(temp == "S" or temp == "s")
+	         deterministico = true;
+        else 
+             deterministico = false;
+             
+        cout << "Deseja rodar em modo debug? (S/N)" << endl;
+        getline(cin,temp);
+        if(temp == "S" or temp == "s")
+	         debug = true;
+        else 
+             debug = false;
+        
 
-		
-
-		Simulador simula = Simulador(taxa_chegada,1);
+		Simulador simula = Simulador(taxa_chegada,1,deterministico);
 
 		for( int i = 0 ; i < num_rodadas ; i++)
 		{
-			simula.Roda(num_clientes,i, false);
+			simula.Roda(num_clientes,i, debug, deterministico);
 			simula.LimpaResultadosParciais();
 		}
     

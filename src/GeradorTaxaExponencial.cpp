@@ -50,8 +50,14 @@ double GeradorTaxaExponencial::Random()
 	return CRandomMersenne::Random();
 }
 
-//Faz a inversa do log para encontrar uma exponencial
-double GeradorTaxaExponencial::ExponencialInversa(double taxa)
+/* 
+Se o modo deterministico for selecionado, gera a média de uma variável exponencial com a taxa dada = 1/taxa
+Caso contrário, gera uma amostra de uma distribuição homogênea no intervalo de 0 a 1
+e aplica a função inversa da CDF da exponencial para gerar uma amostra de variável exponencial.
+*/
+double GeradorTaxaExponencial::GeraTempoExponencial(double taxa, bool deterministico)
 {
+    if (deterministico)
+       return (1 / taxa);
 	return (-1) * (log(1 - this->Random()) / taxa);
 }

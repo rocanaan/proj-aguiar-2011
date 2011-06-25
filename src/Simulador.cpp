@@ -13,7 +13,7 @@ using namespace std;
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-Simulador::Simulador(double ptaxa_chegada, double ptaxa_servico)
+Simulador::Simulador(double ptaxa_chegada, double ptaxa_servico, bool deterministico)
 {
 	
 	// como vou passar quais serao as taxas de chegada e de servico, preciso ter aqui 2 instâncias do gerador.
@@ -32,7 +32,7 @@ Simulador::Simulador(double ptaxa_chegada, double ptaxa_servico)
     fila2.clear();
 	
 	//Coloca o primeiro evendo na heap de eventos
-	filaEventos.push(Evento(nova_chegada,gerador->ExponencialInversa(taxa_chegada)));
+	filaEventos.push(Evento(nova_chegada,gerador->GeraTempoExponencial(taxa_chegada, deterministico)));
 	servidor_vazio = true;
 	id_proximo_cliente = 0;
 	tempo_atual=0.0;
@@ -67,7 +67,7 @@ Simulador::~Simulador()
 
 
 //Função principal do simulador, executa a simulação
-void Simulador::Roda(int num_total_clientes, int rodada_atual, bool debug_eventos)   
+void Simulador::Roda(int num_total_clientes, int rodada_atual, bool debug_eventos, bool deterministico)   
 {
 	int num_clientes_servidos = 0;
 	int num_clientes_servidos_uma_vez =0;
@@ -175,7 +175,7 @@ void Simulador::Roda(int num_total_clientes, int rodada_atual, bool debug_evento
 			
 			fila1.push(cliente_atual); //Coloca o novo cliente na fila 1
 			
-			Evento proxChegada = Evento(nova_chegada,tempo_atual+gerador->ExponencialInversa(taxa_chegada));//Agenda o Evento para a próxima chegada
+			Evento proxChegada = Evento(nova_chegada,tempo_atual+gerador->GeraTempoExponencial(taxa_chegada, deterministico));//Agenda o Evento para a próxima chegada
 			filaEventos.push(proxChegada);
 			
 			if(debug_eventos)
@@ -291,7 +291,7 @@ void Simulador::Roda(int num_total_clientes, int rodada_atual, bool debug_evento
 				fila1.pop();//O cliente é removido da fila 1
 				
 				servidor_vazio = false;//O servidor agora está ocupado
-				double duracao = gerador->ExponencialInversa(taxa_servico);
+				double duracao = gerador->GeraTempoExponencial(taxa_servico, deterministico);
 				Evento proxTerminoServico = Evento(termino_de_servico,tempo_atual+duracao);//Agendar evento de termino de servico
 				filaEventos.push(proxTerminoServico);
 				cliente_em_servico.SetDuracaoPrimeiroServico(duracao);
@@ -311,7 +311,7 @@ void Simulador::Roda(int num_total_clientes, int rodada_atual, bool debug_evento
 				//Se o cliente, que veio da fila 2, não foi interrompido, gere para ele o seu tempo de serviço
 				if(cliente_em_servico.VerificaInterrompido() == N_INTERROMPIDO) 
 				{
-					double duracao = gerador->ExponencialInversa(taxa_servico);
+					double duracao = gerador->GeraTempoExponencial(taxa_servico,deterministico);
                     Evento proxTerminoServico = Evento(termino_de_servico,tempo_atual+duracao);//Agenda evento de termino de servico
 					filaEventos.push(proxTerminoServico);
 					cliente_em_servico.SetDuracaoSegundoServico(duracao);
