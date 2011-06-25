@@ -282,7 +282,7 @@ void Simulador::Roda(int num_total_clientes, int rodada_atual, bool debug_evento
 		}
 		
 		//Se não tem ninguem no servidor
-		if(servidor_vazio == true)
+		if(servidor_vazio == true && num_total_clientes > num_clientes_servidos)
 		{
 			//Fila 1 tem prioridade
 			if(!fila1.empty())
