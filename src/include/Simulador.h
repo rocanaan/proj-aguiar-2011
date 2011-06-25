@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <cstdlib>
 #include <iostream>
+#include <fstream>
 #include "Cliente.h"
 #include "Evento.h"
 #include "GeradorTaxaExponencial.h"
@@ -59,6 +60,7 @@ class Simulador{
 		void Roda(int num_total_clientes, int rodada_atual, bool debug_eventos);
 		void ImprimeResultados(int n, int servidos1, double t, int rodada);
 		void LimpaResultadosParciais();
+		void GeraDadosGrafico(int rodada, double pN1, double pN2, double pNq1, double pNq2, double pW1, double pW2, double pT1, double pT2);
 };
       
 #endif /*SIMULADOR_H_*/
