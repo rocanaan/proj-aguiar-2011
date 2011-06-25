@@ -15,17 +15,25 @@ int main(void)
 	
 	for (int i=0; i<60; i++)
 		cout << gna->Random() << endl;*/
-		
+	
 	string repeat = "";
 	int num_rodadas ;
 	double taxa_chegada ;
 	int num_clientes ;
 	bool deterministico ;
 	bool debug;
+	bool determina_transiente;
 	string temp;
 	
 	while (repeat != "N" and repeat !="n")
     {
+        cout << "Deseja rodar o modo de estimacao da fase transiente? (S/N)" << endl;
+        getline(cin,temp);
+        if(temp == "S" or temp == "s")
+	         determina_transiente = true;
+        else 
+             determina_transiente = false;
+        
 	
 		cout << "Qual a taxa de chegada desejada ?" << endl;
 		cin >> taxa_chegada;
@@ -58,12 +66,13 @@ int main(void)
 
 		for( int i = 0 ; i < num_rodadas ; i++)
 		{
-			simula.Roda(num_clientes,i, debug, deterministico);
-			simula.LimpaResultadosParciais();
+			simula.Roda(num_clientes,i, debug, deterministico, determina_transiente);
+			if(!determina_transiente)
+               simula.LimpaResultadosParciais();
 		}
-		
-		CalculaIntervaloConfianca(num_rodadas, simula.GetE_N1(),  simula.GetE_N2(),  simula.GetE_Nq1(),  simula.GetE_Nq2(),  simula.GetE_W1(),  simula.GetE_W2(),  simula.GetE_T1(),  simula.GetE_T2(), simula.GetV_W1(),  simula.GetV_W2());
-
+    
+        CalculaIntervaloConfianca(num_rodadas, simula.GetE_N1(),  simula.GetE_N2(),  simula.GetE_Nq1(),  simula.GetE_Nq2(),  simula.GetE_W1(),  simula.GetE_W2(),  simula.GetE_T1(),  simula.GetE_T2(), simula.GetV_W1(),  simula.GetV_W2());
+    
 		cout << "Deseja fazer uma nova simulacao? (S/N)" << endl;
 		getline(cin,repeat);
     }
