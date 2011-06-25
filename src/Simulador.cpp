@@ -41,7 +41,8 @@ Simulador::Simulador(double ptaxa_chegada, double ptaxa_servico, bool determinis
 	acumulaT1=0.0;
 	acumulaW2=0.0;
 	acumulaT2=0.0;
-	
+	acumula_quadradoW1 = 0.0;
+	acumula_quadradoW2 = 0.0;
 	/*
     inicia as variaveis que acumulam o (numero de pessoas * tempo) de cada região do sistema
     */
@@ -222,6 +223,7 @@ void Simulador::Roda(int num_total_clientes, int rodada_atual, bool debug_evento
 					
 					acumulaW1 += cliente_W1;
 					acumulaT1 += cliente_em_servico.T1();
+					acumula_quadradoW1 += cliente_W1*cliente_W1;
 					
 					if(debug_eventos)
 					{
@@ -265,6 +267,7 @@ void Simulador::Roda(int num_total_clientes, int rodada_atual, bool debug_evento
 					
 					acumulaW2 += cliente_W2;
 					acumulaT2 += cliente_em_servico.T2();
+					acumula_quadradoW2 += cliente_W2*cliente_W2;
 					
 					if(debug_eventos)
 					{
@@ -347,35 +350,57 @@ void Simulador::ImprimeResultados(int n, int servidos1, double t, int rodada)
      Divide cada uma das variaveis de fila Nq1, Nq2, N1 e N2 pelo tempo total
      de simulacao para obter a media de cada uma delas, e imprime na tela
      */
-         double Nq1 = Nq1_parcial/t;
-         double Nq2 = Nq2_parcial/t;
-         double N1 = N1_parcial/t;
-         double N2 = N2_parcial/t;
-		 
+         double E_Nq1 = Nq1_parcial/t;
+         double E_Nq2 = Nq2_parcial/t;
+         double E_N1 = N1_parcial/t;
+         double E_N2 = N2_parcial/t;
 		
          
          cout << endl <<endl << endl << "Imprimindo resultados da rodada "<< rodada+1 <<" :"<< endl;
-         cout << "     E[Nq1] = " << Nq1 << endl;
-         cout << "     E[Nq2] = " << Nq2 << endl;
-         cout << "     E[N1] = " << N1 << endl;
-         cout << "     E[N2] = " << N2 << endl;
+         cout << "     E[Nq1] = " << E_Nq1 << endl;
+         cout << "     E[Nq2] = " << E_Nq2 << endl;
+         cout << "     E[N1] = " << E_N1 << endl;
+         cout << "     E[N2] = " << E_N2 << endl;
          
      /*
      Divide cada um dos acumuladores dos clientes pelo numero de clientes servidos
      Falta variancia
      Falta saber se os da fila um são tratados apenas quando saem do sistema ou quando são servidos pela primeira vez
      */
-     double W1 = acumulaW1/servidos1;
-     double T1 = acumulaT1/servidos1;
-     double W2 = acumulaW2/n;
-     double T2 = acumulaT2/n;
+     double E_W1 = acumulaW1/servidos1;
+     double E_T1 = acumulaT1/servidos1;
+     double E_W2 = acumulaW2/n;
+     double E_T2 = acumulaT2/n;
      
-     cout << endl << "     E[W1] = " << W1 << endl;
-     cout << "     E[T1] = " << T1 << endl;
-     cout << "     E[W2] = " << W2 << endl;
-     cout << "     E[T2] = " << T2 << endl;
+     /* O estimador da variância é dado por (1/(n-1)) * somatório de ( ( Xi - Xmédio)^2) para cada amostra i, se forem feitas n amostras
+     mas
+     somatório de ( ( Xi - Xmédio)^2) para cada amostra i =
+     somatório de ( ( Xi^2 - Xi*Xmédio + Xmedio^2)) para cada amostra i
+     passando o somatório para dentro, temos
+     somatório de ( Xi^2) para cada amostra i - 2* somatório de ( Xi*Xmedio) para cada amostra i + somatório de (Xmédio)^2) para cada amostra i
+     = acumula_quadradoX - 2*acumulaX*E[X] + n*E[X]^2
      
-     GeraDadosGrafico(rodada, N1, N2, Nq1, Nq2, W1, W2, T1, T2);
+     mas E[X] = acumulaX/n, logo -2*acumulaX*E[X] = -2*E(X)^2*n
+     e (numero de amostras)*E[X]^2 = acumulaX^2/n
+     
+     Assim, V(X) = (acumula_quadradoX - 2*acumulaX^2/n + acumulaX^2/n) * 1/(n-1)
+     V(X) = (aumula_quadradoX - acumulaX^2/n) * 1/(n-1)
+     
+     para X = W1 ou X = W2
+     */
+     
+     double V_W1 = (acumula_quadradoW1 - E_W1*servidos1)/(servidos1-1);
+     double V_W2 = (acumula_quadradoW2 - E_W2*n)/(n-1);
+           
+     cout << endl << "     E[W1] = " << E_W1 << endl;
+     cout << "     E[T1] = " << E_T1 << endl;
+     cout << "     E[W2] = " << E_W2 << endl;
+     cout << "     E[T2] = " << E_T2 << endl;
+     cout << "     V[W1] = " << V_W1 << endl;
+     cout << "     V[W2] = " << V_W2 << endl;
+     
+     
+     GeraDadosGrafico(rodada, E_N1, E_N2, E_Nq1, E_Nq2, E_W1, E_W2, E_T1, E_T2);
 }
 
 void Simulador::LimpaResultadosParciais()
@@ -385,6 +410,8 @@ void Simulador::LimpaResultadosParciais()
 	acumulaT1=0.0;
 	acumulaW2=0.0;
 	acumulaT2=0.0;
+	acumula_quadradoW1=0.0;
+	acumula_quadradoW2=0.0;
 
 	Nq1_parcial = 0.0;
 	Nq2_parcial = 0.0;
