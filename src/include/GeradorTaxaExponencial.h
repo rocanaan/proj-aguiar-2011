@@ -1,5 +1,3 @@
-//ATENÇÃO:
-//Por estar usando a função srand/rand o valor máximo que pode ser sorteado é RAND_MAX = (2^16) - 1
 #include "Mersenne/randomc.h"
 
 class GeradorTaxaExponencial : CRandomMersenne
