@@ -212,8 +212,10 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug_e
 				fila2.push_back(cliente_em_servico);// Coloca o cliente na fila 2
 
 				//Se a fila 2 só tem o próprio cliente e não tem ninguem em serviço, quer dizer que o cliente da fila 2 será atendido direto
-				if(fila2.size() == 1 && servidor_vazio)
-					fila2.front().SetDiretoAoServidor(true);
+				if(fila2.size() == 1)
+					fila2.back().SetDiretoAoServidor(true);
+				else
+					fila2.back().SetDiretoAoServidor(false);
 
 				if(debug_eventos)
 				{
@@ -235,7 +237,6 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug_e
 					else
 						cliente_W1 = 0;
 
-					cliente_em_servico.SetDiretoAoServidor(false);
 
 					acumulaW1 += cliente_W1;
 					acumulaT1 += cliente_em_servico.T1();
