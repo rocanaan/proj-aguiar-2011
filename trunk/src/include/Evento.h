@@ -17,7 +17,6 @@ class Evento{
 		Evento(EnumTipo ptipo, double ptempo_acontecimento);
 		EnumTipo GetTipo();
 		double GetTempoAcontecimento() const;
-		ostream& Imprime( ostream& o );
 		inline bool operator > (const Evento evento2) const { return (this->GetTempoAcontecimento() > evento2.GetTempoAcontecimento()); }
 };
 

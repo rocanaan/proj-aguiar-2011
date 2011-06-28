@@ -30,8 +30,3 @@ double Evento::GetTempoAcontecimento() const
 {
 	return tempo_acontecimento;
 }
-
-ostream& Evento::Imprime(ostream& o)
-{
-	o << "Evento do tipo " << tipo << " marcado para " << tempo_acontecimento << endl;
-}
