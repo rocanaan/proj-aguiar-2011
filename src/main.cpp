@@ -133,7 +133,8 @@ int main(void)
     Config<int> *num_clientes = new Config<int>("num_clientes");
     Config<double> *taxa_chegada = new Config<double>("taxa_chegada");
     Config<bool> *deterministico = new Config<bool>("deterministico");
-    Config<bool> *debug = new Config<bool>("debug");
+    Config<bool> *debug_detalhado = new Config<bool>("debug_detalhado");
+	Config<bool> *debug_resultados = new Config<bool>("debug_resultados");
     Config<bool> *determina_transiente = new Config<bool>("determina_transiente");
 	Config<bool> *dois_por_vez = new Config<bool>("dois_por_vez");
 	Config<bool> *guardar_estatisticas = new Config<bool>("guardar_estatisticas");
@@ -168,7 +169,8 @@ int main(void)
 			num_clientes->procurar_e_adicionar(buffer);
 			taxa_chegada->procurar_e_adicionar(buffer);
 			deterministico->procurar_e_adicionar(buffer);
-			debug->procurar_e_adicionar(buffer);
+			debug_detalhado->procurar_e_adicionar(buffer);
+			debug_resultados->procurar_e_adicionar(buffer);
 			determina_transiente->procurar_e_adicionar(buffer);
 			dois_por_vez->procurar_e_adicionar(buffer);
 			guardar_estatisticas->procurar_e_adicionar(buffer);
@@ -181,7 +183,8 @@ int main(void)
 		num_clientes->verificar_valor();
 		taxa_chegada->verificar_valor();
 		deterministico->verificar_valor();
-		debug->verificar_valor();
+		debug_detalhado->verificar_valor();
+		debug_resultados->verificar_valor();
 		determina_transiente->verificar_valor();
 		dois_por_vez->verificar_valor();
 		guardar_estatisticas->verificar_valor();
@@ -194,11 +197,13 @@ int main(void)
 			cout<<num_clientes->nome()<< ": "<<num_clientes->num()<<endl;
 			cout<<taxa_chegada->nome()<< ": "<<taxa_chegada->num()<<endl;
 			cout<<deterministico->nome()<< ": "<<deterministico->num()<<endl;
-			cout<<debug->nome()<< ": "<<debug->num()<<endl;
+			cout<<debug_detalhado->nome()<< ": "<<debug_detalhado->num()<<endl;
+			cout<<debug_resultados->nome()<< ": "<<debug_resultados->num()<<endl;
 			cout<<determina_transiente->nome()<< ": "<<determina_transiente->num()<<endl;
 			cout<<dois_por_vez->nome()<< ": "<<dois_por_vez->num()<<endl;
 			cout<<guardar_estatisticas->nome()<< ": "<<guardar_estatisticas->num()<<endl;
 			cout<<forca_interrupcao->nome()<< ": "<<forca_interrupcao->num()<<endl;
+			
 			
 			if(!semente->erro())
 				cout<<semente->nome()<< ": "<<semente->num()<<endl;
@@ -239,7 +244,8 @@ int main(void)
 		arquivo_entradas<<num_clientes->nome()<< ": "<<num_clientes->num()<<endl;
 		arquivo_entradas<<taxa_chegada->nome()<< ": "<<taxa_chegada->num()<<endl;
 		arquivo_entradas<<deterministico->nome()<< ": "<<deterministico->num()<<endl;
-		arquivo_entradas<<debug->nome()<< ": "<<debug->num()<<endl;
+		arquivo_entradas<<debug_detalhado->nome()<< ": "<<debug_detalhado->num()<<endl;
+		arquivo_entradas<<debug_resultados->nome()<< ": "<<debug_resultados->num()<<endl;
 		arquivo_entradas<<determina_transiente->nome()<< ": "<<determina_transiente->num()<<endl;
 		arquivo_entradas<<dois_por_vez->nome()<< ": "<<dois_por_vez->num()<<endl;
 		arquivo_entradas<<guardar_estatisticas->nome()<< ": "<<guardar_estatisticas->num()<<endl;
@@ -260,7 +266,7 @@ int main(void)
 
 	for( int i = 0 ; i < num_rodadas->num() ; i++)
 	{
-		simula.Roda(num_clientes->num(),i, debug->num(), deterministico->num(), determina_transiente->num(), dois_por_vez->num(), nome_pasta, guardar_estatisticas, forca_interrupcao->num());
+		simula.Roda(num_clientes->num(),i, debug_detalhado->num(), deterministico->num(), determina_transiente->num(), dois_por_vez->num(), nome_pasta, guardar_estatisticas, forca_interrupcao->num(), debug_resultados->num());
 		if(!determina_transiente->num())
 			simula.LimpaResultadosParciais();
 	}
