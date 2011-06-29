@@ -145,6 +145,7 @@ int main(void)
 	Config<bool> *dois_por_vez = new Config<bool>("dois_por_vez");
 	Config<bool> *guardar_estatisticas = new Config<bool>("guardar_estatisticas");
 	Config<bool> *forca_interrupcao = new Config<bool>("forca_interrupcao");
+	Config<int> *semente = new Config<int>("semente");
 	
 	string nome_arquivo,valor,buffer,nome_pasta;
     ifstream entrada;
@@ -179,6 +180,7 @@ int main(void)
 			dois_por_vez->procurar_e_adicionar(buffer);
 			guardar_estatisticas->procurar_e_adicionar(buffer);
 			forca_interrupcao->procurar_e_adicionar(buffer);
+			semente->procurar_e_adicionar(buffer);
 
 		}
 		
@@ -191,6 +193,7 @@ int main(void)
 		dois_por_vez->verificar_valor();
 		guardar_estatisticas->verificar_valor();
 		forca_interrupcao->verificar_valor();
+		semente->verificar_valor();
 		
 		if( !num_rodadas->erro() and  !num_clientes->erro() and !taxa_chegada->erro())
 		{
@@ -203,6 +206,9 @@ int main(void)
 			cout<<dois_por_vez->nome()<< ": "<<dois_por_vez->num()<<endl;
 			cout<<guardar_estatisticas->nome()<< ": "<<guardar_estatisticas->num()<<endl;
 			cout<<forca_interrupcao->nome()<< ": "<<forca_interrupcao->num()<<endl;
+			
+			if(!semente->erro())
+				cout<<semente->nome()<< ": "<<semente->num()<<endl;
 
 			cout << endl << "Os valores estao corretos? (S/N)" << endl;
 			cin >> repeat_temp;
@@ -226,9 +232,12 @@ int main(void)
 		MKDIR(nome_pasta.c_str());
 	}
 	
+	Simulador simula;
 	
-	
-	Simulador simula = Simulador(taxa_chegada->num(),1,deterministico->num(), dois_por_vez->num(), forca_interrupcao->num());
+	if(!semente->erro())
+		simula = Simulador(taxa_chegada->num(),1,deterministico->num(), dois_por_vez->num(), forca_interrupcao->num(),semente->num() );
+	else
+		simula = Simulador(taxa_chegada->num(),1,deterministico->num(), dois_por_vez->num(), forca_interrupcao->num(), -1);
 
 	for( int i = 0 ; i < num_rodadas->num() ; i++)
 	{
