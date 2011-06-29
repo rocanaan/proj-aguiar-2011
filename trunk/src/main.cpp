@@ -70,7 +70,7 @@ int main(void)
              debug = false;
         
 
-		Simulador simula = Simulador(taxa_chegada,1,deterministico);
+		Simulador simula = Simulador(taxa_chegada,1,deterministico,dois_por_vez);
 
 		for( int i = 0 ; i < num_rodadas ; i++)
 		{
