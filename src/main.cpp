@@ -23,6 +23,7 @@ int main(void)
 	bool deterministico ;
 	bool debug;
 	bool determina_transiente;
+	bool dois_por_vez;
 	string temp;
 	
 	while (repeat != "N" and repeat !="n")
@@ -47,6 +48,13 @@ int main(void)
 	    cin >> num_rodadas;
 	    cin.ignore();
 	    
+	    cout << "Deseja rodar o modo \"dois por vez\"? (S/N)" << endl;
+        getline(cin,temp);
+        if(temp == "S" or temp == "s")
+	         dois_por_vez = true;
+        else 
+             dois_por_vez = false;
+	    
 	    cout << "Deseja rodar em modo deterministico? (S/N)" << endl;
 	    getline(cin,temp);
 	    if(temp == "S" or temp == "s")
@@ -66,7 +74,7 @@ int main(void)
 
 		for( int i = 0 ; i < num_rodadas ; i++)
 		{
-			simula.Roda(num_clientes,i, debug, deterministico, determina_transiente);
+			simula.Roda(num_clientes,i, debug, deterministico, determina_transiente, dois_por_vez);
 			if(!determina_transiente)
                simula.LimpaResultadosParciais();
 		}

@@ -83,12 +83,18 @@ Simulador::~Simulador()
 
 
 //Função principal do simulador, executa a simulação
-void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug_eventos, bool deterministico, bool determina_transiente)
+void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug_eventos, bool deterministico, bool determina_transiente, bool dois_por_vez)
 {
     int num_servicos_tipo_1_rodada_atual = 0;
 	int num_servicos_tipo_2_rodada_atual = 0;
 
 	double tempo_inicio_rodada = tempo_atual;
+	
+	if(dois_por_vez)
+	{
+                    cout << "Rodando em modo dois por vez" << endl;
+	                taxa_chegada=taxa_chegada/2;
+    }
 
 
 	//Enquanto o número total de clientes que queremos servir for maior que o número de clientes já servidos por completo, rodamos a simulação
@@ -191,15 +197,27 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug_e
 			id_proximo_cliente++;
 
 			fila1.push(cliente_atual); //Coloca o novo cliente na fila 1
-
+			
 			Evento proxChegada = Evento(nova_chegada,tempo_atual+gerador->GeraTempoExponencial(taxa_chegada, deterministico));//Agenda o Evento para a próxima chegada
 			filaEventos.push(proxChegada);
-
+			
 			if(debug_eventos)
 			{
 				cout << "          Inserindo o cliente " << cliente_atual.GetID() << " na fila 1" << endl;
-				cout << "          Agendando nova chegada para " << proxChegada.GetTempoAcontecimento() << endl;
 			}
+			
+			if(dois_por_vez){
+                             Cliente segundo_cliente = Cliente(id_proximo_cliente,tempo_atual,FILA_1, rodada_atual);
+                             id_proximo_cliente++;
+                             fila1.push(segundo_cliente);
+                             
+                             if(debug_eventos)
+			                 {
+			                 	cout << "          Inserindo o cliente " << segundo_cliente.GetID() << " na fila 1" << endl;
+			                  	cout << "          Agendando nova chegada (de 2 clientes) para " << proxChegada.GetTempoAcontecimento() << endl;
+  	                         }
+            }
+
 
 		}//Se o Evento, que está sendo tratado no momento, for do termino_de_servico
 		else if (evento_atual.GetTipo() == termino_de_servico)
@@ -394,7 +412,7 @@ void Simulador::CalculaResultados(int n, int servidos1, double t, int rodada, bo
      /* O estimador da variância é dado por (1/(n-1)) * somatório de ( ( Xi - Xmédio)^2) para cada amostra i, se forem feitas n amostras
      mas
      somatório de ( ( Xi - Xmédio)^2) para cada amostra i =
-     somatório de ( ( Xi^2 - Xi*Xmédio + Xmedio^2)) para cada amostra i
+     somatório de ( ( Xi^2 - 2Xi*Xmédio + Xmedio^2)) para cada amostra i
      passando o somatório para dentro, temos
      somatório de ( Xi^2) para cada amostra i - 2* somatório de ( Xi*Xmedio) para cada amostra i + somatório de (Xmédio)^2) para cada amostra i
      = acumula_quadradoX - 2*acumulaX*E[X] + n*E[X]^2
