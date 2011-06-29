@@ -71,9 +71,9 @@ class Simulador{
 		vector<double> V_W2;
     
     public:
-		Simulador(double ptaxa_chegada, double ptaxa_servico, bool deterministico, bool dois_por_vez);
+		Simulador(double ptaxa_chegada, double ptaxa_servico, bool deterministico, bool dois_por_vez, bool forca_interrupcao);
 		~Simulador();	
-		void Roda(int num_total_clientes, int rodada_atual, bool debug_eventos, bool deterministico, bool determina_transiente, bool dois_por_vez, string nome_pasta, bool guardar_estatisticas);
+		void Roda(int num_total_clientes, int rodada_atual, bool debug_eventos, bool deterministico, bool determina_transiente, bool dois_por_vez, string nome_pasta, bool guardar_estatisticas,bool forca_interrupcao);
 		void CalculaResultados(int n, int servidos1, double t, int rodada, bool debug_eventos, string nome_pasta, bool guardar_estatisticas);
 		void LimpaResultadosParciais();
 		void GeraDadosGrafico(int rodada, double pN1, double pN2, double pNq1, double pNq2, double pW1, double pW2, double pT1, double pT2, double pV_W1, double pV_W2, string nome_pasta);
