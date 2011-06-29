@@ -143,6 +143,7 @@ int main(void)
     Config<bool> *debug = new Config<bool>("debug");
     Config<bool> *determina_transiente = new Config<bool>("determina_transiente");
 	Config<bool> *dois_por_vez = new Config<bool>("dois_por_vez");
+	Config<bool> *guardar_estatisticas = new Config<bool>("guardar_estatisticas");
 	
 	string nome_arquivo,valor,buffer,nome_pasta;
     ifstream entrada;
@@ -175,6 +176,7 @@ int main(void)
 			debug->procurar_e_adicionar(buffer);
 			determina_transiente->procurar_e_adicionar(buffer);
 			dois_por_vez->procurar_e_adicionar(buffer);
+			guardar_estatisticas->procurar_e_adicionar(buffer);
 
 		}
 		
@@ -185,6 +187,7 @@ int main(void)
 		debug->verificar_valor();
 		determina_transiente->verificar_valor();
 		dois_por_vez->verificar_valor();
+		guardar_estatisticas->verificar_valor();
 		
 		if( !num_rodadas->erro() and  !num_clientes->erro() and !taxa_chegada->erro())
 		{
@@ -195,6 +198,7 @@ int main(void)
 			cout<<debug->nome()<< ": "<<debug->num()<<endl;
 			cout<<determina_transiente->nome()<< ": "<<determina_transiente->num()<<endl;
 			cout<<dois_por_vez->nome()<< ": "<<dois_por_vez->num()<<endl;
+			cout<<guardar_estatisticas->nome()<< ": "<<guardar_estatisticas->num()<<endl;
 
 			cout << endl << "Os valores estao corretos? (S/N)" << endl;
 			cin >> repeat_temp;
@@ -212,8 +216,11 @@ int main(void)
 			entrada.close();
 		}
     }
-	nome_pasta = nome_arquivo.erase(nome_arquivo.size()-3,3);
-	MKDIR(nome_pasta.c_str());
+	if(guardar_estatisticas->num())
+	{
+		nome_pasta = nome_arquivo.erase(nome_arquivo.size()-3,3);
+		MKDIR(nome_pasta.c_str());
+	}
 	
 	
 	
@@ -221,7 +228,7 @@ int main(void)
 
 	for( int i = 0 ; i < num_rodadas->num() ; i++)
 	{
-		simula.Roda(num_clientes->num(),i, debug->num(), deterministico->num(), determina_transiente->num(), dois_por_vez->num(),nome_pasta);
+		simula.Roda(num_clientes->num(),i, debug->num(), deterministico->num(), determina_transiente->num(), dois_por_vez->num(), nome_pasta, guardar_estatisticas);
 		if(!determina_transiente->num())
 			simula.LimpaResultadosParciais();
 	}

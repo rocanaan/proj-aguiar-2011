@@ -90,7 +90,7 @@ Simulador::~Simulador()
 
 
 //Função principal do simulador, executa a simulação
-void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug_eventos, bool deterministico, bool determina_transiente, bool dois_por_vez, string nome_pasta)
+void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug_eventos, bool deterministico, bool determina_transiente, bool dois_por_vez, string nome_pasta, bool guardar_estatisticas)
 {
     int num_servicos_tipo_1_rodada_atual = 0;
 	int num_servicos_tipo_2_rodada_atual = 0;
@@ -386,16 +386,16 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug_e
 	}
 	if(!determina_transiente)
 	{
-        CalculaResultados(num_servicos_tipo_2_rodada_atual, num_servicos_tipo_1_rodada_atual, tempo_atual - tempo_inicio_rodada, rodada_atual, debug_eventos, nome_pasta);
+        CalculaResultados(num_servicos_tipo_2_rodada_atual, num_servicos_tipo_1_rodada_atual, tempo_atual - tempo_inicio_rodada, rodada_atual, debug_eventos, nome_pasta, guardar_estatisticas);
     }
     else
     {
-        CalculaResultados(total_clientes_servidos_duas_vezes, total_clientes_servidos_uma_vez, tempo_atual, rodada_atual, debug_eventos, nome_pasta);
+        CalculaResultados(total_clientes_servidos_duas_vezes, total_clientes_servidos_uma_vez, tempo_atual, rodada_atual, debug_eventos, nome_pasta, guardar_estatisticas);
     }
 
 }
 
-void Simulador::CalculaResultados(int n, int servidos1, double t, int rodada, bool debug_eventos, string nome_pasta)
+void Simulador::CalculaResultados(int n, int servidos1, double t, int rodada, bool debug_eventos, string nome_pasta, bool guardar_estatisticas)
 {
     /*
     Divide cada uma das variaveis de fila Nq1, Nq2, N1 e N2 pelo tempo da rodada
@@ -455,8 +455,9 @@ void Simulador::CalculaResultados(int n, int servidos1, double t, int rodada, bo
 		cout << "     V[W1] = " << V_W1.back() << endl;
 		cout << "     V[W2] = " << V_W2.back() << endl;
 	}
-
-    GeraDadosGrafico(rodada, E_N1.back(), E_N2.back(), E_Nq1.back(), E_Nq2.back(), E_W1.back(), E_W2.back(), E_T1.back(), E_T2.back(), V_W1.back(),V_W2.back(), nome_pasta);
+	
+	if(guardar_estatisticas)
+		GeraDadosGrafico(rodada, E_N1.back(), E_N2.back(), E_Nq1.back(), E_Nq2.back(), E_W1.back(), E_W2.back(), E_T1.back(), E_T2.back(), V_W1.back(),V_W2.back(), nome_pasta);
 }
 
 void Simulador::LimpaResultadosParciais()
