@@ -126,15 +126,8 @@ int main(void)
 	
 	bool repeat = true;
 	char repeat_temp;
-	/*
-	int num_rodadas ;
-	double taxa_chegada ;
-	int num_clientes ;
-	bool deterministico ;
-	bool debug;
-	bool determina_transiente;
-	bool dois_por_vez;
-	*/
+	ofstream arquivo_entradas;
+
 	
 	Config<int> *num_rodadas = new Config<int>("num_rodadas");
     Config<int> *num_clientes = new Config<int>("num_clientes");
@@ -226,10 +219,36 @@ int main(void)
 			entrada.close();
 		}
     }
+	
+	/*No caso de guardarmos as estatisticas é gerado uma pasta com o nome do arquivo entrada e
+	criamos uma arquivo chamado "Entrada_usadas.txt" com todas as entradas usadas. Para analises posteriores.
+	
+	*/
 	if(guardar_estatisticas->num())
 	{
 		nome_pasta = nome_arquivo.erase(nome_arquivo.size()-3,3);
 		MKDIR(nome_pasta.c_str());
+		
+		string temp_pasta = nome_pasta;
+	
+		temp_pasta.append("/Entradas_usadas.txt");
+		char *arquivo = (char*)temp_pasta.c_str();
+		arquivo_entradas.open(arquivo, ios::app);
+		
+		arquivo_entradas<<num_rodadas->nome()<< ": "<<num_rodadas->num()<<endl;
+		arquivo_entradas<<num_clientes->nome()<< ": "<<num_clientes->num()<<endl;
+		arquivo_entradas<<taxa_chegada->nome()<< ": "<<taxa_chegada->num()<<endl;
+		arquivo_entradas<<deterministico->nome()<< ": "<<deterministico->num()<<endl;
+		arquivo_entradas<<debug->nome()<< ": "<<debug->num()<<endl;
+		arquivo_entradas<<determina_transiente->nome()<< ": "<<determina_transiente->num()<<endl;
+		arquivo_entradas<<dois_por_vez->nome()<< ": "<<dois_por_vez->num()<<endl;
+		arquivo_entradas<<guardar_estatisticas->nome()<< ": "<<guardar_estatisticas->num()<<endl;
+		arquivo_entradas<<forca_interrupcao->nome()<< ": "<<forca_interrupcao->num()<<endl;
+		
+		if(!semente->erro())
+					arquivo_entradas<<semente->nome()<< ": "<<semente->num()<<endl;
+
+		arquivo_entradas.close();
 	}
 	
 	Simulador simula;
