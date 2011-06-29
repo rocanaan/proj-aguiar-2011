@@ -1,0 +1,10 @@
+num_rodadas: 1000
+num_clientes: 500
+taxa_chegada: 0.1
+deterministico: 0
+debug: 0
+determina_transiente: 1
+dois_por_vez: 0
+guardar_estatisticas: 1
+forca_interrupcao: 0
+semente: 444
