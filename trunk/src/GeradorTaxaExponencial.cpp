@@ -1,6 +1,7 @@
 #include "include\GeradorTaxaExponencial.h"
 #include <iostream>
 #include <math.h>
+#include <time.h>
 
 //Inicialização da instancia
 GeradorTaxaExponencial* GeradorTaxaExponencial::instancia = NULL;
@@ -13,6 +14,9 @@ GeradorTaxaExponencial* GeradorTaxaExponencial::instancia = NULL;
 
 GeradorTaxaExponencial::GeradorTaxaExponencial() : CRandomMersenne(0)
 {
+	int semente = (int) time(0); //Gera uma semente aleatória
+	
+	this->DefinirSemente(semente); //Define a semente do gerador como a semente aleatória gerada acima
 }
 
 GeradorTaxaExponencial::~GeradorTaxaExponencial()
