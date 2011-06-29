@@ -71,7 +71,8 @@ class Simulador{
 		vector<double> V_W2;
     
     public:
-		Simulador(double ptaxa_chegada, double ptaxa_servico, bool deterministico, bool dois_por_vez, bool forca_interrupcao);
+		Simulador();
+		Simulador(double ptaxa_chegada, double ptaxa_servico, bool deterministico, bool dois_por_vez, bool forca_interrupcao, int semente);
 		~Simulador();	
 		void Roda(int num_total_clientes, int rodada_atual, bool debug_eventos, bool deterministico, bool determina_transiente, bool dois_por_vez, string nome_pasta, bool guardar_estatisticas,bool forca_interrupcao);
 		void CalculaResultados(int n, int servidos1, double t, int rodada, bool debug_eventos, string nome_pasta, bool guardar_estatisticas);

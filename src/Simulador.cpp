@@ -13,7 +13,7 @@ using namespace std;
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-Simulador::Simulador(double ptaxa_chegada, double ptaxa_servico, bool deterministico, bool dois_por_vez, bool forca_interrupcao)
+Simulador::Simulador(double ptaxa_chegada, double ptaxa_servico, bool deterministico, bool dois_por_vez, bool forca_interrupcao, int semente)
 {
 
 	// como vou passar quais serao as taxas de chegada e de servico, preciso ter aqui 2 instâncias do gerador.
@@ -32,7 +32,11 @@ Simulador::Simulador(double ptaxa_chegada, double ptaxa_servico, bool determinis
 
                     
 	gerador = GeradorTaxaExponencial::GetInstancia();
-
+	
+	//Se definimos alguma semente, então usar ela no gerador
+	if (semente > 0)
+		gerador->DefinirSemente(semente);
+		
 	//Limpa a heap de eventos, as filas e os dados
  	while(!filaEventos.empty()) filaEventos.pop();
 	while(!fila1.empty()) fila1.pop();
@@ -74,6 +78,10 @@ Simulador::Simulador(double ptaxa_chegada, double ptaxa_servico, bool determinis
 	N2_parcial = 0.0;
 
 
+}
+
+Simulador::Simulador()
+{
 }
 
 Simulador::~Simulador()
