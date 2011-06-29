@@ -13,7 +13,7 @@ using namespace std;
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-Simulador::Simulador(double ptaxa_chegada, double ptaxa_servico, bool deterministico)
+Simulador::Simulador(double ptaxa_chegada, double ptaxa_servico, bool deterministico, bool dois_por_vez)
 {
 
 	// como vou passar quais serao as taxas de chegada e de servico, preciso ter aqui 2 instâncias do gerador.
@@ -21,9 +21,16 @@ Simulador::Simulador(double ptaxa_chegada, double ptaxa_servico, bool determinis
 	// que tivesse como parametro a taxa requisitada.
 
 	//Se não usarmos 2 instâncias do Gerador vamos então ter as 2 taxas aqui que usamos em lugares diferentes do método Roda do Simulador
-	taxa_chegada = ptaxa_chegada;
-	taxa_servico = ptaxa_servico;
+	
+    //No modo dois por vez, trabalhamos com metade da taxa de chegada fornecida pelo usuario, mara manter a taxa efetiva igual a que foi dada.
+    if(!dois_por_vez)
+                     taxa_chegada = ptaxa_chegada;
+    else
+                     taxa_chegada = ptaxa_chegada/2;
+	
+    taxa_servico = ptaxa_servico;
 
+                    
 	gerador = GeradorTaxaExponencial::GetInstancia();
 
 	//Limpa a heap de eventos, as filas e os dados
@@ -93,7 +100,6 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug_e
 	if(dois_por_vez)
 	{
                     cout << "Rodando em modo dois por vez" << endl;
-	                taxa_chegada=taxa_chegada/2;
     }
 
 
@@ -230,7 +236,7 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug_e
 				fila2.push_back(cliente_em_servico);// Coloca o cliente na fila 2
 
 				//Se a fila 2 só tem o próprio cliente e não tem ninguem em serviço, quer dizer que o cliente da fila 2 será atendido direto
-				if(fila2.size() == 1)
+				if(fila2.size() == 1 && fila1.empty())
 					fila2.back().SetDiretoAoServidor(true);
 				else
 					fila2.back().SetDiretoAoServidor(false);
@@ -403,10 +409,15 @@ void Simulador::CalculaResultados(int n, int servidos1, double t, int rodada, bo
     /*
     Divide cada um dos acumuladores dos clientes pelo numero de clientes servidos
     */
-    E_W1.push_back(acumulaW1/servidos1);
-    E_T1.push_back(acumulaT1/servidos1);
-    E_W2.push_back(acumulaW2/n);
-    E_T2.push_back(acumulaT2/n);
+    double EW1 = acumulaW1/servidos1;
+    double ET1 = acumulaT1/servidos1;
+    double EW2 = acumulaW2/n;
+    double ET2 = acumulaT2/n;
+    
+    E_W1.push_back(EW1);
+    E_T1.push_back(ET1);
+    E_W2.push_back(EW2);
+    E_T2.push_back(ET2);
 
 
      /* O estimador da variância é dado por (1/(n-1)) * somatório de ( ( Xi - Xmédio)^2) para cada amostra i, se forem feitas n amostras
@@ -426,8 +437,8 @@ void Simulador::CalculaResultados(int n, int servidos1, double t, int rodada, bo
      para X = W1 ou X = W2
      */
 
-	V_W1.push_back((acumula_quadradoW1 - E_W1.back()*servidos1)/(servidos1-1));
-    V_W2.push_back((acumula_quadradoW2 - E_W2.back()*n)/(n-1));
+	V_W1.push_back((acumula_quadradoW1 - EW1*EW1*servidos1)/(servidos1-1));
+    V_W2.push_back((acumula_quadradoW2 - EW2*EW2*n)/(n-1));
 
 
     if(1)
