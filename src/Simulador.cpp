@@ -13,7 +13,7 @@ using namespace std;
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-Simulador::Simulador(double ptaxa_chegada, double ptaxa_servico, bool deterministico, bool dois_por_vez)
+Simulador::Simulador(double ptaxa_chegada, double ptaxa_servico, bool deterministico, bool dois_por_vez, bool forca_interrupcao)
 {
 
 	// como vou passar quais serao as taxas de chegada e de servico, preciso ter aqui 2 instâncias do gerador.
@@ -90,7 +90,7 @@ Simulador::~Simulador()
 
 
 //Função principal do simulador, executa a simulação
-void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug_eventos, bool deterministico, bool determina_transiente, bool dois_por_vez, string nome_pasta, bool guardar_estatisticas)
+void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug_eventos, bool deterministico, bool determina_transiente, bool dois_por_vez, string nome_pasta, bool guardar_estatisticas, bool forca_interrupcao)
 {
     int num_servicos_tipo_1_rodada_atual = 0;
 	int num_servicos_tipo_2_rodada_atual = 0;

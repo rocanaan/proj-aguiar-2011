@@ -144,6 +144,7 @@ int main(void)
     Config<bool> *determina_transiente = new Config<bool>("determina_transiente");
 	Config<bool> *dois_por_vez = new Config<bool>("dois_por_vez");
 	Config<bool> *guardar_estatisticas = new Config<bool>("guardar_estatisticas");
+	Config<bool> *forca_interrupcao = new Config<bool>("forca_interrupcao");
 	
 	string nome_arquivo,valor,buffer,nome_pasta;
     ifstream entrada;
@@ -177,6 +178,7 @@ int main(void)
 			determina_transiente->procurar_e_adicionar(buffer);
 			dois_por_vez->procurar_e_adicionar(buffer);
 			guardar_estatisticas->procurar_e_adicionar(buffer);
+			forca_interrupcao->procurar_e_adicionar(buffer);
 
 		}
 		
@@ -188,6 +190,7 @@ int main(void)
 		determina_transiente->verificar_valor();
 		dois_por_vez->verificar_valor();
 		guardar_estatisticas->verificar_valor();
+		forca_interrupcao->verificar_valor();
 		
 		if( !num_rodadas->erro() and  !num_clientes->erro() and !taxa_chegada->erro())
 		{
@@ -199,6 +202,7 @@ int main(void)
 			cout<<determina_transiente->nome()<< ": "<<determina_transiente->num()<<endl;
 			cout<<dois_por_vez->nome()<< ": "<<dois_por_vez->num()<<endl;
 			cout<<guardar_estatisticas->nome()<< ": "<<guardar_estatisticas->num()<<endl;
+			cout<<forca_interrupcao->nome()<< ": "<<forca_interrupcao->num()<<endl;
 
 			cout << endl << "Os valores estao corretos? (S/N)" << endl;
 			cin >> repeat_temp;
@@ -224,11 +228,11 @@ int main(void)
 	
 	
 	
-	Simulador simula = Simulador(taxa_chegada->num(),1,deterministico->num(), dois_por_vez->num());
+	Simulador simula = Simulador(taxa_chegada->num(),1,deterministico->num(), dois_por_vez->num(), forca_interrupcao->num());
 
 	for( int i = 0 ; i < num_rodadas->num() ; i++)
 	{
-		simula.Roda(num_clientes->num(),i, debug->num(), deterministico->num(), determina_transiente->num(), dois_por_vez->num(), nome_pasta, guardar_estatisticas);
+		simula.Roda(num_clientes->num(),i, debug->num(), deterministico->num(), determina_transiente->num(), dois_por_vez->num(), nome_pasta, guardar_estatisticas, forca_interrupcao->num());
 		if(!determina_transiente->num())
 			simula.LimpaResultadosParciais();
 	}
