@@ -124,6 +124,7 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug_d
 		if(debug_detalhado)
 		{
 			cout << endl << "Evento sendo tratado: Evento do tipo " << evento_atual.GetTipo() << " no tempo " << tempo_atual << endl;
+			cout << "A fila de Eventos tem tamanho " << filaEventos.size() << " apos remover o evento atual" << endl;
 			cout << "Status do sistema (antes de resolver o evento):" << endl;
 			if(servidor_vazio)
 							  cout << "     O servidor esta vazio" << endl;
@@ -182,14 +183,24 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug_d
 			//Condição para tratar a interrupção presente no sistema.
 			//Se o servidor estiver ocupado e este cliente for da fila 2 então o cliente que acabou de chegar irá interromper este serviço
 			if(!servidor_vazio && cliente_em_servico.GetFila() == FILA_2)
-			{
-				Evento evento_destruido = filaEventos.top(); //Guardamos o Evento a ser destruido
-				filaEventos.pop();//Remove o Evento de Término de serviço gerado por este cliente da fila 2 ( ele vai sempre ser o top)
+			{    
+                Evento evento_destruido = filaEventos.top();        
+                if(forca_interrupcao){
+                     evento_destruido = RemoveTerminoServico();
+                     if(debug_detalhado)
+				     {
+                        cout << "          Evento sendo destruido: : Evento do tipo " << evento_destruido.GetTipo() << " marcado para " <<  evento_destruido.GetTempoAcontecimento()<< endl;
+                     }
+                }
+				else{
+                     //evento_destruido = filaEventos.top(); //Guardamos o Evento a ser destruido
+                     filaEventos.pop();//Remove o Evento de Término de serviço gerado por este cliente da fila 2 ( ele vai sempre ser o top)
+                     if(debug_detalhado)
+				     {
+                        cout << "          Evento sendo destruido: : Evento do tipo " << evento_destruido.GetTipo() << " marcado para " <<  evento_destruido.GetTempoAcontecimento()<< endl;
+                     }
+                }
 
-				if(debug_detalhado)
-				{
-					cout << "          Evento sendo destruido: : Evento do tipo " << evento_destruido.GetTipo() << " marcado para " <<  evento_destruido.GetTempoAcontecimento()<< endl;
-				}
 				cliente_em_servico.Interromper();//Marca o cliente como sendo um cliente Interrompido
 				cliente_em_servico.SetTempoRestante(evento_destruido.GetTempoAcontecimento() - tempo_atual);//O tempo restante para finalizar seu servico é guardado
 
@@ -205,7 +216,7 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug_d
 				cliente_atual.SetDiretoAoServidor(true);
 				if(debug_detalhado)
 				{
-					cout << "Cliente foi direto ao servidor"<<endl;
+					cout << "          Cliente foi direto ao servidor"<<endl;
 				}
 			}
 
@@ -213,24 +224,25 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug_d
 
 			fila1.push(cliente_atual); //Coloca o novo cliente na fila 1
 			
-			Evento proxChegada = Evento(nova_chegada,tempo_atual+gerador->GeraTempoExponencial(taxa_chegada, deterministico));//Agenda o Evento para a próxima chegada
-			filaEventos.push(proxChegada);
+			if(evento_atual.GetTipo() == nova_chegada)
+            {
+               Evento proxChegada = Evento(nova_chegada,tempo_atual+gerador->GeraTempoExponencial(taxa_chegada, deterministico));//Agenda o Evento para a próxima chegada
+			   filaEventos.push(proxChegada);
+            }
 			
 			if(debug_detalhado)
 			{
 				cout << "          Inserindo o cliente " << cliente_atual.GetID() << " na fila 1" << endl;
 			}
 			
-			if(dois_por_vez){
-                             Cliente segundo_cliente = Cliente(id_proximo_cliente,tempo_atual,FILA_1, rodada_atual);
-                             id_proximo_cliente++;
-                             fila1.push(segundo_cliente);
-                             
-                             if(debug_detalhado)
-			                 {
-			                 	cout << "          Inserindo o cliente " << segundo_cliente.GetID() << " na fila 1" << endl;
-			                  	cout << "          Agendando nova chegada (de 2 clientes) para " << proxChegada.GetTempoAcontecimento() << endl;
-  	                         }
+			if(dois_por_vez and evento_atual.GetTipo() == nova_chegada)
+			{
+                            Evento artificial = Evento(chegada_artificial,tempo_atual);
+			                filaEventos.push(artificial);
+                            if(debug_detalhado)
+                            {
+                                              cout << "          Agendando chegada artificial para " << artificial.GetTempoAcontecimento() << endl;
+                            }                   
             }
             
             if(forca_interrupcao and evento_atual.GetTipo() == nova_chegada)
@@ -402,6 +414,8 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug_d
 
 			}
 		}
+		if(debug_detalhado)
+                           cout << "A fila de Eventos tem tamanho " << filaEventos.size() << endl;
 	}
 	if(!determina_transiente)
 	{
@@ -458,6 +472,10 @@ void Simulador::CalculaResultados(int n, int servidos1, double t, int rodada, bo
 
 	V_W1.push_back((acumula_quadradoW1 - EW1*EW1*servidos1)/(servidos1-1));
     V_W2.push_back((acumula_quadradoW2 - EW2*EW2*n)/(n-1));
+    
+    
+    cout << "Acumula W2 = " << acumulaW2 << ", media = " << EW2 << endl;
+    cout << "("<< acumula_quadradoW2 << " - " << EW2 << " * " << EW2 << " * " << n << ") / " << n-1 << endl;
 
 
     if(debug_resultados)
@@ -571,6 +589,24 @@ void Simulador::GeraDadosGrafico(int rodada, double pN1, double pN2, double pNq1
 	outputFile << rodada <<"\t"<< pV_W2 << endl;
 	outputFile.close();
 }
+
+Evento Simulador::RemoveTerminoServico(){
+     priority_queue<Evento, vector<Evento>, greater<Evento> > filaTemp;
+     Evento topo = filaEventos.top();
+     while(topo.GetTipo() != termino_de_servico){
+        cout << "oi" << endl;
+        filaTemp.push(filaEventos.top());
+        filaEventos.pop();
+        topo = filaEventos.top();
+     }
+     filaEventos.pop();
+     while(!filaTemp.empty()){
+        filaEventos.push(filaTemp.top());
+        filaTemp.pop();
+     }
+     return topo;
+}
+        
 
 vector<double> Simulador::GetE_Nq1()
 {
