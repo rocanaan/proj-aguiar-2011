@@ -101,7 +101,7 @@ Simulador::~Simulador()
 
 
 //Função principal do simulador, executa a simulação
-void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug, bool deterministico, bool determina_transiente, bool dois_por_vez, string nome_pasta, bool guardar_estatisticas, bool interrupcao_forcada, bool mostrar_resultados, int tamanho_transiente)
+void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug, bool deterministico, bool determina_transiente, bool dois_por_vez, string nome_pasta, bool guardar_estatisticas, bool interrupcao_forcada, bool mostrar_resultados)
 {
     int num_servicos_tipo_1_rodada_atual = 0;
 	int num_servicos_tipo_2_rodada_atual = 0;
@@ -155,7 +155,7 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug, 
            No final da simulacao, teremos a area sob a curva de cada uma dessas variaveis.
            Faltara dividir pelo tempo total decorrido para calcular a media.
         */
-		if (tamanho_transiente == 0)
+		if (rodada_atual != 0)
 		{
 			Nq1_parcial += fila1.size()*tempo_desde_evento_anterior;
 			Nq2_parcial += fila2.size()*tempo_desde_evento_anterior;
@@ -294,7 +294,7 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug, 
 				/////////////////////////////////////////////////////////////////////////////////////////////////////
 
 				//Verifica se o cliente em serviço é da rodada(coloração usada) em que estamos, pois só esse cliente entra nos dados desta rodada
-				if((cliente_em_servico.GetRodadaPertencente() == rodada_atual or determina_transiente) and tamanho_transiente == 0)
+				if((cliente_em_servico.GetRodadaPertencente() == rodada_atual or determina_transiente) and rodada_atual != 0)
 				{
 					if(!cliente_em_servico.GetDiretoAoServidor())
 						cliente_W1 = cliente_em_servico.W1();
@@ -338,15 +338,10 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug, 
 				/////////////////////////////////////////////////////////////////////////////////////////////////////
 
 				//Verifica se o cliente em serviço é da rodada(coloração usada) em que estamos, pois só esse cliente entra nos dados desta rodada
-				if((cliente_em_servico.GetRodadaPertencente() == rodada_atual or determina_transiente) and tamanho_transiente == 0)
+				if((cliente_em_servico.GetRodadaPertencente() == rodada_atual or determina_transiente) and rodada_atual != 0)
 				{
 					total_clientes_servidos_duas_vezes ++;
-					
-				//	if(tamanho_transiente <= 0 )
-						num_servicos_tipo_2_rodada_atual ++;
-					
-					//tamanho_transiente ++;
-					
+					num_servicos_tipo_2_rodada_atual ++;
 
 					if(cliente_em_servico.VerificaInterrompido() == N_INTERROMPIDO && cliente_em_servico.GetDiretoAoServidor())
 						cliente_W2 = 0;
@@ -362,17 +357,14 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug, 
 						cout << "          Dados do cliente " << cliente_em_servico.GetID() << ": W2 =  " << cliente_W2 << ", T2 = " << cliente_em_servico.T2() << endl;
 					}
 				}
+				
+				if(rodada_atual == 0)
+					num_servicos_tipo_2_rodada_atual ++;
 
 				/////////////////////////////////////////////////////////////////////////////////////////////////////
 				/////////////////////////////////////////FIM DA COLETA DE DADOS//////////////////////////////////////
 				/////////////////////////////////////////////////////////////////////////////////////////////////////
-				
-				/*
-					O tamanho da fase transiente é usado para determinar quando devemos começar a coletar os dados.
-					Enquanto o tamanho da fase transiente, determinada pelo usuario, for diferente de 0, nós decrementamos um de seu valor
-				*/
-				if(tamanho_transiente != 0)
-					tamanho_transiente--;
+	
 			}
 
 			//
@@ -438,14 +430,17 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug, 
 		if(debug)
                            cout << "A fila de Eventos tem tamanho " << filaEventos.size() << endl;
 	}
-	if(!determina_transiente)
+	if( rodada_atual != 0)
 	{
-        CalculaResultados(num_servicos_tipo_2_rodada_atual, num_servicos_tipo_1_rodada_atual, tempo_atual - tempo_inicio_rodada, rodada_atual, mostrar_resultados, nome_pasta, guardar_estatisticas);
-    }
-    else
-    {
-        CalculaResultados(total_clientes_servidos_duas_vezes, total_clientes_servidos_uma_vez, tempo_atual, rodada_atual, mostrar_resultados, nome_pasta, guardar_estatisticas);
-    }
+		if(!determina_transiente)
+		{
+			CalculaResultados(num_servicos_tipo_2_rodada_atual, num_servicos_tipo_1_rodada_atual, tempo_atual - tempo_inicio_rodada, rodada_atual, mostrar_resultados, nome_pasta, guardar_estatisticas);
+		}
+		else
+		{
+			CalculaResultados(total_clientes_servidos_duas_vezes, total_clientes_servidos_uma_vez, tempo_atual, rodada_atual, mostrar_resultados, nome_pasta, guardar_estatisticas);
+		}
+	}
 
 }
 
