@@ -6,7 +6,7 @@
 #include <iostream>
 
 using namespace std;
-enum EnumTipo{nova_chegada,termino_de_servico};
+enum EnumTipo{nova_chegada,chegada_artificial,termino_de_servico};
 
 class Evento{
 	private:

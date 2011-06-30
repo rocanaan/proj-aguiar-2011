@@ -22,11 +22,12 @@ Simulador::Simulador(double ptaxa_chegada, double ptaxa_servico, bool determinis
 
 	//Se não usarmos 2 instâncias do Gerador vamos então ter as 2 taxas aqui que usamos em lugares diferentes do método Roda do Simulador
 	
-    //No modo dois por vez, trabalhamos com metade da taxa de chegada fornecida pelo usuario, mara manter a taxa efetiva igual a que foi dada.
-    if(!dois_por_vez)
-                     taxa_chegada = ptaxa_chegada;
-    else
+    /*No modos dois por vez e  de interrupcao forçada, trabalhamos com
+     metade da taxa de chegada fornecida pelo usuario, mara manter a taxa efetiva igual a que foi dada.*/
+    if(dois_por_vez or forca_interrupcao)
                      taxa_chegada = ptaxa_chegada/2;
+    else
+                     taxa_chegada = ptaxa_chegada;
 	
     taxa_servico = ptaxa_servico;
 
@@ -176,7 +177,7 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug_d
 
 
 		//Se o Evento, que está sendo tratado no momento, for do tipo nova_chegada
-		if(evento_atual.GetTipo() == nova_chegada)
+		if(evento_atual.GetTipo() == nova_chegada or evento_atual.GetTipo() == chegada_artificial)
 		{
 			//Condição para tratar a interrupção presente no sistema.
 			//Se o servidor estiver ocupado e este cliente for da fila 2 então o cliente que acabou de chegar irá interromper este serviço
@@ -230,6 +231,16 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug_d
 			                 	cout << "          Inserindo o cliente " << segundo_cliente.GetID() << " na fila 1" << endl;
 			                  	cout << "          Agendando nova chegada (de 2 clientes) para " << proxChegada.GetTempoAcontecimento() << endl;
   	                         }
+            }
+            
+            if(forca_interrupcao and evento_atual.GetTipo() == nova_chegada)
+            {
+             Evento artificial = Evento(chegada_artificial,tempo_atual+gerador->GeraTempoExponencial(taxa_servico*2/3, deterministico));
+			 filaEventos.push(artificial);
+                             if(debug_detalhado)
+                             {
+                                                cout << "          Agendando chegada artificial para " << artificial.GetTempoAcontecimento() << endl;
+                             }                   
             }
 
 
