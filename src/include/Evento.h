@@ -16,6 +16,7 @@ class Evento{
 	public:
 		Evento(EnumTipo ptipo, double ptempo_acontecimento);
 		EnumTipo GetTipo();
+		string GetNome();
 		double GetTempoAcontecimento() const;
 		inline bool operator > (const Evento evento2) const { return (this->GetTempoAcontecimento() > evento2.GetTempoAcontecimento()); }
 };

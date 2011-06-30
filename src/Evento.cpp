@@ -30,3 +30,13 @@ double Evento::GetTempoAcontecimento() const
 {
 	return tempo_acontecimento;
 }
+
+string Evento::GetNome()
+{
+       if (tipo == 0)
+          return "Nova Chegada";
+       if (tipo == 1)
+          return "Chegada Artificial";
+       return "Termino de Servico";
+}
+          
