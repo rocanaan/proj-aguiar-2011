@@ -473,9 +473,6 @@ void Simulador::CalculaResultados(int n, int servidos1, double t, int rodada, bo
 	V_W1.push_back((acumula_quadradoW1 - EW1*EW1*servidos1)/(servidos1-1));
     V_W2.push_back((acumula_quadradoW2 - EW2*EW2*n)/(n-1));
     
-    
-    cout << "Acumula W2 = " << acumulaW2 << ", media = " << EW2 << endl;
-    cout << "("<< acumula_quadradoW2 << " - " << EW2 << " * " << EW2 << " * " << n << ") / " << n-1 << endl;
 
 
     if(debug_resultados)
