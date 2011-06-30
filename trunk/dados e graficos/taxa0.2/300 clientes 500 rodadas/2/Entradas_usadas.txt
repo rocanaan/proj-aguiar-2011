@@ -1,0 +1,11 @@
+num_rodadas: 500
+num_clientes: 300
+taxa_chegada: 0.2
+deterministico: 0
+debug_detalhado: 0
+debug_resultados: 0
+determina_transiente: 1
+dois_por_vez: 0
+guardar_estatisticas: 1
+forca_interrupcao: 0
+semente: 2147483647
