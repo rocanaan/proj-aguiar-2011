@@ -123,13 +123,13 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug_d
 
 		if(debug_detalhado)
 		{
-			cout << endl << "Evento sendo tratado: Evento do tipo " << evento_atual.GetTipo() << " no tempo " << tempo_atual << endl;
+			cout << endl << "Evento sendo tratado: Evento do tipo " << evento_atual.GetNome() << " no instante " << tempo_atual << endl;
 			cout << "A fila de Eventos tem tamanho " << filaEventos.size() << " apos remover o evento atual" << endl;
 			cout << "Status do sistema (antes de resolver o evento):" << endl;
 			if(servidor_vazio)
 							  cout << "     O servidor esta vazio" << endl;
 			else
-							  cout << "     Existe 1 cliente em servico, vindo da fila " << cliente_em_servico.GetFila() <<endl;
+							  cout << "     O cliente numero " << cliente_em_servico.GetID() << " esta em servico, vindo da fila " << cliente_em_servico.GetFila() <<endl;
 			cout << "     Numero de pessoas na fila 1: " << fila1.size()  << endl;
 			cout << "     Numero de pessoas na fila 2: " << fila2.size() << endl;
         }
@@ -189,7 +189,7 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug_d
                      evento_destruido = RemoveTerminoServico();
                      if(debug_detalhado)
 				     {
-                        cout << "          Evento sendo destruido: : Evento do tipo " << evento_destruido.GetTipo() << " marcado para " <<  evento_destruido.GetTempoAcontecimento()<< endl;
+                        cout << "          Evento sendo destruido: : Evento do tipo " << evento_destruido.GetNome() << " marcado para o instante " <<  evento_destruido.GetTempoAcontecimento()<< endl;
                      }
                 }
 				else{
@@ -197,7 +197,7 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug_d
                      filaEventos.pop();//Remove o Evento de Término de serviço gerado por este cliente da fila 2 ( ele vai sempre ser o top)
                      if(debug_detalhado)
 				     {
-                        cout << "          Evento sendo destruido: : Evento do tipo " << evento_destruido.GetTipo() << " marcado para " <<  evento_destruido.GetTempoAcontecimento()<< endl;
+                        cout << "          Evento sendo destruido: : Evento do tipo " << evento_destruido.GetTipo() << " marcado para o instante " <<  evento_destruido.GetTempoAcontecimento()<< endl;
                      }
                 }
 
@@ -214,10 +214,6 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug_d
 			if(servidor_vazio)
 			{
 				cliente_atual.SetDiretoAoServidor(true);
-				if(debug_detalhado)
-				{
-					cout << "          Cliente foi direto ao servidor"<<endl;
-				}
 			}
 
 			id_proximo_cliente++;
@@ -228,6 +224,10 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug_d
             {
                Evento proxChegada = Evento(nova_chegada,tempo_atual+gerador->GeraTempoExponencial(taxa_chegada, deterministico));//Agenda o Evento para a próxima chegada
 			   filaEventos.push(proxChegada);
+			    if(debug_detalhado)
+               {
+                                   cout << "          Agendando proxima chegada para o instante " << proxChegada.GetTempoAcontecimento() << endl;
+               }         
             }
 			
 			if(debug_detalhado)
@@ -241,7 +241,7 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug_d
 			                filaEventos.push(artificial);
                             if(debug_detalhado)
                             {
-                                              cout << "          Agendando chegada artificial para " << artificial.GetTempoAcontecimento() << endl;
+                                              cout << "          Agendando chegada artificial para o instante " << artificial.GetTempoAcontecimento() << endl;
                             }                   
             }
             
@@ -251,7 +251,7 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug_d
 			 filaEventos.push(artificial);
                              if(debug_detalhado)
                              {
-                                                cout << "          Agendando chegada artificial para " << artificial.GetTempoAcontecimento() << endl;
+                                                cout << "          Agendando chegada artificial para o instante " << artificial.GetTempoAcontecimento() << endl;
                              }                   
             }
 
@@ -381,7 +381,7 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug_d
 				if(debug_detalhado)
 				{
 					cout << "          Transferindo cliente " << cliente_em_servico.GetID() << " da fila 1 para o servidor." << endl;
-					cout << "          Agendando termino do primeiro servico do cliente " << cliente_em_servico.GetID() <<" para " << proxTerminoServico.GetTempoAcontecimento() << endl;;
+					cout << "          Agendando termino do primeiro servico do cliente " << cliente_em_servico.GetID() <<" para o instante " << proxTerminoServico.GetTempoAcontecimento() << endl;;
 				}
 			}
 			else if(!fila2.empty())
@@ -401,7 +401,7 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug_d
 					if(debug_detalhado)
 					{
 						cout << "          Transferindo cliente " << cliente_em_servico.GetID() << " da fila 2 para o servidor." << endl;
-						cout << "          Agendando termino do segundo servico do cliente " << cliente_em_servico.GetID() << " para " << proxTerminoServico.GetTempoAcontecimento() << endl;
+						cout << "          Agendando termino do segundo servico do cliente " << cliente_em_servico.GetID() << " para o instante " << proxTerminoServico.GetTempoAcontecimento() << endl;
 					}
 				}
 
@@ -483,16 +483,16 @@ void Simulador::CalculaResultados(int n, int servidos1, double t, int rodada, bo
     if(debug_resultados)
 	{
 		cout << endl <<endl << endl << "Imprimindo resultados da rodada "<< rodada+1 <<" :"<< endl;
-		cout << "     E[Nq1] = " << E_Nq1.back() << endl;
-		cout << "     E[Nq2] = " << E_Nq2.back() << endl;
-		cout << "     E[N1] = " << E_N1.back() << endl;
-		cout << "     E[N2] = " << E_N2.back() << endl;
 		cout << "     E[W1] = " << E_W1.back() << endl;
 		cout << "     E[T1] = " << E_T1.back() << endl;
-		cout << "     E[W2] = " << E_W2.back() << endl;
-		cout << "     E[T2] = " << E_T2.back() << endl;
 		cout << "     V[W1] = " << V_W1.back() << endl;
+        cout << "     E[Nq1] = " << E_Nq1.back() << endl;
+        cout << "     E[N1] = " << E_N1.back() << endl << endl;
+        cout << "     E[W2] = " << E_W2.back() << endl;
+        cout << "     E[T2] = " << E_T2.back() << endl;
 		cout << "     V[W2] = " << V_W2.back() << endl;
+		cout << "     E[Nq2] = " << E_Nq2.back() << endl;
+		cout << "     E[N2] = " << E_N2.back() << endl;
 	}
 	
 	if(guardar_estatisticas)

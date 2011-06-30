@@ -185,119 +185,7 @@ void CalculaIntervaloConfianca(int num_rodadas, vector<double> E_N1, vector<doub
 {
 	double estimador_media, estimador_var, intervalo;
 
-	
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
-	//////////////////////////////--------------Cálculo do Intervalo de N1--------------////////////////////////////////////
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
-	estimador_media = 0.0;
-	estimador_var = 0.0;
-	
-    for(unsigned int i = 0; i < num_rodadas ; i++)
-    {
-        estimador_media += (double)E_N1[i];
-    }
-    estimador_media /= (double)num_rodadas;
-
-    for(unsigned int i = 0; i < num_rodadas ; i++)
-    {
-        estimador_var += (((double)E_N1[i]) - estimador_media) * (((double)E_N1[i]) - estimador_media);
-    }
-    estimador_var /= (double)(num_rodadas - 1);
-
-    intervalo = CONF95 * (sqrt(estimador_var) / sqrt(num_rodadas));
-
-	printf("E[N1]\n", (estimador_media - intervalo < 0) ? 0 : estimador_media - intervalo);
-	printf("     Intervalo = %lf ate %lf\n",(estimador_media - intervalo < 0) ? 0 : estimador_media - intervalo, estimador_media + intervalo);
-	printf("     Media do Intervalo: %lf \n", estimador_media);
-	printf("     Tamanho: %lf \n",  2.0 * intervalo);
-	printf("     Tamanho em relacao a Media: %lf%% \n", (200.0 * intervalo) / estimador_media);
-
-
-		
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
-	//////////////////////////////--------------Cálculo do Intervalo de N2--------------////////////////////////////////////
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	estimador_media = 0.0;
-	estimador_var = 0.0;
-	
-    for(unsigned int i = 0; i < num_rodadas ; i++)
-    {
-        estimador_media += (double)E_N2[i];
-    }
-    estimador_media /= (double)num_rodadas;
-
-    for(unsigned int i = 0; i < num_rodadas ; i++)
-    {
-        estimador_var += (((double)E_N2[i]) - estimador_media) * (((double)E_N2[i]) - estimador_media);
-    }
-    estimador_var /= (double)(num_rodadas - 1);
-
-    intervalo = CONF95 * (sqrt(estimador_var) / sqrt(num_rodadas));
-
-	printf("E[N2]\n", (estimador_media - intervalo < 0) ? 0 : estimador_media - intervalo);
-	printf("     Intervalo = %lf ate %lf\n",(estimador_media - intervalo < 0) ? 0 : estimador_media - intervalo, estimador_media + intervalo);
-	printf("     Media do Intervalo: %lf \n", estimador_media);
-	printf("     Tamanho: %lf \n",  2.0 * intervalo);
-	printf("     Tamanho em relacao a Media: %lf%% \n", (200.0 * intervalo) / estimador_media);
-
-	
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
-	//////////////////////////////--------------Cálculo do Intervalo de Nq1--------------////////////////////////////////////
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	estimador_media = 0.0;
-	estimador_var = 0.0;
-	
-    for(unsigned int i = 0; i < num_rodadas ; i++)
-    {
-        estimador_media += (double)E_Nq1[i];
-    }
-    estimador_media /= (double)num_rodadas;
-
-    for(unsigned int i = 0; i < num_rodadas ; i++)
-    {
-        estimador_var += (((double)E_Nq1[i]) - estimador_media) * (((double)E_Nq1[i]) - estimador_media);
-    }
-    estimador_var /= (double)(num_rodadas - 1);
-
-    intervalo = CONF95 * (sqrt(estimador_var) / sqrt(num_rodadas));
-
-	printf("E[Nq1]\n", (estimador_media - intervalo < 0) ? 0 : estimador_media - intervalo);
-	printf("     Intervalo = %lf ate %lf\n",(estimador_media - intervalo < 0) ? 0 : estimador_media - intervalo, estimador_media + intervalo);
-	printf("     Media do Intervalo: %lf \n", estimador_media);
-	printf("     Tamanho: %lf \n",  2.0 * intervalo);
-	printf("     Tamanho em relacao a Media: %lf%% \n", (200.0 * intervalo) / estimador_media);
-	
-	
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
-	//////////////////////////////--------------Cálculo do Intervalo de Nq2--------------////////////////////////////////////
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	estimador_media = 0.0;
-	estimador_var = 0.0;
-	
-    for(unsigned int i = 0; i < num_rodadas ; i++)
-    {
-        estimador_media += (double)E_Nq2[i];
-    }
-    estimador_media /= (double)num_rodadas;
-
-    for(unsigned int i = 0; i < num_rodadas ; i++)
-    {
-        estimador_var += (((double)E_Nq2[i]) - estimador_media) * (((double)E_Nq2[i]) - estimador_media);
-    }
-    estimador_var /= (double)(num_rodadas - 1);
-
-    intervalo = CONF95 * (sqrt(estimador_var) / sqrt(num_rodadas));
-
-	printf("E[Nq2]\n", (estimador_media - intervalo < 0) ? 0 : estimador_media - intervalo);
-	printf("     Intervalo = %lf ate %lf\n",(estimador_media - intervalo < 0) ? 0 : estimador_media - intervalo, estimador_media + intervalo);
-	printf("     Media do Intervalo: %lf \n", estimador_media);
-	printf("     Tamanho: %lf \n",  2.0 * intervalo);
-	printf("     Tamanho em relacao a Media: %lf%% \n", (200.0 * intervalo) / estimador_media);
-	
-	
-	
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
+ 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 	//////////////////////////////--------------Cálculo do Intervalo de W1--------------////////////////////////////////////
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	estimador_media = 0.0;
@@ -318,32 +206,6 @@ void CalculaIntervaloConfianca(int num_rodadas, vector<double> E_N1, vector<doub
     intervalo = CONF95 * (sqrt(estimador_var) / sqrt(num_rodadas));
 
 	printf("E[W1]\n", (estimador_media - intervalo < 0) ? 0 : estimador_media - intervalo);
-	printf("     Intervalo = %lf ate %lf\n",(estimador_media - intervalo < 0) ? 0 : estimador_media - intervalo, estimador_media + intervalo);
-	printf("     Media do Intervalo: %lf \n", estimador_media);
-	printf("     Tamanho: %lf \n",  2.0 * intervalo);
-	printf("     Tamanho em relacao a Media: %lf%% \n", (200.0 * intervalo) / estimador_media);
-	
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
-	//////////////////////////////--------------Cálculo do Intervalo de W2--------------////////////////////////////////////
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	estimador_media = 0.0;
-	estimador_var = 0.0;
-	
-    for(unsigned int i = 0; i < num_rodadas ; i++)
-    {
-        estimador_media += (double)E_W2[i];
-    }
-    estimador_media /= (double)num_rodadas;
-
-    for(unsigned int i = 0; i < num_rodadas ; i++)
-    {
-        estimador_var += (((double)E_W2[i]) - estimador_media) * (((double)E_W2[i]) - estimador_media);
-    }
-    estimador_var /= (double)(num_rodadas - 1);
-
-    intervalo = CONF95 * (sqrt(estimador_var) / sqrt(num_rodadas));
-
-	printf("E[W2]\n", (estimador_media - intervalo < 0) ? 0 : estimador_media - intervalo);
 	printf("     Intervalo = %lf ate %lf\n",(estimador_media - intervalo < 0) ? 0 : estimador_media - intervalo, estimador_media + intervalo);
 	printf("     Media do Intervalo: %lf \n", estimador_media);
 	printf("     Tamanho: %lf \n",  2.0 * intervalo);
@@ -376,33 +238,9 @@ void CalculaIntervaloConfianca(int num_rodadas, vector<double> E_N1, vector<doub
 	printf("     Tamanho em relacao a Media: %lf%% \n", (200.0 * intervalo) / estimador_media);
 	
 	
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
-	//////////////////////////////--------------Cálculo do Intervalo de T2--------------////////////////////////////////////
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	estimador_media = 0.0;
-	estimador_var = 0.0;
-	
-    for(unsigned int i = 0; i < num_rodadas ; i++)
-    {
-        estimador_media += (double)E_T2[i];
-    }
-    estimador_media /= (double)num_rodadas;
 
-    for(unsigned int i = 0; i < num_rodadas ; i++)
-    {
-        estimador_var += (((double)E_T2[i]) - estimador_media) * (((double)E_T2[i]) - estimador_media);
-    }
-    estimador_var /= (double)(num_rodadas - 1);
 
-    intervalo = CONF95 * (sqrt(estimador_var) / sqrt(num_rodadas));
-
-	printf("E[T2]\n", (estimador_media - intervalo < 0) ? 0 : estimador_media - intervalo);
-	printf("     Intervalo = %lf ate %lf\n",(estimador_media - intervalo < 0) ? 0 : estimador_media - intervalo, estimador_media + intervalo);
-	printf("     Media do Intervalo: %lf \n", estimador_media);
-	printf("     Tamanho: %lf \n",  2.0 * intervalo);
-	printf("     Tamanho em relacao a Media: %lf%% \n", (200.0 * intervalo) / estimador_media);
-	
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 	//////////////////////////////--------------Cálculo do Intervalo de V_W1--------------////////////////////////////////////
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	estimador_media = 0.0;
@@ -429,6 +267,115 @@ void CalculaIntervaloConfianca(int num_rodadas, vector<double> E_N1, vector<doub
 	printf("     Tamanho em relacao a Media: %lf%% \n", (200.0 * intervalo) / estimador_media);
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
+	//////////////////////////////--------------Cálculo do Intervalo de Nq1--------------////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	estimador_media = 0.0;
+	estimador_var = 0.0;
+	
+    for(unsigned int i = 0; i < num_rodadas ; i++)
+    {
+        estimador_media += (double)E_Nq1[i];
+    }
+    estimador_media /= (double)num_rodadas;
+
+    for(unsigned int i = 0; i < num_rodadas ; i++)
+    {
+        estimador_var += (((double)E_Nq1[i]) - estimador_media) * (((double)E_Nq1[i]) - estimador_media);
+    }
+    estimador_var /= (double)(num_rodadas - 1);
+
+    intervalo = CONF95 * (sqrt(estimador_var) / sqrt(num_rodadas));
+
+	printf("E[Nq1]\n", (estimador_media - intervalo < 0) ? 0 : estimador_media - intervalo);
+	printf("     Intervalo = %lf ate %lf\n",(estimador_media - intervalo < 0) ? 0 : estimador_media - intervalo, estimador_media + intervalo);
+	printf("     Media do Intervalo: %lf \n", estimador_media);
+	printf("     Tamanho: %lf \n",  2.0 * intervalo);
+	printf("     Tamanho em relacao a Media: %lf%% \n", (200.0 * intervalo) / estimador_media);
+	
+		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
+	//////////////////////////////--------------Cálculo do Intervalo de N1--------------////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	estimador_media = 0.0;
+	estimador_var = 0.0;
+	
+    for(unsigned int i = 0; i < num_rodadas ; i++)
+    {
+        estimador_media += (double)E_N1[i];
+    }
+    estimador_media /= (double)num_rodadas;
+
+    for(unsigned int i = 0; i < num_rodadas ; i++)
+    {
+        estimador_var += (((double)E_N1[i]) - estimador_media) * (((double)E_N1[i]) - estimador_media);
+    }
+    estimador_var /= (double)(num_rodadas - 1);
+
+    intervalo = CONF95 * (sqrt(estimador_var) / sqrt(num_rodadas));
+
+	printf("E[N1]\n", (estimador_media - intervalo < 0) ? 0 : estimador_media - intervalo);
+	printf("     Intervalo = %lf ate %lf\n",(estimador_media - intervalo < 0) ? 0 : estimador_media - intervalo, estimador_media + intervalo);
+	printf("     Media do Intervalo: %lf \n", estimador_media);
+	printf("     Tamanho: %lf \n",  2.0 * intervalo);
+	printf("     Tamanho em relacao a Media: %lf%% \n", (200.0 * intervalo) / estimador_media);
+	
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
+	//////////////////////////////--------------Cálculo do Intervalo de W2--------------////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	estimador_media = 0.0;
+	estimador_var = 0.0;
+	
+    for(unsigned int i = 0; i < num_rodadas ; i++)
+    {
+        estimador_media += (double)E_W2[i];
+    }
+    estimador_media /= (double)num_rodadas;
+
+    for(unsigned int i = 0; i < num_rodadas ; i++)
+    {
+        estimador_var += (((double)E_W2[i]) - estimador_media) * (((double)E_W2[i]) - estimador_media);
+    }
+    estimador_var /= (double)(num_rodadas - 1);
+
+    intervalo = CONF95 * (sqrt(estimador_var) / sqrt(num_rodadas));
+
+	printf("E[W2]\n", (estimador_media - intervalo < 0) ? 0 : estimador_media - intervalo);
+	printf("     Intervalo = %lf ate %lf\n",(estimador_media - intervalo < 0) ? 0 : estimador_media - intervalo, estimador_media + intervalo);
+	printf("     Media do Intervalo: %lf \n", estimador_media);
+	printf("     Tamanho: %lf \n",  2.0 * intervalo);
+	printf("     Tamanho em relacao a Media: %lf%% \n", (200.0 * intervalo) / estimador_media);
+	
+	
+	
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
+	//////////////////////////////--------------Cálculo do Intervalo de T2--------------////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	estimador_media = 0.0;
+	estimador_var = 0.0;
+	
+    for(unsigned int i = 0; i < num_rodadas ; i++)
+    {
+        estimador_media += (double)E_T2[i];
+    }
+    estimador_media /= (double)num_rodadas;
+
+    for(unsigned int i = 0; i < num_rodadas ; i++)
+    {
+        estimador_var += (((double)E_T2[i]) - estimador_media) * (((double)E_T2[i]) - estimador_media);
+    }
+    estimador_var /= (double)(num_rodadas - 1);
+
+    intervalo = CONF95 * (sqrt(estimador_var) / sqrt(num_rodadas));
+
+	printf("E[T2]\n", (estimador_media - intervalo < 0) ? 0 : estimador_media - intervalo);
+	printf("     Intervalo = %lf ate %lf\n",(estimador_media - intervalo < 0) ? 0 : estimador_media - intervalo, estimador_media + intervalo);
+	printf("     Media do Intervalo: %lf \n", estimador_media);
+	printf("     Tamanho: %lf \n",  2.0 * intervalo);
+	printf("     Tamanho em relacao a Media: %lf%% \n", (200.0 * intervalo) / estimador_media);
+	
+
+	
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 	//////////////////////////////--------------Cálculo do Intervalo de V_W2--------------////////////////////////////////////
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	estimador_media = 0.0;
@@ -449,6 +396,59 @@ void CalculaIntervaloConfianca(int num_rodadas, vector<double> E_N1, vector<doub
     intervalo = CONF95 * (sqrt(estimador_var) / sqrt(num_rodadas));
 
 	printf("V(W2)\n", (estimador_media - intervalo < 0) ? 0 : estimador_media - intervalo);
+	printf("     Intervalo = %lf ate %lf\n",(estimador_media - intervalo < 0) ? 0 : estimador_media - intervalo, estimador_media + intervalo);
+	printf("     Media do Intervalo: %lf \n", estimador_media);
+	printf("     Tamanho: %lf \n",  2.0 * intervalo);
+	printf("     Tamanho em relacao a Media: %lf%% \n", (200.0 * intervalo) / estimador_media);
+	
+	
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
+	//////////////////////////////--------------Cálculo do Intervalo de Nq2--------------////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	estimador_media = 0.0;
+	estimador_var = 0.0;
+	
+    for(unsigned int i = 0; i < num_rodadas ; i++)
+    {
+        estimador_media += (double)E_Nq2[i];
+    }
+    estimador_media /= (double)num_rodadas;
+
+    for(unsigned int i = 0; i < num_rodadas ; i++)
+    {
+        estimador_var += (((double)E_Nq2[i]) - estimador_media) * (((double)E_Nq2[i]) - estimador_media);
+    }
+    estimador_var /= (double)(num_rodadas - 1);
+
+    intervalo = CONF95 * (sqrt(estimador_var) / sqrt(num_rodadas));
+
+	printf("E[Nq2]\n", (estimador_media - intervalo < 0) ? 0 : estimador_media - intervalo);
+	printf("     Intervalo = %lf ate %lf\n",(estimador_media - intervalo < 0) ? 0 : estimador_media - intervalo, estimador_media + intervalo);
+	printf("     Media do Intervalo: %lf \n", estimador_media);
+	printf("     Tamanho: %lf \n",  2.0 * intervalo);
+	printf("     Tamanho em relacao a Media: %lf%% \n", (200.0 * intervalo) / estimador_media);
+	
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
+	//////////////////////////////--------------Cálculo do Intervalo de N2--------------////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	estimador_media = 0.0;
+	estimador_var = 0.0;
+	
+    for(unsigned int i = 0; i < num_rodadas ; i++)
+    {
+        estimador_media += (double)E_N2[i];
+    }
+    estimador_media /= (double)num_rodadas;
+
+    for(unsigned int i = 0; i < num_rodadas ; i++)
+    {
+        estimador_var += (((double)E_N2[i]) - estimador_media) * (((double)E_N2[i]) - estimador_media);
+    }
+    estimador_var /= (double)(num_rodadas - 1);
+
+    intervalo = CONF95 * (sqrt(estimador_var) / sqrt(num_rodadas));
+
+	printf("E[N2]\n", (estimador_media - intervalo < 0) ? 0 : estimador_media - intervalo);
 	printf("     Intervalo = %lf ate %lf\n",(estimador_media - intervalo < 0) ? 0 : estimador_media - intervalo, estimador_media + intervalo);
 	printf("     Media do Intervalo: %lf \n", estimador_media);
 	printf("     Tamanho: %lf \n",  2.0 * intervalo);
