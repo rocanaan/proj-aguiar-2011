@@ -16,14 +16,10 @@ using namespace std;
 Simulador::Simulador(double ptaxa_chegada, double ptaxa_servico, bool deterministico, bool dois_por_vez, bool interrupcao_forcada, int semente)
 {
 
-	// como vou passar quais serao as taxas de chegada e de servico, preciso ter aqui 2 instâncias do gerador.
-	// e cada uma delas ter uma das taxas. Logo, seria bom o metodo inversa estar dentro da classe geradora e que a classe tivesse um construtor
-	// que tivesse como parametro a taxa requisitada.
-
-	//Se não usarmos 2 instâncias do Gerador vamos então ter as 2 taxas aqui que usamos em lugares diferentes do método Roda do Simulador
-	
-    /*No modos dois por vez e  de interrupcao forçada, trabalhamos com
-     metade da taxa de chegada fornecida pelo usuario, mara manter a taxa efetiva igual a que foi dada.*/
+    /*
+		No modo "dois por vez" e de "interrupcao forçada", trabalhamos com
+		metade da taxa de chegada fornecida pelo usuario. Assim mantemos a taxa efetiva igual a que foi dada.
+	*/
     if(dois_por_vez or interrupcao_forcada)
                      taxa_chegada = ptaxa_chegada/2;
     else
@@ -34,11 +30,15 @@ Simulador::Simulador(double ptaxa_chegada, double ptaxa_servico, bool determinis
                     
 	gerador = GeradorTempoExponencial::GetInstancia();
 	
-	//Se definimos alguma semente, então usar ela no gerador
+	/*
+		Se definimos alguma semente, então usar ela no gerador
+	*/
 	if (semente > 0)
 		gerador->DefinirSemente(semente);
 		
-	//Limpa a heap de eventos, as filas e os dados
+	/*
+		Limpa a heap de eventos, as filas e os dados
+	*/
  	while(!filaEventos.empty()) filaEventos.pop();
 	while(!fila1.empty()) fila1.pop();
     fila2.clear();
@@ -55,7 +55,9 @@ Simulador::Simulador(double ptaxa_chegada, double ptaxa_servico, bool determinis
 	while(!V_W1.empty()) V_W1.pop_back();
 	while(!V_W2.empty()) V_W2.pop_back();
 
-	//Coloca o primeiro evendo na heap de eventos
+	/*
+		Coloca o primeiro evendo na "heap" de eventos
+	*/
 	filaEventos.push(Evento(nova_chegada,gerador->GeraTempoExponencial(taxa_chegada, deterministico)));
 	servidor_vazio = true;
 	id_proximo_cliente = 0;
@@ -71,7 +73,7 @@ Simulador::Simulador(double ptaxa_chegada, double ptaxa_servico, bool determinis
 	acumula_quadradoW2 = 0.0;
 
 	/*
-    inicia as variaveis que acumulam o (numero de pessoas * tempo) de cada região do sistema
+		Inicia as variaveis que acumulam o (numero de pessoas * tempo) de cada região do sistema
     */
 	Nq1_parcial = 0.0;
 	Nq2_parcial = 0.0;
@@ -99,7 +101,7 @@ Simulador::~Simulador()
 
 
 //Função principal do simulador, executa a simulação
-void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug_detalhado, bool deterministico, bool determina_transiente, bool dois_por_vez, string nome_pasta, bool guardar_estatisticas, bool interrupcao_forcada, bool debug_resultados, int tamanho_transiente)
+void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug, bool deterministico, bool determina_transiente, bool dois_por_vez, string nome_pasta, bool guardar_estatisticas, bool interrupcao_forcada, bool mostrar_resultados, int tamanho_transiente)
 {
     int num_servicos_tipo_1_rodada_atual = 0;
 	int num_servicos_tipo_2_rodada_atual = 0;
@@ -121,7 +123,7 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug_d
 		double tempo_desde_evento_anterior = evento_atual.GetTempoAcontecimento()-tempo_atual;
 		tempo_atual=evento_atual.GetTempoAcontecimento();
 
-		if(debug_detalhado)
+		if(debug)
 		{
 			cout << endl << "Evento sendo tratado: Evento do tipo " << evento_atual.GetNome() << " no instante " << tempo_atual << endl;
 			cout << "A fila de Eventos tem tamanho " << filaEventos.size() << " apos remover o evento atual" << endl;
@@ -153,22 +155,29 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug_d
            No final da simulacao, teremos a area sob a curva de cada uma dessas variaveis.
            Faltara dividir pelo tempo total decorrido para calcular a media.
         */
-        Nq1_parcial += fila1.size()*tempo_desde_evento_anterior;
-        Nq2_parcial += fila2.size()*tempo_desde_evento_anterior;
-        if (!servidor_vazio){
-           if (cliente_em_servico.GetFila() == 1){
-              N1_parcial += (1+fila1.size())*tempo_desde_evento_anterior;
-              N2_parcial += fila2.size()*tempo_desde_evento_anterior;
-           }
-           else{
-                N1_parcial += fila1.size()*tempo_desde_evento_anterior;
-                N2_parcial += (1+fila2.size())*tempo_desde_evento_anterior;
-           }
-        }
-        else{
-             N1_parcial += fila1.size()*tempo_desde_evento_anterior;
-             N2_parcial += fila2.size()*tempo_desde_evento_anterior;
-        }
+		if (tamanho_transiente == 0)
+		{
+			Nq1_parcial += fila1.size()*tempo_desde_evento_anterior;
+			Nq2_parcial += fila2.size()*tempo_desde_evento_anterior;
+			if (!servidor_vazio)
+			{
+			   if (cliente_em_servico.GetFila() == 1)
+			   {
+				  N1_parcial += (1+fila1.size())*tempo_desde_evento_anterior;
+				  N2_parcial += fila2.size()*tempo_desde_evento_anterior;
+			   }
+			   else
+			   {
+					N1_parcial += fila1.size()*tempo_desde_evento_anterior;
+					N2_parcial += (1+fila2.size())*tempo_desde_evento_anterior;
+			   }
+			}
+			else
+			{
+				 N1_parcial += fila1.size()*tempo_desde_evento_anterior;
+				 N2_parcial += fila2.size()*tempo_desde_evento_anterior;
+			}
+		}
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////
 		/////////////////////////////////////////FIM DA COLETA DE DADOS//////////////////////////////////////
@@ -187,7 +196,7 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug_d
                 Evento evento_destruido = filaEventos.top();        
                 if(interrupcao_forcada){
                      evento_destruido = RemoveTerminoServico();
-                     if(debug_detalhado)
+                     if(debug)
 				     {
                         cout << "          Evento sendo destruido: : Evento do tipo " << evento_destruido.GetNome() << " marcado para o instante " <<  evento_destruido.GetTempoAcontecimento()<< endl;
                      }
@@ -195,7 +204,7 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug_d
 				else{
                      //evento_destruido = filaEventos.top(); //Guardamos o Evento a ser destruido
                      filaEventos.pop();//Remove o Evento de Término de serviço gerado por este cliente da fila 2 ( ele vai sempre ser o top)
-                     if(debug_detalhado)
+                     if(debug)
 				     {
                         cout << "          Evento sendo destruido: : Evento do tipo " << evento_destruido.GetTipo() << " marcado para o instante " <<  evento_destruido.GetTempoAcontecimento()<< endl;
                      }
@@ -224,13 +233,13 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug_d
             {
                Evento proxChegada = Evento(nova_chegada,tempo_atual+gerador->GeraTempoExponencial(taxa_chegada, deterministico));//Agenda o Evento para a próxima chegada
 			   filaEventos.push(proxChegada);
-			    if(debug_detalhado)
+			    if(debug)
                {
                                    cout << "          Agendando proxima chegada para o instante " << proxChegada.GetTempoAcontecimento() << endl;
                }         
             }
 			
-			if(debug_detalhado)
+			if(debug)
 			{
 				cout << "          Inserindo o cliente " << cliente_atual.GetID() << " na fila 1" << endl;
 			}
@@ -239,7 +248,7 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug_d
 			{
                             Evento artificial = Evento(chegada_artificial,tempo_atual);
 			                filaEventos.push(artificial);
-                            if(debug_detalhado)
+                            if(debug)
                             {
                                               cout << "          Agendando chegada artificial para o instante " << artificial.GetTempoAcontecimento() << endl;
                             }                   
@@ -249,7 +258,7 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug_d
             {
              Evento artificial = Evento(chegada_artificial,tempo_atual+gerador->GeraTempoExponencial(taxa_servico*2/3, deterministico));
 			 filaEventos.push(artificial);
-                             if(debug_detalhado)
+                             if(debug)
                              {
                                                 cout << "          Agendando chegada artificial para o instante " << artificial.GetTempoAcontecimento() << endl;
                              }                   
@@ -272,7 +281,7 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug_d
 				else
 					fila2.back().SetDiretoAoServidor(false);
 
-				if(debug_detalhado)
+				if(debug)
 				{
 					cout << "          Fim de servico na fila 1. Inserindo cliente " << cliente_em_servico.GetID() << " na fila 2" << endl;
 				}
@@ -285,7 +294,7 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug_d
 				/////////////////////////////////////////////////////////////////////////////////////////////////////
 
 				//Verifica se o cliente em serviço é da rodada(coloração usada) em que estamos, pois só esse cliente entra nos dados desta rodada
-				if(cliente_em_servico.GetRodadaPertencente() == rodada_atual or determina_transiente)
+				if((cliente_em_servico.GetRodadaPertencente() == rodada_atual or determina_transiente) and tamanho_transiente == 0)
 				{
 					if(!cliente_em_servico.GetDiretoAoServidor())
 						cliente_W1 = cliente_em_servico.W1();
@@ -297,7 +306,7 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug_d
 					acumulaT1 += cliente_em_servico.T1();
 					acumula_quadradoW1 += cliente_W1*cliente_W1;
 
-					if(debug_detalhado)
+					if(debug)
 					{
 						cout << "          Dados do cliente " << cliente_em_servico.GetID() << ": W1 =  " << cliente_W1 << ", T1 = " << cliente_em_servico.T1() << endl;
 					}
@@ -316,7 +325,7 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug_d
 			else
 			{
 				//Acabou os 2 serviços do cliente, logo marcamos mais um cliente servido totalmente
-				if(debug_detalhado)
+				if(debug)
 				{
 					cout  <<"          Fim de servico na fila 2. Removendo cliente " << cliente_em_servico.GetID() << " do sistema" << endl;
 				}
@@ -329,7 +338,7 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug_d
 				/////////////////////////////////////////////////////////////////////////////////////////////////////
 
 				//Verifica se o cliente em serviço é da rodada(coloração usada) em que estamos, pois só esse cliente entra nos dados desta rodada
-				if(cliente_em_servico.GetRodadaPertencente() == rodada_atual or determina_transiente)
+				if((cliente_em_servico.GetRodadaPertencente() == rodada_atual or determina_transiente) and tamanho_transiente == 0)
 				{
 					total_clientes_servidos_duas_vezes ++;
 					
@@ -348,7 +357,7 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug_d
 					acumulaT2 += cliente_em_servico.T2();
 					acumula_quadradoW2 += cliente_W2*cliente_W2;
 
-					if(debug_detalhado)
+					if(debug)
 					{
 						cout << "          Dados do cliente " << cliente_em_servico.GetID() << ": W2 =  " << cliente_W2 << ", T2 = " << cliente_em_servico.T2() << endl;
 					}
@@ -357,6 +366,13 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug_d
 				/////////////////////////////////////////////////////////////////////////////////////////////////////
 				/////////////////////////////////////////FIM DA COLETA DE DADOS//////////////////////////////////////
 				/////////////////////////////////////////////////////////////////////////////////////////////////////
+				
+				/*
+					O tamanho da fase transiente é usado para determinar quando devemos começar a coletar os dados.
+					Enquanto o tamanho da fase transiente, determinada pelo usuario, for diferente de 0, nós decrementamos um de seu valor
+				*/
+				if(tamanho_transiente != 0)
+					tamanho_transiente--;
 			}
 
 			//
@@ -378,7 +394,7 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug_d
 				filaEventos.push(proxTerminoServico);
 				cliente_em_servico.SetDuracaoPrimeiroServico(duracao);
 
-				if(debug_detalhado)
+				if(debug)
 				{
 					cout << "          Transferindo cliente " << cliente_em_servico.GetID() << " da fila 1 para o servidor." << endl;
 					cout << "          Agendando termino do primeiro servico do cliente " << cliente_em_servico.GetID() <<" para o instante " << proxTerminoServico.GetTempoAcontecimento() << endl;;
@@ -398,7 +414,7 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug_d
 					filaEventos.push(proxTerminoServico);
 					cliente_em_servico.SetDuracaoSegundoServico(duracao);
 
-					if(debug_detalhado)
+					if(debug)
 					{
 						cout << "          Transferindo cliente " << cliente_em_servico.GetID() << " da fila 2 para o servidor." << endl;
 						cout << "          Agendando termino do segundo servico do cliente " << cliente_em_servico.GetID() << " para o instante " << proxTerminoServico.GetTempoAcontecimento() << endl;
@@ -409,7 +425,7 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug_d
 				{
 					Evento proxTerminoServico = Evento(termino_de_servico,tempo_atual+cliente_em_servico.GetTempoRestante());//Agenda evento de termino de servico, com o tempo restante de servico do cliente que foi interrompido
 					filaEventos.push(proxTerminoServico);
-					if(debug_detalhado)
+					if(debug)
 					{
 						cout << "          Inserindo cliente " << cliente_em_servico.GetID() << " da fila 2 no servidor. Este cliente ja foi interrompido alguma vez." << endl;
 						cout << "          Agendando termino do segundo servico do cliente " << cliente_em_servico.GetID() << " para " << proxTerminoServico.GetTempoAcontecimento() << endl;
@@ -419,21 +435,21 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug_d
 
 			}
 		}
-		if(debug_detalhado)
+		if(debug)
                            cout << "A fila de Eventos tem tamanho " << filaEventos.size() << endl;
 	}
 	if(!determina_transiente)
 	{
-        CalculaResultados(num_servicos_tipo_2_rodada_atual, num_servicos_tipo_1_rodada_atual, tempo_atual - tempo_inicio_rodada, rodada_atual, debug_resultados, nome_pasta, guardar_estatisticas);
+        CalculaResultados(num_servicos_tipo_2_rodada_atual, num_servicos_tipo_1_rodada_atual, tempo_atual - tempo_inicio_rodada, rodada_atual, mostrar_resultados, nome_pasta, guardar_estatisticas);
     }
     else
     {
-        CalculaResultados(total_clientes_servidos_duas_vezes, total_clientes_servidos_uma_vez, tempo_atual, rodada_atual, debug_resultados, nome_pasta, guardar_estatisticas);
+        CalculaResultados(total_clientes_servidos_duas_vezes, total_clientes_servidos_uma_vez, tempo_atual, rodada_atual, mostrar_resultados, nome_pasta, guardar_estatisticas);
     }
 
 }
 
-void Simulador::CalculaResultados(int n, int servidos1, double t, int rodada, bool debug_resultados, string nome_pasta, bool guardar_estatisticas)
+void Simulador::CalculaResultados(int n, int servidos1, double t, int rodada, bool mostrar_resultados, string nome_pasta, bool guardar_estatisticas)
 {
     /*
     Divide cada uma das variaveis de fila Nq1, Nq2, N1 e N2 pelo tempo da rodada
@@ -480,7 +496,7 @@ void Simulador::CalculaResultados(int n, int servidos1, double t, int rodada, bo
     
 
 
-    if(debug_resultados)
+    if(mostrar_resultados)
 	{
 		cout << endl <<endl << endl << "Imprimindo resultados da rodada "<< rodada+1 <<" :"<< endl;
 		cout << "     E[W1] = " << E_W1.back() << endl;
