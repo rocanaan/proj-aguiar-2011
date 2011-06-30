@@ -167,9 +167,13 @@ int main(void)
 	else
 		simula = Simulador(taxa_chegada->num(),1,deterministico->num(), dois_por_vez->num(), interrupcao_forcada->num(), -1);
 
-	for( int i = 0 ; i < num_rodadas->num() ; i++)
+	for( int i = 0 ; i < num_rodadas->num()+1 ; i++)
 	{
-		simula.Roda(num_clientes->num(),i, debug->num(), deterministico->num(), determina_transiente->num(), dois_por_vez->num(), nome_pasta, guardar_estatisticas, interrupcao_forcada->num(), mostrar_resultados->num(),tamanho_transiente->num());
+		if( i == 0 )
+			simula.Roda(tamanho_transiente->num(),i, debug->num(), deterministico->num(), determina_transiente->num(), dois_por_vez->num(), nome_pasta, guardar_estatisticas, interrupcao_forcada->num(), mostrar_resultados->num());
+		else
+			simula.Roda(num_clientes->num(),i, debug->num(), deterministico->num(), determina_transiente->num(), dois_por_vez->num(), nome_pasta, guardar_estatisticas, interrupcao_forcada->num(), mostrar_resultados->num());
+		
 		if(!determina_transiente->num())
 			simula.LimpaResultadosParciais();
 	}
