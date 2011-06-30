@@ -13,7 +13,7 @@ using namespace std;
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-Simulador::Simulador(double ptaxa_chegada, double ptaxa_servico, bool deterministico, bool dois_por_vez, bool forca_interrupcao, int semente)
+Simulador::Simulador(double ptaxa_chegada, double ptaxa_servico, bool deterministico, bool dois_por_vez, bool interrupcao_forcada, int semente)
 {
 
 	// como vou passar quais serao as taxas de chegada e de servico, preciso ter aqui 2 instâncias do gerador.
@@ -24,7 +24,7 @@ Simulador::Simulador(double ptaxa_chegada, double ptaxa_servico, bool determinis
 	
     /*No modos dois por vez e  de interrupcao forçada, trabalhamos com
      metade da taxa de chegada fornecida pelo usuario, mara manter a taxa efetiva igual a que foi dada.*/
-    if(dois_por_vez or forca_interrupcao)
+    if(dois_por_vez or interrupcao_forcada)
                      taxa_chegada = ptaxa_chegada/2;
     else
                      taxa_chegada = ptaxa_chegada;
@@ -99,7 +99,7 @@ Simulador::~Simulador()
 
 
 //Função principal do simulador, executa a simulação
-void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug_detalhado, bool deterministico, bool determina_transiente, bool dois_por_vez, string nome_pasta, bool guardar_estatisticas, bool forca_interrupcao, bool debug_resultados)
+void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug_detalhado, bool deterministico, bool determina_transiente, bool dois_por_vez, string nome_pasta, bool guardar_estatisticas, bool interrupcao_forcada, bool debug_resultados, int tamanho_transiente)
 {
     int num_servicos_tipo_1_rodada_atual = 0;
 	int num_servicos_tipo_2_rodada_atual = 0;
@@ -185,7 +185,7 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug_d
 			if(!servidor_vazio && cliente_em_servico.GetFila() == FILA_2)
 			{    
                 Evento evento_destruido = filaEventos.top();        
-                if(forca_interrupcao){
+                if(interrupcao_forcada){
                      evento_destruido = RemoveTerminoServico();
                      if(debug_detalhado)
 				     {
@@ -245,7 +245,7 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug_d
                             }                   
             }
             
-            if(forca_interrupcao and evento_atual.GetTipo() == nova_chegada)
+            if(interrupcao_forcada and evento_atual.GetTipo() == nova_chegada)
             {
              Evento artificial = Evento(chegada_artificial,tempo_atual+gerador->GeraTempoExponencial(taxa_servico*2/3, deterministico));
 			 filaEventos.push(artificial);
@@ -332,7 +332,12 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug_d
 				if(cliente_em_servico.GetRodadaPertencente() == rodada_atual or determina_transiente)
 				{
 					total_clientes_servidos_duas_vezes ++;
-					num_servicos_tipo_2_rodada_atual ++;
+					
+				//	if(tamanho_transiente <= 0 )
+						num_servicos_tipo_2_rodada_atual ++;
+					
+					//tamanho_transiente ++;
+					
 
 					if(cliente_em_servico.VerificaInterrompido() == N_INTERROMPIDO && cliente_em_servico.GetDiretoAoServidor())
 						cliente_W2 = 0;

@@ -36,8 +36,9 @@ int main(void)
     Config<bool> *determina_transiente = new Config<bool>("determina_transiente");
 	Config<bool> *dois_por_vez = new Config<bool>("dois_por_vez");
 	Config<bool> *guardar_estatisticas = new Config<bool>("guardar_estatisticas");
-	Config<bool> *forca_interrupcao = new Config<bool>("forca_interrupcao");
+	Config<bool> *interrupcao_forcada = new Config<bool>("interrupcao_forcada");
 	Config<int> *semente = new Config<int>("semente");
+	Config<int> *tamanho_transiente = new Config<int>("tamanho_transiente");
 	
 	string nome_arquivo,valor,buffer,nome_pasta;
     ifstream entrada;
@@ -72,8 +73,9 @@ int main(void)
 			determina_transiente->procurar_e_adicionar(buffer);
 			dois_por_vez->procurar_e_adicionar(buffer);
 			guardar_estatisticas->procurar_e_adicionar(buffer);
-			forca_interrupcao->procurar_e_adicionar(buffer);
+			interrupcao_forcada->procurar_e_adicionar(buffer);
 			semente->procurar_e_adicionar(buffer);
+			tamanho_transiente->procurar_e_adicionar(buffer);
 
 		}
 		
@@ -86,10 +88,11 @@ int main(void)
 		determina_transiente->verificar_valor();
 		dois_por_vez->verificar_valor();
 		guardar_estatisticas->verificar_valor();
-		forca_interrupcao->verificar_valor();
+		interrupcao_forcada->verificar_valor();
 		semente->verificar_valor();
+		tamanho_transiente->verificar_valor();
 		
-		if( !num_rodadas->erro() and  !num_clientes->erro() and !taxa_chegada->erro())
+		if( !num_rodadas->erro() and  !num_clientes->erro() and !taxa_chegada->erro() and !tamanho_transiente->erro())
 		{
 			cout<< endl << num_rodadas->nome()<< ": "<<num_rodadas->num()<<endl;
 			cout<<num_clientes->nome()<< ": "<<num_clientes->num()<<endl;
@@ -100,7 +103,8 @@ int main(void)
 			cout<<determina_transiente->nome()<< ": "<<determina_transiente->num()<<endl;
 			cout<<dois_por_vez->nome()<< ": "<<dois_por_vez->num()<<endl;
 			cout<<guardar_estatisticas->nome()<< ": "<<guardar_estatisticas->num()<<endl;
-			cout<<forca_interrupcao->nome()<< ": "<<forca_interrupcao->num()<<endl;
+			cout<<interrupcao_forcada->nome()<< ": "<<interrupcao_forcada->num()<<endl;
+			cout<<tamanho_transiente->nome()<< ": "<<tamanho_transiente->num()<<endl;
 			
 			
 			if(!semente->erro())
@@ -138,19 +142,20 @@ int main(void)
 		char *arquivo = (char*)temp_pasta.c_str();
 		arquivo_entradas.open(arquivo, ios::app);
 		
-		arquivo_entradas<<num_rodadas->nome()<< ": "<<num_rodadas->num()<<endl;
-		arquivo_entradas<<num_clientes->nome()<< ": "<<num_clientes->num()<<endl;
-		arquivo_entradas<<taxa_chegada->nome()<< ": "<<taxa_chegada->num()<<endl;
-		arquivo_entradas<<deterministico->nome()<< ": "<<deterministico->num()<<endl;
-		arquivo_entradas<<debug_detalhado->nome()<< ": "<<debug_detalhado->num()<<endl;
-		arquivo_entradas<<debug_resultados->nome()<< ": "<<debug_resultados->num()<<endl;
-		arquivo_entradas<<determina_transiente->nome()<< ": "<<determina_transiente->num()<<endl;
-		arquivo_entradas<<dois_por_vez->nome()<< ": "<<dois_por_vez->num()<<endl;
-		arquivo_entradas<<guardar_estatisticas->nome()<< ": "<<guardar_estatisticas->num()<<endl;
-		arquivo_entradas<<forca_interrupcao->nome()<< ": "<<forca_interrupcao->num()<<endl;
+		arquivo_entradas<<num_rodadas->nome()<< ": "<<num_rodadas->num()<< ";" <<endl;
+		arquivo_entradas<<num_clientes->nome()<< ": "<<num_clientes->num()<< ";" <<endl;
+		arquivo_entradas<<taxa_chegada->nome()<< ": "<<taxa_chegada->num()<< ";" <<endl;
+		arquivo_entradas<<deterministico->nome()<< ": "<<deterministico->num()<< ";" <<endl;
+		arquivo_entradas<<debug_detalhado->nome()<< ": "<<debug_detalhado->num()<< ";" <<endl;
+		arquivo_entradas<<debug_resultados->nome()<< ": "<<debug_resultados->num()<< ";" <<endl;
+		arquivo_entradas<<determina_transiente->nome()<< ": "<<determina_transiente->num()<< ";" <<endl;
+		arquivo_entradas<<dois_por_vez->nome()<< ": "<<dois_por_vez->num()<< ";" <<endl;
+		arquivo_entradas<<guardar_estatisticas->nome()<< ": "<<guardar_estatisticas->num()<< ";" <<endl;
+		arquivo_entradas<<interrupcao_forcada->nome()<< ": "<<interrupcao_forcada->num()<< ";" <<endl;
+		arquivo_entradas<<tamanho_transiente->nome()<< ": "<<tamanho_transiente->num()<< ";" <<endl;
 		
 		if(!semente->erro())
-					arquivo_entradas<<semente->nome()<< ": "<<semente->num()<<endl;
+					arquivo_entradas<<semente->nome()<< ": "<<semente->num()<< ";" <<endl;
 
 		arquivo_entradas.close();
 	}
@@ -158,13 +163,13 @@ int main(void)
 	Simulador simula;
 	
 	if(!semente->erro())
-		simula = Simulador(taxa_chegada->num(),1,deterministico->num(), dois_por_vez->num(), forca_interrupcao->num(),semente->num() );
+		simula = Simulador(taxa_chegada->num(),1,deterministico->num(), dois_por_vez->num(), interrupcao_forcada->num(),semente->num());
 	else
-		simula = Simulador(taxa_chegada->num(),1,deterministico->num(), dois_por_vez->num(), forca_interrupcao->num(), -1);
+		simula = Simulador(taxa_chegada->num(),1,deterministico->num(), dois_por_vez->num(), interrupcao_forcada->num(), -1);
 
 	for( int i = 0 ; i < num_rodadas->num() ; i++)
 	{
-		simula.Roda(num_clientes->num(),i, debug_detalhado->num(), deterministico->num(), determina_transiente->num(), dois_por_vez->num(), nome_pasta, guardar_estatisticas, forca_interrupcao->num(), debug_resultados->num());
+		simula.Roda(num_clientes->num(),i, debug_detalhado->num(), deterministico->num(), determina_transiente->num(), dois_por_vez->num(), nome_pasta, guardar_estatisticas, interrupcao_forcada->num(), debug_resultados->num(),tamanho_transiente->num());
 		if(!determina_transiente->num())
 			simula.LimpaResultadosParciais();
 	}
