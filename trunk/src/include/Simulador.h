@@ -78,6 +78,7 @@ class Simulador{
 		void CalculaResultados(int n, int servidos1, double t, int rodada, bool debug_resultados, string nome_pasta, bool guardar_estatisticas);
 		void LimpaResultadosParciais();
 		void GeraDadosGrafico(int rodada, double pN1, double pN2, double pNq1, double pNq2, double pW1, double pW2, double pT1, double pT2, double pV_W1, double pV_W2, string nome_pasta);
+		Evento RemoveTerminoServico();
 		vector<double> GetE_Nq1();
 		vector<double> GetE_Nq2();
 		vector<double> GetE_N1();
