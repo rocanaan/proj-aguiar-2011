@@ -32,7 +32,7 @@ Simulador::Simulador(double ptaxa_chegada, double ptaxa_servico, bool determinis
     taxa_servico = ptaxa_servico;
 
                     
-	gerador = GeradorTaxaExponencial::GetInstancia();
+	gerador = GeradorTempoExponencial::GetInstancia();
 	
 	//Se definimos alguma semente, então usar ela no gerador
 	if (semente > 0)
