@@ -44,45 +44,12 @@ Simulador::Simulador(double ptaxa_chegada, double ptaxa_servico, bool determinis
                      taxa_chegada = ptaxa_chegada;
 	
     taxa_servico = ptaxa_servico;
-
-                    
-	gerador = GeradorTempoExponencial::GetInstancia();
 	
-	/*
-		Se definimos alguma semente, então usar ela no gerador
-	*/
-	if (semente > 0)
-		gerador->DefinirSemente(semente);
+
+	Setup(semente, deterministico);	
+	
 		
-	/*
-		Limpa a heap de eventos, as filas e os dados
-	*/
- 	while(!filaEventos.empty()) filaEventos.pop();
-	while(!fila1.empty()) fila1.pop();
-    fila2.clear();
-	while(!E_N1.empty()) E_N1.pop_back();
-	while(!E_N2.empty()) E_N2.pop_back();
-	while(!E_Nq1.empty()) E_Nq1.pop_back();
-	while(!E_Nq2.empty()) E_Nq2.pop_back();
-	while(!E_W1.empty()) E_W1.pop_back();
-	while(!E_W2.empty()) E_W2.pop_back();
-	while(!E_T1.empty()) E_T1.pop_back();
-	while(!E_T2.empty()) E_T2.pop_back();
-	while(!E_T1.empty()) E_T1.pop_back();
-	while(!E_T2.empty()) E_T2.pop_back();
-	while(!V_W1.empty()) V_W1.pop_back();
-	while(!V_W2.empty()) V_W2.pop_back();
-
-	/*
-		Coloca o primeiro evendo na "heap" de eventos
-	*/
-	filaEventos.push(Evento(nova_chegada,gerador->GeraTempoExponencial(taxa_chegada, deterministico)));
-	servidor_vazio = true;
-	id_proximo_cliente = 0;
-	tempo_atual = 0.0;
-
-	total_clientes_servidos_uma_vez =0;
-    total_clientes_servidos_duas_vezes = 0;
+		
 	acumulaW1 = 0.0;
 	acumulaT1 = 0.0;
 	acumulaW2 = 0.0;
@@ -126,6 +93,7 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug, 
 	int num_servicos_tipo_2_rodada_atual = 0;
 
 	double tempo_inicio_rodada = tempo_atual;
+	
 	
 	if(dois_por_vez)
 	{
@@ -575,6 +543,54 @@ void Simulador::LimpaResultadosParciais()
 
 	acumula_quadradoW1 = 0.0;
 	acumula_quadradoW2 = 0.0;
+
+}
+
+void Simulador::Setup(int semente, bool deterministico)
+{       
+
+	
+	total_clientes_servidos_uma_vez =0;
+    total_clientes_servidos_duas_vezes = 0;	
+	
+	gerador = GeradorTempoExponencial::GetInstancia();
+	
+	/*
+		Se definimos alguma semente, então usar ela no gerador
+	*/
+	if (semente > 0)
+		gerador->DefinirSemente(semente);
+
+
+	servidor_vazio = true;
+	id_proximo_cliente = 0;
+	tempo_atual = 0.0;
+
+		
+	/*
+		Limpa a heap de eventos, as filas e os dados
+	*/
+ 	while(!filaEventos.empty()) filaEventos.pop();
+	while(!fila1.empty()) fila1.pop();
+    fila2.clear();
+	while(!E_N1.empty()) E_N1.pop_back();
+	while(!E_N2.empty()) E_N2.pop_back();
+	while(!E_Nq1.empty()) E_Nq1.pop_back();
+	while(!E_Nq2.empty()) E_Nq2.pop_back();
+	while(!E_W1.empty()) E_W1.pop_back();
+	while(!E_W2.empty()) E_W2.pop_back();
+	while(!E_T1.empty()) E_T1.pop_back();
+	while(!E_T2.empty()) E_T2.pop_back();
+	while(!E_T1.empty()) E_T1.pop_back();
+	while(!E_T2.empty()) E_T2.pop_back();
+	while(!V_W1.empty()) V_W1.pop_back();
+	while(!V_W2.empty()) V_W2.pop_back();
+	
+	/*
+		Coloca o primeiro evendo na "heap" de eventos
+	*/
+	filaEventos.push(Evento(nova_chegada,gerador->GeraTempoExponencial(taxa_chegada, deterministico)));
+
 
 }
 
