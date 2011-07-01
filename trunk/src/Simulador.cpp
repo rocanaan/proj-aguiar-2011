@@ -1,3 +1,21 @@
+///////////////////////////////////////////////////////
+/*
+		Avaliação e Desempenho
+		
+		Trabalho de Simulação
+		
+	
+
+Alunos:	
+	Luiz Filipe de Sá Estrella		    DRE: 107390627
+	Fernando de Mesentier Silva 		DRE: 107390520
+	Rodrigo de Moura Canaan		        DRE: 107362200
+	Vinicius José Serva Pereira 		DRE: 106050355
+
+
+*/
+///////////////////////////////////////////////////////
+
 #include "include\Simulador.h"
 #include <math.h>
 #define FILA_1 1
@@ -17,8 +35,8 @@ Simulador::Simulador(double ptaxa_chegada, double ptaxa_servico, bool determinis
 {
 
     /*
-		No modo "dois por vez" e de "interrupcao forçada", trabalhamos com
-		metade da taxa de chegada fornecida pelo usuario. Assim mantemos a taxa efetiva igual a que foi dada.
+		No modo "dois por vez" e de "interrupção forçada", trabalhamos com
+		metade da taxa de chegada fornecida pelo usuário. Assim mantemos a taxa efetiva igual a que foi dada
 	*/
     if(dois_por_vez or interrupcao_forcada)
                      taxa_chegada = ptaxa_chegada/2;
@@ -73,7 +91,7 @@ Simulador::Simulador(double ptaxa_chegada, double ptaxa_servico, bool determinis
 	acumula_quadradoW2 = 0.0;
 
 	/*
-		Inicia as variaveis que acumulam o (numero de pessoas * tempo) de cada região do sistema
+		Inicia as variáveis que acumulam o (numero de pessoas * tempo) de cada região do sistema
     */
 	Nq1_parcial = 0.0;
 	Nq2_parcial = 0.0;
@@ -99,8 +117,9 @@ Simulador::~Simulador()
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-//Função principal do simulador, executa a simulação
+/*
+	Função principal do simulador, executa a simulação.
+*/
 void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug, bool deterministico, bool determina_transiente, bool dois_por_vez, string nome_pasta, bool guardar_estatisticas, bool interrupcao_forcada, bool mostrar_resultados)
 {
     int num_servicos_tipo_1_rodada_atual = 0;
@@ -114,12 +133,21 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug, 
     }
 
 
-	//Enquanto o número total de clientes que queremos servir for maior que o número de clientes já servidos por completo, rodamos a simulação
+	/*
+		Loop principal do simulador.
+		Enquanto o número total de clientes que queremos servir for maior que o número de clientes já servidos por completo, rodamos a simulação
+	*/
 	while(num_clientes_por_rodada > num_servicos_tipo_2_rodada_atual)
 	{
-
-		Evento evento_atual = filaEventos.top();//O primeiro evento é selecionado
-		filaEventos.pop();//Ele é retirado da Fila
+		/*
+			O primeiro evento é selecionado
+		*/
+		Evento evento_atual = filaEventos.top();
+		/*
+			Ele é retirado da Fila
+		*/
+		filaEventos.pop();
+		
 		double tempo_desde_evento_anterior = evento_atual.GetTempoAcontecimento()-tempo_atual;
 		tempo_atual=evento_atual.GetTempoAcontecimento();
 
@@ -152,7 +180,7 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug, 
                       N1 e N2 sao o numero de pessoas esperando cada tipo de servico na fila
                       Ni = Nqi + 1 se houver um cliente vindo da fila i no servidor
                       Ni = Nqi caso contrario
-           No final da simulacao, teremos a area sob a curva de cada uma dessas variaveis.
+           No final da simulacao, teremos a área sob a curva de cada uma dessas variaveis.
            Faltara dividir pelo tempo total decorrido para calcular a media.
         */
 		if (rodada_atual != 0)
@@ -186,14 +214,23 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug, 
 
 
 
-		//Se o Evento, que está sendo tratado no momento, for do tipo nova_chegada
+		/*
+			Tratamos aqui o evento do tipo nova chegada.
+			Se o caso deterministico interrupcao_forcada estiver ligado também temos a possibilidade de entrar no condicional com uma chegada_artificial
+		*/
 		if(evento_atual.GetTipo() == nova_chegada or evento_atual.GetTipo() == chegada_artificial)
 		{
-			//Condição para tratar a interrupção presente no sistema.
-			//Se o servidor estiver ocupado e este cliente for da fila 2 então o cliente que acabou de chegar irá interromper este serviço
+			/*
+				Condição para tratar a interrupção presente no sistema.
+				Se o servidor estiver ocupado e este cliente for da fila 2 então o cliente que acabou de chegar irá interromper este serviço
+			*/
 			if(!servidor_vazio && cliente_em_servico.GetFila() == FILA_2)
 			{    
-                Evento evento_destruido = filaEventos.top();        
+                Evento evento_destruido = filaEventos.top(); 
+
+				/*
+					No caso de interrupcao_forcada, é necessário realizar o método RemoveTerminoServico() para remover o evento correto
+				*/
                 if(interrupcao_forcada){
                      evento_destruido = RemoveTerminoServico();
                      if(debug)
@@ -202,19 +239,33 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug, 
                      }
                 }
 				else{
-                     //evento_destruido = filaEventos.top(); //Guardamos o Evento a ser destruido
-                     filaEventos.pop();//Remove o Evento de Término de serviço gerado por este cliente da fila 2 ( ele vai sempre ser o top)
+					/*
+						Remove o Evento de Término de serviço gerado por este cliente da fila 2 ( ele vai sempre ser o top)
+					*/
+                     filaEventos.pop();
                      if(debug)
 				     {
                         cout << "          Evento sendo destruido: : Evento do tipo " << evento_destruido.GetTipo() << " marcado para o instante " <<  evento_destruido.GetTempoAcontecimento()<< endl;
                      }
                 }
+				/*
+					Marca o cliente como sendo um cliente Interrompido
+				*/
+				cliente_em_servico.Interromper();
+				/*
+					O tempo restante para finalizar seu servico é guardado
+				*/
+				O tempo restante para finalizar seu servico é guardado
+				cliente_em_servico.SetTempoRestante(evento_destruido.GetTempoAcontecimento() - tempo_atual);
 
-				cliente_em_servico.Interromper();//Marca o cliente como sendo um cliente Interrompido
-				cliente_em_servico.SetTempoRestante(evento_destruido.GetTempoAcontecimento() - tempo_atual);//O tempo restante para finalizar seu servico é guardado
-
-				fila2.push_front(cliente_em_servico); //Cliente que foi interrompido volta a ser o primeiro da fila 2.
-				servidor_vazio = true; //Deixa o servidor vazio
+				/*
+					Cliente que foi interrompido volta a ser o primeiro da fila 2.
+				*/
+				fila2.push_front(cliente_em_servico); 
+				/*
+					Deixa o servidor vazio
+				*/
+				servidor_vazio = true; 
 			}
 
 			Cliente cliente_atual = Cliente(id_proximo_cliente,tempo_atual,FILA_1, rodada_atual); //O novo cliente começa na fila 1
