@@ -142,20 +142,20 @@ int main(void)
 		char *arquivo = (char*)temp_pasta.c_str();
 		arquivo_entradas.open(arquivo, ios::app);
 		
-		arquivo_entradas<<num_rodadas->nome()<< ": "<<num_rodadas->num()<< ";" <<endl;
-		arquivo_entradas<<num_clientes->nome()<< ": "<<num_clientes->num()<< ";" <<endl;
-		arquivo_entradas<<taxa_chegada->nome()<< ": "<<taxa_chegada->num()<< ";" <<endl;
-		arquivo_entradas<<deterministico->nome()<< ": "<<deterministico->num()<< ";" <<endl;
-		arquivo_entradas<<debug->nome()<< ": "<<debug->num()<< ";" <<endl;
-		arquivo_entradas<<mostrar_resultados->nome()<< ": "<<mostrar_resultados->num()<< ";" <<endl;
-		arquivo_entradas<<determina_transiente->nome()<< ": "<<determina_transiente->num()<< ";" <<endl;
-		arquivo_entradas<<dois_por_vez->nome()<< ": "<<dois_por_vez->num()<< ";" <<endl;
-		arquivo_entradas<<guardar_estatisticas->nome()<< ": "<<guardar_estatisticas->num()<< ";" <<endl;
-		arquivo_entradas<<interrupcao_forcada->nome()<< ": "<<interrupcao_forcada->num()<< ";" <<endl;
-		arquivo_entradas<<tamanho_transiente->nome()<< ": "<<tamanho_transiente->num()<< ";" <<endl;
+		arquivo_entradas<<num_rodadas->nome()<< " = "<<num_rodadas->num()<< ";" <<endl;
+		arquivo_entradas<<num_clientes->nome()<< " = "<<num_clientes->num()<< ";" <<endl;
+		arquivo_entradas<<taxa_chegada->nome()<< " = "<<taxa_chegada->num()<< ";" <<endl;
+		arquivo_entradas<<deterministico->nome()<< " = "<<deterministico->num()<< ";" <<endl;
+		arquivo_entradas<<debug->nome()<< " =  "<<debug->num()<< ";" <<endl;
+		arquivo_entradas<<mostrar_resultados->nome()<< " = "<<mostrar_resultados->num()<< ";" <<endl;
+		arquivo_entradas<<determina_transiente->nome()<< " = "<<determina_transiente->num()<< ";" <<endl;
+		arquivo_entradas<<dois_por_vez->nome()<< " = "<<dois_por_vez->num()<< ";" <<endl;
+		arquivo_entradas<<guardar_estatisticas->nome()<< " = "<<guardar_estatisticas->num()<< ";" <<endl;
+		arquivo_entradas<<interrupcao_forcada->nome()<< " = "<<interrupcao_forcada->num()<< ";" <<endl;
+		arquivo_entradas<<tamanho_transiente->nome()<< " = "<<tamanho_transiente->num()<< ";" <<endl;
 		
 		if(!semente->erro())
-					arquivo_entradas<<semente->nome()<< ": "<<semente->num()<< ";" <<endl;
+					arquivo_entradas<<semente->nome()<< " = "<<semente->num()<< ";" <<endl;
 
 		arquivo_entradas.close();
 	}
