@@ -255,7 +255,6 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug, 
 				/*
 					O tempo restante para finalizar seu servico é guardado
 				*/
-				O tempo restante para finalizar seu servico é guardado
 				cliente_em_servico.SetTempoRestante(evento_destruido.GetTempoAcontecimento() - tempo_atual);
 
 				/*
