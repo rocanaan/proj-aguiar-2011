@@ -44,11 +44,13 @@ int main(void)
     ifstream entrada;
     size_t pos, fim,temp;
 	
+	cout<<"******************* Simulador AD 2011/1********************"<<endl;
+	
 	while (repeat)
     {
 		while (1)
 		{
-			cout<<"Entre com o nome do arquivo que contem as entradas: ";
+			cout<<endl<<"Entre com o nome do arquivo que contem as entradas: ";
 			cin>>nome_arquivo;
 			entrada.clear();
 			entrada.open(nome_arquivo.c_str(), ifstream::in);
@@ -113,7 +115,10 @@ int main(void)
 			cout << endl << "Os valores estao corretos? (S/N)" << endl;
 			cin >> repeat_temp;
 			if(repeat_temp == 'S' or repeat_temp == 's')
+			{
+				 cout<<endl<<"A simulacao esta sendo executada, aguarde..."<<endl;
 				 repeat = false;
+			}
 			else 
 			{
 				entrada.close();
