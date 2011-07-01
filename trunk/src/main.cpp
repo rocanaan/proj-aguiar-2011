@@ -138,7 +138,7 @@ int main(void)
 		
 		string temp_pasta = nome_pasta;
 	
-		temp_pasta.append("/Entradas_usadas.txt");
+		temp_pasta.append("/Entradas_usadas.ini");
 		char *arquivo = (char*)temp_pasta.c_str();
 		arquivo_entradas.open(arquivo, ios::app);
 		
