@@ -30,7 +30,9 @@ double Evento::GetTempoAcontecimento() const
 {
 	return tempo_acontecimento;
 }
-
+/*
+	Método usado para podermos imprimir o nome dos eventos na tela, no modo debug.
+*/
 string Evento::GetNome()
 {
        if (tipo == 0)

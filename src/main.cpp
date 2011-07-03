@@ -5,12 +5,12 @@
 #include <cstdlib>
 #include <fstream>
 #include <sstream>
-#ifdef WIN32// || _WIN32
+#ifdef WIN32
     #include <direct.h>
     #define MKDIR(a) _mkdir(a)
 #else
      #include <sys/stat.h>
-     #define MKDIR(a) mkdir(a, 0777)  /*Aqui o 0777 define o modo como igual ao umask, ou seja as permissões que resultariam de um mkdir na shell */
+     #define MKDIR(a) mkdir(a, 0777) 
 #endif
 #define CONF95  1.96
 
@@ -132,9 +132,9 @@ int main(void)
 		}
     }
 	
-	/*No caso de guardarmos as estatisticas é gerado uma pasta com o nome do arquivo entrada e
-	criamos uma arquivo chamado "Entrada_usadas.txt" com todas as entradas usadas. Para analises posteriores.
-	
+	/*
+		No caso de guardarmos as estatisticas é gerado uma pasta com o nome do arquivo entrada e
+		criamos uma arquivo chamado "Entrada_usadas.txt" com todas as entradas usadas. Para analises posteriores.
 	*/
 	if(guardar_estatisticas->num())
 	{
@@ -190,6 +190,9 @@ int main(void)
 	return 0;
 }
 
+/*
+	Método responsável pelo cálculo dos intervalos de confiança.
+*/
 void CalculaIntervaloConfianca(int num_rodadas, vector<double> E_N1, vector<double> E_N2, vector<double> E_Nq1, vector<double> E_Nq2, vector<double> E_W1, vector<double> E_W2, vector<double> E_T1, vector<double> E_T2, vector<double> V_W1, vector<double> V_W2)
 {
 	double estimador_media, estimador_var, intervalo;
@@ -301,7 +304,7 @@ void CalculaIntervaloConfianca(int num_rodadas, vector<double> E_N1, vector<doub
 	printf("     Tamanho: %lf \n",  2.0 * intervalo);
 	printf("     Tamanho em relacao a Media: %lf%% \n", (200.0 * intervalo) / estimador_media);
 	
-		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 	//////////////////////////////--------------Cálculo do Intervalo de N1--------------////////////////////////////////////
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
