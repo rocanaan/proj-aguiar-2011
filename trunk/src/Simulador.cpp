@@ -234,18 +234,23 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug, 
 				*/
 				servidor_vazio = true; 
 			}
+			
+			/*
+				O novo cliente começa na fila 1
+			*/
+			Cliente cliente_atual = Cliente(id_proximo_cliente,tempo_atual,FILA_1, rodada_atual); 
 
-			Cliente cliente_atual = Cliente(id_proximo_cliente,tempo_atual,FILA_1, rodada_atual); //O novo cliente começa na fila 1
 
-			//Como o servidor já vai estar marcado como vazio se ele estivesse ocupado com algum cliente da fila 2 então só é necessário verificar se ele está vazio
 			if(servidor_vazio)
 			{
 				cliente_atual.SetDiretoAoServidor(true);
 			}
 
 			id_proximo_cliente++;
-
-			fila1.push(cliente_atual); //Coloca o novo cliente na fila 1
+			/*
+				Coloca o novo cliente na fila 1
+			*/
+			fila1.push(cliente_atual); 
 			
 			if(evento_atual.GetTipo() == nova_chegada)
             {
@@ -310,8 +315,10 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug, 
 				/////////////////////////////////////////////////////////////////////////////////////////////////////
 				/////////////////////////////////////////COLETA DE DADOS/////////////////////////////////////////////
 				/////////////////////////////////////////////////////////////////////////////////////////////////////
-
-				//Verifica se o cliente em serviço é da rodada(coloração usada) em que estamos, pois só esse cliente entra nos dados desta rodada
+				
+				/*
+					Verifica se o cliente em serviço é da rodada(coloração usada) em que estamos, pois só esse cliente entra nos dados desta rodada
+				*/
 				if((cliente_em_servico.GetRodadaPertencente() == rodada_atual or determina_transiente) and rodada_atual != 0)
 				{
 					if(!cliente_em_servico.GetDiretoAoServidor())
@@ -388,8 +395,9 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug, 
 			//
 			servidor_vazio = true;//Como alguem foi servido marcamos o servidor como vazio
 		}
-
-		//Se não tem ninguem no servidor
+		/*
+			Se não tem ninguem no servidor
+		*/
 		if(servidor_vazio == true )
 		{
 			//Fila 1 tem prioridade
@@ -465,8 +473,8 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug, 
 void Simulador::CalculaResultados(int n, int servidos1, double t, int rodada, bool mostrar_resultados, string nome_pasta, bool guardar_estatisticas)
 {
     /*
-    Divide cada uma das variaveis de fila Nq1, Nq2, N1 e N2 pelo tempo da rodada
-     para obter a media de cada uma delas
+		Divide cada uma das variaveis de fila Nq1, Nq2, N1 e N2 pelo tempo da rodada
+		para obter a media de cada uma delas
     */
     E_Nq1.push_back(Nq1_parcial/t);
     E_Nq2.push_back(Nq2_parcial/t);
@@ -474,7 +482,7 @@ void Simulador::CalculaResultados(int n, int servidos1, double t, int rodada, bo
     E_N2.push_back(N2_parcial/t);
 
     /*
-    Divide cada um dos acumuladores dos clientes pelo numero de clientes servidos
+		Divide cada um dos acumuladores dos clientes pelo numero de clientes servidos
     */
     double EW1 = acumulaW1/servidos1;
     double ET1 = acumulaT1/servidos1;
@@ -487,21 +495,22 @@ void Simulador::CalculaResultados(int n, int servidos1, double t, int rodada, bo
     E_T2.push_back(ET2);
 
 
-     /* O estimador da variância é dado por (1/(n-1)) * somatório de ( ( Xi - Xmédio)^2) para cada amostra i, se forem feitas n amostras
-     mas
-     somatório de ( ( Xi - Xmédio)^2) para cada amostra i =
-     somatório de ( ( Xi^2 - 2Xi*Xmédio + Xmedio^2)) para cada amostra i
-     passando o somatório para dentro, temos
-     somatório de ( Xi^2) para cada amostra i - 2* somatório de ( Xi*Xmedio) para cada amostra i + somatório de (Xmédio)^2) para cada amostra i
-     = acumula_quadradoX - 2*acumulaX*E[X] + n*E[X]^2
+     /*
+		O estimador da variância é dado por (1/(n-1)) * somatório de ( ( Xi - Xmédio)^2) para cada amostra i, se forem feitas n amostras
+		mas
+		somatório de ( ( Xi - Xmédio)^2) para cada amostra i =
+		somatório de ( ( Xi^2 - 2Xi*Xmédio + Xmedio^2)) para cada amostra i
+		passando o somatório para dentro, temos
+		somatório de ( Xi^2) para cada amostra i - 2* somatório de ( Xi*Xmedio) para cada amostra i + somatório de (Xmédio)^2) para cada amostra i
+		= acumula_quadradoX - 2*acumulaX*E[X] + n*E[X]^2
 
-     mas E[X] = acumulaX/n, logo -2*acumulaX*E[X] = -2*E(X)^2*n
-     e (numero de amostras)*E[X]^2 = acumulaX^2/n
+		mas E[X] = acumulaX/n, logo -2*acumulaX*E[X] = -2*E(X)^2*n
+		e (numero de amostras)*E[X]^2 = acumulaX^2/n
 
-     Assim, V(X) = (acumula_quadradoX - 2*acumulaX^2/n + acumulaX^2/n) * 1/(n-1)
-     V(X) = (aumula_quadradoX - acumulaX^2/n) * 1/(n-1)
+		Assim, V(X) = (acumula_quadradoX - 2*acumulaX^2/n + acumulaX^2/n) * 1/(n-1)
+		V(X) = (aumula_quadradoX - acumulaX^2/n) * 1/(n-1)
 
-     para X = W1 ou X = W2
+		para X = W1 ou X = W2
      */
 
 	V_W1.push_back((acumula_quadradoW1 - EW1*EW1*servidos1)/(servidos1-1));

@@ -16,9 +16,15 @@ using namespace std;
 
 class Simulador{
     private:
-		priority_queue<Evento, vector<Evento>, greater<Evento> > filaEventos;//Fila de prioridade para podermos ordenar os eventos a partir de seu tempo de acontecimento
+		/*
+			Fila de prioridade para podermos ordenar os eventos a partir de seu tempo de acontecimento
+		*/
+		priority_queue<Evento, vector<Evento>, greater<Evento> > filaEventos;
 		queue<Cliente> fila1;
-		deque<Cliente> fila2;//Foi utillizado deque para podermos mover um cliente de volta para a frente da fila 2 sem dificuldades
+		/*
+			Foi utillizado deque para podermos mover um cliente de volta para a frente da fila 2 sem dificuldades
+		*/
+		deque<Cliente> fila2;
 	
 		GeradorTempoExponencial* gerador;
 	
@@ -35,13 +41,13 @@ class Simulador{
         int total_clientes_servidos_duas_vezes;
 		
 		/*
-        Variaveis que auxiliarão no cálculo do numero medio de clientes em cada regiao do sistema,
-        acumulando o produto N * tempo, onde N é o número de pessoas em cada região do sistema.
-        Nq1 = Número de pessoas na fila de espera para receber o primeiro serviço
-        Nq2 = Número de pessoas na fila de espera para receber o segundo serviço
-        N1 = Número total de pessoas no sistema que ainda não receberam o primeiro serviço completo
-        N2 = Número total de pessoas no sistema que já foram servidas uma vez, mas ainda não completaram o segundo serviço
-        OBS em um dado instante: Ni = Nqi + 1, se houver um cliente vindo da fila i no servidor
+			Variaveis que auxiliarão no cálculo do numero medio de clientes em cada regiao do sistema,
+			acumulando o produto N * tempo, onde N é o número de pessoas em cada região do sistema.
+			Nq1 = Número de pessoas na fila de espera para receber o primeiro serviço
+			Nq2 = Número de pessoas na fila de espera para receber o segundo serviço
+			N1 = Número total de pessoas no sistema que ainda não receberam o primeiro serviço completo
+			N2 = Número total de pessoas no sistema que já foram servidas uma vez, mas ainda não completaram o segundo serviço
+			OBS em um dado instante: Ni = Nqi + 1, se houver um cliente vindo da fila i no servidor
                                  Ni = Nqi, caso contrário
         */
         double Nq1_parcial;
@@ -50,7 +56,7 @@ class Simulador{
 		double N2_parcial;
 		
 		/*
-		Acumuladores das informacoes dos clientes
+			Acumuladores das informacoes dos clientes
 		*/
 		double acumulaW1;
 	    double acumulaT1;
