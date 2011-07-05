@@ -197,7 +197,9 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug, 
                 Evento evento_destruido = filaEventos.top(); 
 
 				/*
-					No caso de interrupcao_forcada, é necessário realizar o método RemoveTerminoServico() para remover o evento correto
+					No caso de interrupcao_forcada, é necessário realizar o método RemoveTerminoServico() para remover o evento correto,
+					pois não temos garantia de que o evento a ser removido é o do topo, pois pode haver mais de um evento de chega
+					na heap por vez.
 				*/
                 if(interrupcao_forcada){
                      evento_destruido = RemoveTerminoServico();
@@ -208,7 +210,11 @@ void Simulador::Roda(int num_clientes_por_rodada, int rodada_atual, bool debug, 
                 }
 				else{
 					/*
-						Remove o Evento de Término de serviço gerado por este cliente da fila 2 ( ele vai sempre ser o top)
+						Remove o Evento de Término de serviço gerado por este cliente da fila 2.
+                        Como no modo de execução normal guardamos apenas um evento de chegada e um de término de serviço
+                        por vez na fila de enventos, e a chegada atual já foi removida nesse ponto de execução
+                        do programa, mas a próxima chegada ainda não foi adicionada, podemos garantir que o
+                        evento de término de serviço que devemos cancelar vai estar no topo da heap.
 					*/
                      filaEventos.pop();
                      if(debug)
@@ -520,7 +526,7 @@ void Simulador::CalculaResultados(int n, int servidos1, double t, int rodada, bo
 
     if(mostrar_resultados)
 	{
-		cout << endl <<endl << endl << "Imprimindo resultados da rodada "<< rodada+1 <<" :"<< endl;
+		cout << endl <<endl << endl << "Imprimindo resultados da rodada "<< rodada <<" :"<< endl;
 		cout << "     E[W1] = " << E_W1.back() << endl;
 		cout << "     E[T1] = " << E_T1.back() << endl;
 		cout << "     V[W1] = " << V_W1.back() << endl;
@@ -537,6 +543,11 @@ void Simulador::CalculaResultados(int n, int servidos1, double t, int rodada, bo
 		GeraDadosGrafico(rodada, E_N1.back(), E_N2.back(), E_Nq1.back(), E_Nq2.back(), E_W1.back(), E_W2.back(), E_T1.back(), E_T2.back(), V_W1.back(),V_W2.back(), nome_pasta);
 }
 
+/* 
+Limpa os resultados da rodada guardados pelo simulador.
+Deve ser usada entre as rodadas para garantir que só consideramos
+em cada rodada dados que tem origem em clientes daquela rodada
+*/
 void Simulador::LimpaResultadosParciais()
 {
 
@@ -677,6 +688,16 @@ void Simulador::GeraDadosGrafico(int rodada, double pN1, double pN2, double pNq1
 	outputFile << rodada <<"\t"<< pV_W2 << endl;
 	outputFile.close();
 }
+
+/*
+Essa função é necessária para remover eventos de término de serviço da fila de eventos
+quando rodamos o programa no modo "dois por vez", pois nesse modo não temos garantia
+que o serviço a ser destruído está no topo da fila de eventos, mas sabemos que é o único
+evento do tipo "termino de servico" na fila.
+Essa funçao varre a fila (remove o primeiro elemento e guarda numa fila temporária)
+até encontrar o evento de término de serviço, então deleta esse evento e insere ordenadamente
+os eventos removidos até ali, exceto o que realmente deveria ter sido removido
+*/
 
 Evento Simulador::RemoveTerminoServico(){
      priority_queue<Evento, vector<Evento>, greater<Evento> > filaTemp;

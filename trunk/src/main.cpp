@@ -44,7 +44,16 @@ int main(void)
     ifstream entrada;
     size_t pos, fim,temp;
 	
-	cout<<"******************* Simulador AD 2011/1********************"<<endl;
+	cout<<"******************* Trabalho de Simulacao de AD 2011/1********************"<< endl;
+	cout<<"Simulador desenvolvido pelos alunos:"<<endl;
+	cout<<"      Luiz Filipe de Sa Estrella         DRE: 107390627" << endl;
+	cout<<"      Fernando de Mesentier Silva        DRE: 107390520" << endl;
+	cout<<"      Rodrigo de Moura Canaan            DRE: 107362200" << endl;
+	cout<<"      Vinicius Jose Serva Pereira        DRE: 106050355" << endl;
+	cout<<"Como projeto final da disciplina Avaliacao e Desempenho," << endl;
+	cout<<"Do curso Bacharelado em Ciencia da Computacao da UFRJ,"<<endl;
+	cout<<"Sob orientacao do prof. Paulo Henrique de Aguiar Rodrigues"<<endl;
+	cout<<"Durante o primeiro semestre de 2011."<<endl;
 	
 	while (repeat)
     {
